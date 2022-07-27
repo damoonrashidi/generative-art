@@ -19,10 +19,8 @@ impl Shape for Rectangle {
         )
     }
 
-    fn contains(&self, point: super::point::Point) -> bool {
-        point.x >= self.x
-            && point.x <= self.x + self.width
-            && point.y >= self.y
-            && point.y <= self.y + self.height
+    fn contains(&self, point: &super::point::Point) -> bool {
+        (self.x..(self.x + self.width)).contains(&point.x)
+            && (self.y..(self.y + self.height)).contains(&point.y)
     }
 }

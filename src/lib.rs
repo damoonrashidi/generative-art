@@ -17,7 +17,7 @@ pub struct SVG<'a> {
 
 pub trait Shape {
     fn as_svg(&self) -> String;
-    fn contains(&self, point: Point) -> bool;
+    fn contains(&self, point: &Point) -> bool;
 }
 
 impl SVG<'static> {

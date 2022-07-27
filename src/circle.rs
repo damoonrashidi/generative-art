@@ -22,7 +22,7 @@ impl super::Shape for Circle {
         )
     }
 
-    fn contains(&self, point: super::point::Point) -> bool {
+    fn contains(&self, point: &super::point::Point) -> bool {
         self.distance(&Circle {
             x: point.x,
             y: point.y,

@@ -6,24 +6,19 @@ use rust_gen_art::{circle::Circle, SVG};
 fn main() {
     const WIDTH: f64 = 500.0;
     const HEIGHT: f64 = 850.0;
+    const PADDING: f64 = WIDTH / 10.0;
     let mut document = SVG {
         name: "Grid",
         width: WIDTH,
         height: HEIGHT,
-        /**
-         * Ideally, this would be a private field, but as I understand it
-         * you cannot create a struct with private fields
-         **/
         document: String::from(""),
     };
 
     document.create_document();
 
-    const PADDING: f64 = WIDTH / 10.0;
-
     let mut x: f64 = PADDING;
     let mut rng = rand::thread_rng();
-    let mut total_dot_count = 0;
+    let mut total_dot_count: i32 = 0;
 
     while x < WIDTH - PADDING {
         let block_width = rng.gen_range(WIDTH * 0.003..WIDTH * 0.04);
@@ -73,5 +68,5 @@ fn get_dot_count(y: f64, area: f64, render_height: f64) -> i32 {
     let mut rng = rand::thread_rng();
     let count = (render_height - y) * rng.gen_range(2.0..4.0) + normalized_area;
 
-    return min(count as i32, 30);
+    return min(count as i32, 100);
 }

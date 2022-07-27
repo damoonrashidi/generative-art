@@ -12,3 +12,12 @@ impl Point {
         (a.x..b.x).contains(&self.x) && (a.y..b.y).contains(&self.y)
     }
 }
+
+impl Clone for Point {
+    fn clone(&self) -> Self {
+        Point {
+            x: self.x,
+            y: self.y,
+        }
+    }
+}
