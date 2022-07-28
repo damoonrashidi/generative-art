@@ -4,7 +4,7 @@ use rand::Rng;
 
 #[derive(Clone, Copy)]
 pub enum Color {
-    HSLa(u8, f64, f64, f64),
+    HSLa(u16, f64, f64, f64),
     Hex(&'static str),
 }
 

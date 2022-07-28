@@ -1,4 +1,4 @@
-use noise::{NoiseFn, Seedable, SuperSimplex};
+use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::Rng;
 use rust_gen_art::{
     circle::Circle, line::Line, palette::Color, point::Point, rectangle::Rectangle, Shape, SVG,
@@ -30,17 +30,23 @@ fn main() {
         color: None,
     };
 
-    let perlin = SuperSimplex::new();
-    Seedable::set_seed(perlin, rng.gen_range(0..100));
+    let noise = OpenSimplex::new();
+    Seedable::set_seed(noise, rng.gen_range(0..100_000));
 
-    let distort = rng.gen_range(1.5..3.0);
+    let distort = rng.gen_range(1.5..4.2);
+    let zoom = rng.gen_range(800.0..2_000.0);
 
-    for _ in 0..5000 {
+    for _ in 0..10_000 {
         let mut x: f64 = rng.gen_range(PADDING..WIDTH - PADDING);
         let mut y: f64 = rng.gen_range(PADDING..HEIGHT - PADDING);
-        let r = rng.gen_range(35.0..40.0);
+        let mut r = 15.0;
+        let mut step_size = 30.0;
+        let (h, s, l, a) = (rng.gen_range(300..320), 50.0, 50.0, 1.0);
 
-        let (h, s, l, a) = (rng.gen_range(200..240), 50.0, 50.0, 1.0);
+        if rng.gen_bool(0.2) {
+            r *= 5.0;
+            step_size = 120.0;
+        }
 
         let mut line = Line {
             points: vec![],
@@ -49,20 +55,13 @@ fn main() {
         };
 
         while bounds.contains(&Point { x, y }) && line.length() < MAX_LINE_LENGTH {
-            let n = perlin.get([x / 1200.0, y / 1200.0, 0.0]);
-            x += (distort * n).cos() * 30.0;
-            y += (distort * n).sin() * 30.0;
+            let n = noise.get([x / zoom, y / zoom]);
+            x += (distort * n).cos() * step_size;
+            y += (distort * n).sin() * step_size;
 
             let current_point = Circle { x, y, r };
 
-            if dots.iter().any(|dot| {
-                let distance = current_point.distance(&Circle {
-                    x: dot.x,
-                    y: dot.y,
-                    r,
-                });
-                return distance < r * 2.0;
-            }) {
+            if dots.iter().any(|dot| current_point.intersects(dot)) {
                 break;
             }
 
