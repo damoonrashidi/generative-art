@@ -1,11 +1,15 @@
-use noise::{NoiseFn, OpenSimplex};
+use noise::{NoiseFn, Seedable, SuperSimplex};
 use rand::Rng;
-use rust_gen_art::{circle::Circle, line::Line, point::Point, rectangle::Rectangle, Shape, SVG};
+use rust_gen_art::{
+    circle::Circle, line::Line, palette::Color, point::Point, rectangle::Rectangle, Shape, SVG,
+};
 
 fn main() {
-    const WIDTH: f64 = 500.0;
-    const HEIGHT: f64 = 850.0;
+    const WIDTH: f64 = 3000.0;
+    const HEIGHT: f64 = WIDTH * 1.4;
     const PADDING: f64 = WIDTH / 10.0;
+    const MAX_LINE_LENGTH: f64 = 2000.0;
+
     let mut document = SVG {
         name: "Forces",
         width: WIDTH,
@@ -23,39 +27,41 @@ fn main() {
         y: PADDING,
         width: WIDTH - (PADDING * 2.0),
         height: HEIGHT - (PADDING * 2.0),
-        fill: "#111",
+        color: None,
     };
 
-    let perlin = OpenSimplex::new();
-    let distort = rng.gen_range(2.0..4.2);
+    let perlin = SuperSimplex::new();
+    Seedable::set_seed(perlin, rng.gen_range(0..100));
 
-    for _ in 0..1000 {
-        let mut x: f64 = rng.gen_range(0.0..WIDTH);
-        let mut y: f64 = rng.gen_range(0.0..HEIGHT);
+    let distort = rng.gen_range(1.5..3.0);
 
-        let r = 3.0;
+    for _ in 0..5000 {
+        let mut x: f64 = rng.gen_range(PADDING..WIDTH - PADDING);
+        let mut y: f64 = rng.gen_range(PADDING..HEIGHT - PADDING);
+        let r = rng.gen_range(35.0..40.0);
+
+        let (h, s, l, a) = (rng.gen_range(200..240), 50.0, 50.0, 1.0);
 
         let mut line = Line {
             points: vec![],
-            stroke: "#000",
+            stroke: Color::HSLa(h, s, l, a),
             stroke_width: r,
         };
 
-        while bounds.contains(&Point { x, y }) {
-            let n = perlin.get([x / 800.0, y / 800.0, 0.0]);
-            x += (distort * n).sin() * 5.0;
-            y += (distort * n).cos() * 5.0;
+        while bounds.contains(&Point { x, y }) && line.length() < MAX_LINE_LENGTH {
+            let n = perlin.get([x / 1200.0, y / 1200.0, 0.0]);
+            x += (distort * n).cos() * 30.0;
+            y += (distort * n).sin() * 30.0;
 
-            let circle = Circle { x, y, r };
+            let current_point = Circle { x, y, r };
 
-            println!("checking for collissions against {} points", dots.len());
-
-            if line.points.iter().any(|dot| {
-                circle.distance(&Circle {
+            if dots.iter().any(|dot| {
+                let distance = current_point.distance(&Circle {
                     x: dot.x,
                     y: dot.y,
                     r,
-                }) < r * 2.0 + 5.0
+                });
+                return distance < r * 2.0;
             }) {
                 break;
             }
@@ -63,15 +69,16 @@ fn main() {
             line.add_point(Point { x, y });
         }
 
-        line.points.iter().for_each(|point| {
-            dots.push(Circle {
-                x: point.x,
-                y: point.y,
-                r,
+        if line.length() > 200.0 {
+            line.points.iter().for_each(|point| {
+                dots.push(Circle {
+                    x: point.x,
+                    y: point.y,
+                    r,
+                });
             });
-        });
-
-        document.add(Box::new(line));
+            document.add(Box::new(line));
+        }
     }
 
     document.save();

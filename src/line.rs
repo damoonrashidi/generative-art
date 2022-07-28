@@ -1,9 +1,9 @@
-use crate::{point::Point, Shape};
+use crate::{palette::Color, point::Point, Shape};
 
 pub struct Line {
     pub points: Vec<Point>,
     pub stroke_width: f64,
-    pub stroke: &'static str,
+    pub stroke: Color,
 }
 
 impl Line {
@@ -13,6 +13,18 @@ impl Line {
 
     pub fn add_point(&mut self, point: Point) {
         self.points.push(point);
+    }
+
+    pub fn length(&self) -> f64 {
+        if self.points.len() == 0 {
+            return 0.0;
+        }
+
+        let mut total = 0.0;
+        for i in 1..self.points.len() {
+            total += self.points[i - 1].distance(self.points[i])
+        }
+        return total;
     }
 }
 
@@ -31,7 +43,7 @@ impl Shape for Line {
             str.push_str(&format!("{:.2} {:.2}, ", point.x, point.y));
         }
 
-        str.push_str("\" />");
+        str.push_str("\" />\n");
         return str;
     }
 

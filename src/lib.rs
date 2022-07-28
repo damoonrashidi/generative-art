@@ -1,5 +1,6 @@
 pub mod circle;
 pub mod line;
+pub mod palette;
 pub mod point;
 pub mod rectangle;
 use chrono::{Datelike, Utc};

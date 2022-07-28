@@ -1,4 +1,5 @@
 use super::Shape;
+use crate::palette::Color;
 
 pub struct Rectangle {
     pub x: f64,
@@ -6,16 +7,21 @@ pub struct Rectangle {
     pub width: f64,
     pub height: f64,
 
-    pub fill: &'static str,
+    pub color: Option<Color>,
 }
 
 impl Rectangle {}
 
 impl Shape for Rectangle {
     fn as_svg(&self) -> String {
+        let fill = match self.color {
+            Some(color) => format!("{}", color),
+            _ => String::from("transparent"),
+        };
+
         format!(
-            "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" />",
-            self.x, self.y, self.width, self.height,
+            "<rect x=\"{:.2}\" y=\"{:.2}\" width=\"{:.2}\" height=\"{:.2}\" fill=\"{}\"/>",
+            self.x, self.y, self.width, self.height, fill
         )
     }
 
