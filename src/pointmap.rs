@@ -40,7 +40,16 @@ impl PointMap<Circle> {
             .push(circle);
     }
 
-    pub fn get_neighbors(&self, point: Circle) -> &Vec<Circle> {}
+    pub fn get_neighbors(&self, circle: Circle) -> &Vec<Circle> {
+        let x = self.get_x(circle);
+        let y = self.get_y(circle);
+
+        if !(0..9).contains(&x) || !(0..9).contains(&y) {
+            panic!("out of bounds");
+        }
+
+        return self.points.get(y).unwrap().get(x).unwrap();
+    }
 
     fn get_x(&self, circle: Circle) -> usize {
         return (circle.x / self.width * 10.0).floor() as usize;
@@ -82,5 +91,19 @@ mod test {
         point_map.insert(circle);
         let points = point_map.points.get_mut(1).unwrap().get_mut(1).unwrap();
         assert_eq!(points.len(), 1);
+    }
+
+    #[test]
+    fn get_neighbors() {
+        let mut point_map: PointMap<Circle> = PointMap::new(100.0, 100.0);
+        let circle = Circle::new(11.0, 11.0, 5.0);
+        let non_neighbor = Circle::new(30.3, 50.4, 10.0);
+        point_map.insert(circle);
+        point_map.insert(non_neighbor);
+
+        let neighbors = point_map.get_neighbors(circle);
+
+        assert_eq!(neighbors.len(), 1);
+        assert_eq!(neighbors.first().unwrap().to_owned(), circle);
     }
 }

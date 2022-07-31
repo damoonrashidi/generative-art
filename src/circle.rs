@@ -62,6 +62,12 @@ impl super::Shape for Circle {
     }
 }
 
+impl PartialEq for Circle {
+    fn eq(&self, other: &Self) -> bool {
+        return self.x == other.x && self.y == other.y && self.r == other.r;
+    }
+}
+
 impl Display for Circle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "x:{} y:{} r:{}", self.x, self.y, self.r)
