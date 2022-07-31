@@ -28,27 +28,33 @@ impl PointMap<Circle> {
         let x = self.get_x(circle);
         let y = self.get_y(circle);
 
-        if !(0..9).contains(&x) || !(0..9).contains(&y) {
-            panic!("out of bounds");
+        if !(0..=9).contains(&x) || !(0..=9).contains(&y) {
+            panic!("{}:{} is out of bounds ({})", x, y, circle);
         }
 
-        self.points
-            .get_mut(y)
-            .unwrap()
-            .get_mut(x)
-            .unwrap()
-            .push(circle);
+        if let Some(g_y) = self.points.get_mut(y) {
+            if let Some(g_x) = g_y.get_mut(x) {
+                g_x.push(circle);
+            }
+        }
+
+        // self.points
+        //     .get_mut(y)
+        //     .unwrap()
+        //     .get_mut(x)
+        //     .unwrap()
+        //     .push(circle);
     }
 
-    pub fn get_neighbors(&self, circle: Circle) -> &Vec<Circle> {
+    pub fn get_neighbors(&self, circle: Circle) -> Option<&Vec<Circle>> {
         let x = self.get_x(circle);
         let y = self.get_y(circle);
 
-        if !(0..9).contains(&x) || !(0..9).contains(&y) {
-            panic!("out of bounds");
+        if !(0..=9).contains(&x) || !(0..=9).contains(&y) {
+            panic!("{}:{} is out of bounds", x, y);
         }
 
-        return self.points.get(y).unwrap().get(x).unwrap();
+        return self.points.get(y).unwrap().get(x);
     }
 
     fn get_x(&self, circle: Circle) -> usize {
@@ -103,7 +109,7 @@ mod test {
 
         let neighbors = point_map.get_neighbors(circle);
 
-        assert_eq!(neighbors.len(), 1);
-        assert_eq!(neighbors.first().unwrap().to_owned(), circle);
+        assert_eq!(neighbors.unwrap().len(), 1);
+        assert_eq!(neighbors.unwrap().first().unwrap().to_owned(), circle);
     }
 }

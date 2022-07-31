@@ -9,6 +9,7 @@ edition = "2021"
 chrono = "0.4.19"
 noise = "0.7.0"
 rand = "0.8.5"
+rand_chacha = "0.3.1"
 
 
 [[bin]]

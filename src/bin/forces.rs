@@ -1,7 +1,9 @@
 use noise::{NoiseFn, OpenSimplex, Seedable};
-use rand::Rng;
+use rand::prelude::*;
+use rand_chacha::ChaCha20Rng;
 use rust_gen_art::{
-    circle::Circle, line::Line, palette::Color, point::Point, rectangle::Rectangle, Shape, SVG,
+    circle::Circle, line::Line, palette::Color, point::Point, pointmap::PointMap,
+    rectangle::Rectangle, Shape, SVG,
 };
 
 fn main() {
@@ -11,9 +13,9 @@ fn main() {
     const MAX_LINE_LENGTH: f64 = 2000.0;
 
     let mut svg = SVG::new("Forces", WIDTH, HEIGHT);
-    let mut rng = rand::thread_rng();
+    let mut rng = ChaCha20Rng::from_entropy();
 
-    let mut dots: Vec<Circle> = vec![];
+    let mut dots: PointMap<Circle> = PointMap::new(WIDTH, HEIGHT);
 
     let bounds = Rectangle {
         x: PADDING,
@@ -24,17 +26,17 @@ fn main() {
     };
 
     let noise = OpenSimplex::new();
-    Seedable::set_seed(noise, rng.gen_range(0..100_000));
+    Seedable::set_seed(noise, rng.gen_range(1..100_000));
 
     let distort = rng.gen_range(1.5..4.2);
-    let zoom = rng.gen_range(800.0..2_000.0);
+    let zoom = rng.gen_range(1_200.0..4_000.0);
 
     for _ in 0..10_000 {
         let mut x: f64 = rng.gen_range(PADDING..WIDTH - PADDING);
         let mut y: f64 = rng.gen_range(PADDING..HEIGHT - PADDING);
         let mut r = 15.0;
         let mut step_size = 30.0;
-        let (h, s, l, a) = (rng.gen_range(300..320), 50.0, 50.0, 1.0);
+        let (h, s, l, a) = (rng.gen_range(350..360), 50.0, 50.0, 1.0);
 
         if rng.gen_bool(0.2) {
             r *= 5.0;
@@ -52,10 +54,12 @@ fn main() {
             x += (distort * n).cos() * step_size;
             y += (distort * n).sin() * step_size;
 
-            let current_point = Circle::new(x, y, r);
+            let circle = Circle::new(x, y, r);
 
-            if dots.iter().any(|dot| current_point.intersects(dot)) {
-                break;
+            if let Some(neighbors) = dots.get_neighbors(circle) {
+                if neighbors.iter().any(|dot| circle.intersects(dot)) {
+                    break;
+                }
             }
 
             line.add_point(Point { x, y });
@@ -64,7 +68,7 @@ fn main() {
         if line.length() > 200.0 {
             line.points
                 .iter()
-                .for_each(|point| dots.push(Circle::new(point.x, point.y, r)));
+                .for_each(|point| dots.insert(Circle::new(point.x, point.y, r)));
 
             svg.add(Box::new(line));
         }
