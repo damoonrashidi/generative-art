@@ -10,14 +10,7 @@ fn main() {
     const PADDING: f64 = WIDTH / 10.0;
     const MAX_LINE_LENGTH: f64 = 2000.0;
 
-    let mut document = SVG {
-        name: "Forces",
-        width: WIDTH,
-        height: HEIGHT,
-        document: String::from(""),
-    };
-
-    document.create_document();
+    let mut svg = SVG::new("Forces", WIDTH, HEIGHT);
     let mut rng = rand::thread_rng();
 
     let mut dots: Vec<Circle> = vec![];
@@ -54,12 +47,12 @@ fn main() {
             stroke_width: r,
         };
 
-        while bounds.contains(&Point { x, y }) && line.length() < MAX_LINE_LENGTH {
+        while bounds.contains(Point { x, y }) && line.length() < MAX_LINE_LENGTH {
             let n = noise.get([x / zoom, y / zoom]);
             x += (distort * n).cos() * step_size;
             y += (distort * n).sin() * step_size;
 
-            let current_point = Circle { x, y, r };
+            let current_point = Circle::new(x, y, r);
 
             if dots.iter().any(|dot| current_point.intersects(dot)) {
                 break;
@@ -69,16 +62,13 @@ fn main() {
         }
 
         if line.length() > 200.0 {
-            line.points.iter().for_each(|point| {
-                dots.push(Circle {
-                    x: point.x,
-                    y: point.y,
-                    r,
-                });
-            });
-            document.add(Box::new(line));
+            line.points
+                .iter()
+                .for_each(|point| dots.push(Circle::new(point.x, point.y, r)));
+
+            svg.add(Box::new(line));
         }
     }
 
-    document.save();
+    svg.save();
 }

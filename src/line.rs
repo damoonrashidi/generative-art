@@ -47,7 +47,7 @@ impl Shape for Line {
         return str;
     }
 
-    fn contains(&self, _point: &Point) -> bool {
+    fn contains(&self, _point: Point) -> bool {
         false
     }
 }

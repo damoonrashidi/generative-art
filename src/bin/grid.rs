@@ -7,18 +7,10 @@ fn main() {
     const WIDTH: f64 = 500.0;
     const HEIGHT: f64 = 850.0;
     const PADDING: f64 = WIDTH / 10.0;
-    let mut document = SVG {
-        name: "Grid",
-        width: WIDTH,
-        height: HEIGHT,
-        document: String::from(""),
-    };
-
-    document.create_document();
+    let mut document = SVG::new("Grid", WIDTH, HEIGHT);
 
     let mut x: f64 = PADDING;
     let mut rng = rand::thread_rng();
-    let mut total_dot_count: i32 = 0;
 
     while x < WIDTH - PADDING {
         let block_width = rng.gen_range(WIDTH * 0.003..WIDTH * 0.04);
@@ -33,14 +25,13 @@ fn main() {
 
             let area = block_width * block_height;
             let dot_count = get_dot_count(y, area, HEIGHT);
-            total_dot_count += dot_count;
 
             for _ in 0..dot_count {
                 let cy: f64 = rng.gen_range(y..(y + block_height));
                 let cx: f64 = rng.gen_range(x..(x + block_width));
                 let r: f64 = 1.0;
 
-                document.add(Box::new(Circle { x: cx, y: cy, r }));
+                document.add(Box::new(Circle::new(cx, cy, r)));
             }
 
             y += block_height;
@@ -48,8 +39,6 @@ fn main() {
 
         x += block_width;
     }
-
-    println!("wrote {} dots", total_dot_count);
 
     document.save();
 }

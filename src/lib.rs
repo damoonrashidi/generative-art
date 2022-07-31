@@ -2,6 +2,7 @@ pub mod circle;
 pub mod line;
 pub mod palette;
 pub mod point;
+pub mod pointmap;
 pub mod rectangle;
 use chrono::{Datelike, Utc};
 
@@ -13,20 +14,25 @@ pub struct SVG<'a> {
     pub name: &'a str,
     pub width: f64,
     pub height: f64,
-    pub document: String,
+    document: String,
 }
 
 pub trait Shape {
     fn as_svg(&self) -> String;
-    fn contains(&self, point: &Point) -> bool;
+    fn contains(&self, point: Point) -> bool;
 }
 
 impl SVG<'static> {
-    pub fn create_document(&mut self) -> () {
-        self.document = format!(
-            "<svg viewBox=\"0 0 {} {}\" xmlns=\"http://www.w3.org/2000/svg\">",
-            self.width, self.height
-        );
+    pub fn new(name: &str, width: f64, height: f64) -> SVG {
+        SVG {
+            name,
+            width,
+            height,
+            document: format!(
+                "<svg viewBox=\"0 0 {} {}\" xmlns=\"http://www.w3.org/2000/svg\">",
+                width, height
+            ),
+        }
     }
 
     pub fn add(&mut self, shape: Box<dyn Shape>) -> () {

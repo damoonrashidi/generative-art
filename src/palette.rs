@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use rand::Rng;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Color {
     HSLa(u16, f64, f64, f64),
     Hex(&'static str),
