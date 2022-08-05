@@ -1,10 +1,12 @@
 pub mod circle;
+pub mod group;
 pub mod line;
 pub mod palette;
 pub mod point;
 pub mod pointmap;
 pub mod rectangle;
 use chrono::{Datelike, Utc};
+use group::Group;
 
 use std::{fs::File, io::Write};
 
@@ -35,8 +37,12 @@ impl SVG<'static> {
         }
     }
 
-    pub fn add(&mut self, shape: Box<dyn Shape>) -> () {
+    pub fn add_shape(&mut self, shape: Box<dyn Shape>) -> () {
         self.document.push_str(&shape.as_svg());
+    }
+
+    pub fn add_group(&mut self, group: Box<Group>) -> () {
+        self.document.push_str(&group.as_svg());
     }
 
     pub fn save(&mut self) -> () {

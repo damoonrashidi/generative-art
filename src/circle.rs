@@ -27,7 +27,7 @@ impl Circle {
     }
 
     pub fn intersects(&self, other: &Circle) -> bool {
-        self.distance(&other) < (self.r + other.r)
+        self.distance(&other) < self.r + other.r
     }
 
     pub fn set_color(&mut self, color: Color) {

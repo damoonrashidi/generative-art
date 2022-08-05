@@ -1,9 +1,10 @@
 use crate::{palette::Color, point::Point, Shape};
 
+#[derive(Debug)]
 pub struct Line {
     pub points: Vec<Point>,
     pub stroke_width: f64,
-    pub stroke: Color,
+    pub stroke: Option<Color>,
 }
 
 impl Line {
@@ -34,16 +35,24 @@ impl Shape for Line {
             return String::from("");
         }
 
-        let mut str = format!(
-            "<path stroke=\"{}\" fill=\"transparent\" stroke-width=\"{}\" d=\"M ",
-            &self.stroke, &self.stroke_width,
-        );
+        let stroke: String = match &self.stroke {
+            Some(color) => format!("stroke=\"{}\" ", color),
+            _ => String::from(""),
+        };
+
+        let stroke_weight: String = if &self.stroke_width == &0.0 {
+            String::from("")
+        } else {
+            format!("stroke-width=\"{:.2}\" ", &self.stroke_width)
+        };
+
+        let mut str = format!("<path {}{}d=\"M ", stroke, stroke_weight,);
 
         for point in &self.points {
             str.push_str(&format!("{:.2} {:.2}, ", point.x, point.y));
         }
 
-        str.push_str("\" />\n");
+        str.push_str("\"/>\n");
         return str;
     }
 

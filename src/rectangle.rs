@@ -10,17 +10,27 @@ pub struct Rectangle {
     pub color: Option<Color>,
 }
 
-impl Rectangle {}
+impl Rectangle {
+    pub fn new(x: f64, y: f64, width: f64, height: f64) -> Rectangle {
+        Rectangle {
+            x,
+            y,
+            width,
+            height,
+            color: Rectangle::default().color,
+        }
+    }
+}
 
 impl Shape for Rectangle {
     fn as_svg(&self) -> String {
         let fill = match self.color {
-            Some(color) => format!("{}", color),
-            _ => String::from("transparent"),
+            Some(color) => format!(" fill=\"{}\"", color),
+            _ => String::from(""),
         };
 
         format!(
-            "<rect x=\"{:.2}\" y=\"{:.2}\" width=\"{:.2}\" height=\"{:.2}\" fill=\"{}\"/>",
+            "<rect x=\"{:.2}\" y=\"{:.2}\" width=\"{:.2}\" height=\"{:.2}\"{}/>",
             self.x, self.y, self.width, self.height, fill
         )
     }
@@ -28,6 +38,18 @@ impl Shape for Rectangle {
     fn contains(&self, point: super::point::Point) -> bool {
         (self.x..(self.x + self.width)).contains(&point.x)
             && (self.y..(self.y + self.height)).contains(&point.y)
+    }
+}
+
+impl Default for Rectangle {
+    fn default() -> Self {
+        Rectangle {
+            x: 0.0,
+            y: 0.0,
+            width: 0.0,
+            height: 0.0,
+            color: None,
+        }
     }
 }
 

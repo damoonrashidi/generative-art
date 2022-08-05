@@ -31,7 +31,7 @@ fn main() {
                 let cx: f64 = rng.gen_range(x..(x + block_width));
                 let r: f64 = 1.0;
 
-                document.add(Box::new(Circle::new(cx, cy, r)));
+                document.add_shape(Box::new(Circle::new(cx, cy, r)));
             }
 
             y += block_height;
