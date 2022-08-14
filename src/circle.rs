@@ -23,7 +23,7 @@ impl Circle {
     pub fn distance(&self, other: &Circle) -> f64 {
         let d_x = self.x - other.x;
         let d_y = self.y - other.y;
-        return (d_x.powi(2) + d_y.powi(2)).sqrt();
+        return (d_x.powi(2) + d_y.powi(2)).sqrt() - (self.r * 2.0 + other.r * 2.0);
     }
 
     pub fn intersects(&self, other: &Circle) -> bool {

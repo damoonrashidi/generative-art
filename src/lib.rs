@@ -71,6 +71,5 @@ impl SVG<'static> {
         let _result = f
             .write_all(self.document.as_bytes())
             .expect("Could not write to file");
-        println!("Wrote image to {}", &path);
     }
 }

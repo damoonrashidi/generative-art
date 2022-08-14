@@ -16,13 +16,13 @@ fn main() {
     const WIDTH: f64 = 3000.0;
     const HEIGHT: f64 = WIDTH * 1.4;
     const PADDING: f64 = WIDTH / 10.0;
-    const MAX_LINE_LENGTH: f64 = 2000.0;
-    const MIN_LINE_LENGHT: f64 = 100.0;
+    const MAX_LINE_LENGTH: f64 = 800.0;
+    const MIN_LINE_LENGHT: f64 = 150.0;
 
     let mut svg = SVG::new("Forces", WIDTH, HEIGHT);
     let mut rng = ChaCha20Rng::from_entropy();
 
-    let mut point_map: PointMap<Circle> = PointMap::new(WIDTH, HEIGHT);
+    let mut point_map: PointMap<Circle> = PointMap::new(WIDTH, HEIGHT, 30);
 
     let bounds = Rectangle {
         x: PADDING,
@@ -35,8 +35,8 @@ fn main() {
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(1..100_000));
 
-    let distort = rng.gen_range(1.5..4.2);
-    let zoom = rng.gen_range(1_200.0..4_000.0);
+    let distort = rng.gen_range(1.5..3.2);
+    let zoom = rng.gen_range(500.0..900.0);
 
     let mut group = Group::new();
 
@@ -46,24 +46,16 @@ fn main() {
         stroke_width: Some(15.0),
     });
 
-    for _ in 0..5_000 {
+    for _ in 0..1000 {
         let mut x: f64 = rng.gen_range(PADDING..WIDTH - PADDING);
         let mut y: f64 = rng.gen_range(PADDING..HEIGHT - PADDING);
-        let mut r = 15.0;
-        let mut step_size = 30.0;
-
-        if rng.gen_bool(0.2) {
-            r *= 5.0;
-            step_size = 160.0;
-        } else if rng.gen_bool(0.1) {
-            r *= 10.0;
-            step_size = 250.0;
-        }
-
+        let r = 90.0;
+        let line_padding = 120.0;
+        let step_size = 25.0;
         let mut line = Line {
             points: vec![],
             stroke_width: r,
-            stroke: None,
+            color: None,
         };
 
         while bounds.contains(Point { x, y }) && line.length() < MAX_LINE_LENGTH {
@@ -73,7 +65,11 @@ fn main() {
             let circle = Circle::new(x, y, r);
 
             if let Some(neighbors) = point_map.get_neighbors(circle) {
-                if neighbors.iter().any(|point| circle.intersects(point)) {
+                let collides_with_any = neighbors
+                    .iter()
+                    .any(|point| circle.distance(point) < line_padding);
+
+                if collides_with_any {
                     break;
                 }
             }

@@ -4,14 +4,10 @@ use crate::{palette::Color, point::Point, Shape};
 pub struct Line {
     pub points: Vec<Point>,
     pub stroke_width: f64,
-    pub stroke: Option<Color>,
+    pub color: Option<Color>,
 }
 
 impl Line {
-    pub fn new(&mut self, points: Vec<Point>) {
-        self.points = points;
-    }
-
     pub fn add_point(&mut self, point: Point) {
         self.points.push(point);
     }
@@ -35,7 +31,7 @@ impl Shape for Line {
             return String::from("");
         }
 
-        let stroke: String = match &self.stroke {
+        let stroke: String = match &self.color {
             Some(color) => format!("stroke=\"{}\" ", color),
             _ => String::from(""),
         };
