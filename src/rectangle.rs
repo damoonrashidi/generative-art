@@ -1,5 +1,5 @@
 use super::Shape;
-use crate::palette::Color;
+use crate::{palette::Color, point::Point};
 
 pub struct Rectangle {
     pub x: f64,
@@ -19,6 +19,13 @@ impl Rectangle {
             height,
             color: Rectangle::default().color,
         }
+    }
+
+    pub fn center(&self) -> Point {
+        return Point {
+            x: self.x,
+            y: self.y,
+        };
     }
 }
 

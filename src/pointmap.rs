@@ -105,8 +105,10 @@ impl PointMap<Circle> {
 #[cfg(test)]
 mod test {
 
-    use super::PointMap;
-    use crate::{circle::Circle, pointmap::PointMapResult};
+    use crate::{
+        circle::Circle,
+        pointmap::{PointMap, PointMapResult},
+    };
 
     #[test]
     fn get_x() {
@@ -172,7 +174,7 @@ mod test {
 
         let neighbors = point_map.get_neighbors(circle).unwrap();
 
-        assert_eq!(neighbors.len(), 1);
+        assert_eq!(neighbors.len(), 2);
         assert_eq!(neighbors.first().unwrap().to_owned(), circle);
     }
 }

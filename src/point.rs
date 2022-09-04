@@ -8,8 +8,8 @@ pub struct Point {
 
 impl Point {
     pub fn distance(&self, other: Point) -> f64 {
-        let d_x = self.x - other.x;
-        let d_y = self.y - other.y;
+        let d_x = (self.x - other.x).abs();
+        let d_y = (self.y - other.y).abs();
         return (d_x.powi(2) + d_y.powi(2)).sqrt();
     }
 
