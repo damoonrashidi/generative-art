@@ -1,13 +1,13 @@
 use crate::{palette::Color, point::Point, Shape};
 
 #[derive(Debug)]
-pub struct Line {
+pub struct Path {
     pub points: Vec<Point>,
     pub stroke_width: f64,
     pub color: Option<Color>,
 }
 
-impl Line {
+impl Path {
     pub fn add_point(&mut self, point: Point) {
         self.points.push(point);
     }
@@ -25,7 +25,7 @@ impl Line {
     }
 }
 
-impl Shape for Line {
+impl Shape for Path {
     fn as_svg(&self) -> String {
         if self.points.len() == 0 {
             return String::from("");

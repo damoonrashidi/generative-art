@@ -1,7 +1,7 @@
 pub mod circle;
 pub mod group;
-pub mod line;
 pub mod palette;
+pub mod path;
 pub mod point;
 pub mod pointmap;
 pub mod rectangle;

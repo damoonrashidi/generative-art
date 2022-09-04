@@ -4,8 +4,8 @@ use rand_chacha::ChaCha20Rng;
 use rust_gen_art::{
     circle::Circle,
     group::{Group, GroupStyle},
-    line::Line,
     palette::Color,
+    path::Path,
     point::Point,
     pointmap::PointMap,
     rectangle::Rectangle,
@@ -52,7 +52,7 @@ fn main() {
         let r = 90.0;
         let line_padding = 120.0;
         let step_size = 25.0;
-        let mut line = Line {
+        let mut line = Path {
             points: vec![],
             stroke_width: r,
             color: None,
