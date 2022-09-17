@@ -1,3 +1,4 @@
+pub mod blob;
 pub mod circle;
 pub mod group;
 pub mod palette;

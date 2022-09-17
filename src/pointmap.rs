@@ -81,8 +81,8 @@ impl PointMap<Circle> {
         for a in y - 1..y + 1 {
             for b in x - 1..x + 1 {
                 if self.index_is_valid(a) && self.index_is_valid(b) {
-                    let mut points_in_grid = self.points.get(y).unwrap().get(x).unwrap().to_owned();
-                    points.append(&mut points_in_grid);
+                    let mut points_in_cell = self.points.get(y).unwrap().get(x).unwrap().to_owned();
+                    points.append(&mut points_in_cell);
                 }
             }
         }
