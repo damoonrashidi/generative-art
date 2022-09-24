@@ -1,6 +1,7 @@
 pub mod blob;
 pub mod circle;
 pub mod group;
+pub mod helpers;
 pub mod palette;
 pub mod path;
 pub mod point;

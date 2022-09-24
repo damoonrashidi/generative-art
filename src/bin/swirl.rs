@@ -1,4 +1,4 @@
-use std::{f64::consts::PI, ops::Range};
+use std::f64::consts::PI;
 
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
@@ -84,9 +84,4 @@ fn to_center(x: f64, y: f64, bounds: &Rectangle) -> f64 {
     let angle = (x - bounds.center().x).atan2((y - bounds.center().y).abs());
 
     return angle * PI;
-}
-
-#[allow(unused)]
-fn map(value: f64, from: Range<f64>, to: Range<f64>) -> f64 {
-    return ((value - from.start) * (to.end - to.start)) / (from.end - from.start) + to.start;
 }
