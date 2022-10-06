@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::palette::Color;
+use crate::{palette::Color, point::Point};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Circle {
@@ -32,6 +32,13 @@ impl Circle {
 
     pub fn set_color(&mut self, color: Color) {
         self.color = Some(color);
+    }
+
+    pub fn center(&self) -> Point {
+        return Point {
+            x: self.x,
+            y: self.y,
+        };
     }
 
     pub fn copy(&self) -> Circle {

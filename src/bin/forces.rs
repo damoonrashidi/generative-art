@@ -22,8 +22,6 @@ fn main() {
     let mut svg = SVG::new("Forces", WIDTH, HEIGHT);
     let mut rng = ChaCha20Rng::from_entropy();
 
-    let mut point_map: PointMap<Circle> = PointMap::new(WIDTH, HEIGHT, 30);
-
     let bounds = Rectangle {
         x: PADDING,
         y: PADDING,
@@ -32,6 +30,7 @@ fn main() {
         color: Rectangle::default().color,
     };
 
+    let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 30);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(1..100_000));
 

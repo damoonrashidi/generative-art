@@ -8,8 +8,15 @@ use rust_gen_art::{
 fn main() {
     const WIDTH: f64 = 1000.0;
     const HEIGHT: f64 = 1000.0 * 1.4;
+    let bounds = Rectangle {
+        x: 0.0,
+        y: 0.0,
+        width: 1000.0,
+        height: 1000.0 * 1.4,
+        color: None,
+    };
     let mut svg = SVG::new("drop", WIDTH, HEIGHT);
-    let mut point_map: PointMap<Circle> = PointMap::new(WIDTH, HEIGHT, 75);
+    let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 75);
 
     let bounds = Rectangle {
         x: 0.0,
