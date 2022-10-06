@@ -17,7 +17,7 @@ fn main() {
     };
     let mut svg = SVG::new("Swirl", bounds.width, bounds.height);
     let mut rng = ChaCha20Rng::from_entropy();
-    let mut point_map = PointMap::new(bounds.width, bounds.height, 50);
+    let mut point_map = PointMap::new(bounds.width, bounds.height, 20);
 
     for _ in 0..500 {
         let mut g = Group::new();

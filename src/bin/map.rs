@@ -11,29 +11,27 @@ fn main() {
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, 1);
 
-    for _ in 0..10 {
+    for _ in 0..2000 {
         let mut point = Point {
             x: rng.gen_range(bounds.x_range()),
             y: rng.gen_range(bounds.y_range()),
         };
 
-        let n = noise.get([point.x / 100.0, point.y / 100.0]);
+        let n = noise.get([point.x / 800.0, point.y / 800.0]);
 
-        let mut rect = snap_to_cell(point, 50.0);
-        rect.set_color(Color::HSLa((
-            map::<f64>(n, -1.0..1.0, 0.0..360.0),
-            100.0,
-            100.0,
-            1.0,
-        )));
-        println!("{}", rect);
+        let size = point.distance(bounds.center()).sqrt();
+        let mut rect = snap_to_cell(point, size);
+        rect.set_width(size);
+        rect.set_height(size);
+        let hue = map::<f64>(n, -1.0..1.0, 200.0..260.0) as u16;
+        rect.set_color(Color::HSLa((hue, 50.0, 50.0, 1.0)));
         svg.add_shape(Box::new(rect));
 
-        point.x += n.cos() * 50.0;
-        point.y += n.sin() * 50.0;
+        point.x += n.cos() * 25.0;
+        point.y += n.sin() * 25.0;
     }
 
-    // svg.save();
+    svg.save();
 }
 
 fn snap_to_cell(point: Point, cell_size: f64) -> Rectangle {

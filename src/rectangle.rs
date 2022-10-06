@@ -31,7 +31,7 @@ impl Rectangle {
         };
     }
 
-    pub fn set_color(&mut self, color: Color) -> () {
+    pub fn set_color(&mut self, color: Color) {
         self.color = Some(color);
     }
 
@@ -41,6 +41,14 @@ impl Rectangle {
 
     pub fn y_range(&self) -> Range<f64> {
         return self.y..(self.y + self.height);
+    }
+
+    pub fn set_width(&mut self, width: f64) {
+        self.width = width;
+    }
+
+    pub fn set_height(&mut self, height: f64) {
+        self.height = height;
     }
 }
 

@@ -54,6 +54,21 @@ impl PointMap<Circle> {
     }
 
     /**
+    * An easier way is using a vector of vectors of Circles.
+    * We can easily see if a point is out of bounds by just doing (contains)
+    * To get the correct box we do div count % remainder
+    *
+    *  -------------------------
+    *  | 0 | 1 | 2 | 3 | 4 | 5 |
+    *  | 6 | 7 | 8 | 9 | . | . |
+    *  | . |   |   |   |   |   |
+    *  -------------------------
+
+    * So something that is x = 80% and y = 80% in the case above
+    * would yield
+    */
+
+    /**
      * The idea here is that we get all the points for this cell
      * and all the surrounding cells to avoid collisions at nodes
      * close to the one where we pop over to a neigboring grid cell.
