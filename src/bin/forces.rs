@@ -49,7 +49,6 @@ fn main() {
         let mut x: f64 = rng.gen_range(PADDING..WIDTH - PADDING);
         let mut y: f64 = rng.gen_range(PADDING..HEIGHT - PADDING);
         let r = 90.0;
-        let line_padding = 120.0;
         let step_size = 25.0;
         let mut line = Path {
             points: vec![],
@@ -64,11 +63,7 @@ fn main() {
             let circle = Circle::new(x, y, r);
 
             if let Some(neighbors) = point_map.get_neighbors(circle) {
-                let collides_with_any = neighbors
-                    .iter()
-                    .any(|point| circle.distance(point) < line_padding);
-
-                if collides_with_any {
+                if circle.instersects_any(neighbors) {
                     break;
                 }
             }

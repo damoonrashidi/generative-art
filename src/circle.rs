@@ -30,6 +30,10 @@ impl Circle {
         self.distance(&other) < self.r + other.r
     }
 
+    pub fn instersects_any(&self, others: Vec<Circle>) -> bool {
+        others.into_iter().any(|circle| self.intersects(&circle))
+    }
+
     pub fn set_color(&mut self, color: Color) {
         self.color = Some(color);
     }

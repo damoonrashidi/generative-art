@@ -150,8 +150,9 @@ mod test {
         let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
         let circle = Circle::new(11.0, 11.0, 5.0);
         let non_neighbor = Circle::new(30.3, 50.4, 10.0);
-        point_map.insert(circle);
-        point_map.insert(non_neighbor);
+
+        let _ = point_map.insert(circle);
+        let __ = point_map.insert(non_neighbor);
 
         let neighbors = point_map.get_neighbors(circle).unwrap();
 
@@ -172,8 +173,8 @@ mod test {
         let circle = Circle::new(99.0, 11.0, 5.0);
         let non_neighbor = Circle::new(101.1, 50.4, 10.0);
 
-        point_map.insert(circle);
-        point_map.insert(non_neighbor);
+        let _ = point_map.insert(circle);
+        let __ = point_map.insert(non_neighbor);
 
         let neighbors = point_map.get_neighbors(circle).unwrap();
 
