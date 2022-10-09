@@ -6,7 +6,7 @@ use rust_gen_art::{helpers::map, palette::Color, point::Point, rectangle::Rectan
 fn main() {
     let bounds: Rectangle = Rectangle::new(0.0, 0.0, 1000.0, 1000.0);
 
-    let mut svg = SVG::new("map", bounds.width, bounds.height);
+    let mut svg = SVG::new("map", bounds);
     let mut rng = ChaCha20Rng::from_entropy();
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, 1);

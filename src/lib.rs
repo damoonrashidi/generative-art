@@ -9,6 +9,7 @@ pub mod pointmap;
 pub mod rectangle;
 use chrono::{Datelike, Utc};
 use group::Group;
+use rectangle::Rectangle;
 
 use std::{fs::File, io::Write};
 
@@ -16,8 +17,7 @@ use self::point::Point;
 
 pub struct SVG<'a> {
     pub name: &'a str,
-    pub width: f64,
-    pub height: f64,
+    bounds: Rectangle,
     document: String,
 }
 
@@ -27,14 +27,13 @@ pub trait Shape {
 }
 
 impl SVG<'static> {
-    pub fn new(name: &str, width: f64, height: f64) -> SVG {
+    pub fn new(name: &str, bounds: Rectangle) -> SVG {
         SVG {
             name,
-            width,
-            height,
+            bounds,
             document: format!(
                 "<svg viewBox=\"0 0 {} {}\" xmlns=\"http://www.w3.org/2000/svg\">",
-                width, height
+                bounds.width, bounds.height
             ),
         }
     }
@@ -45,6 +44,10 @@ impl SVG<'static> {
 
     pub fn add_group(&mut self, group: Box<Group>) -> () {
         self.document.push_str(&group.as_svg());
+    }
+
+    pub fn get_bounds(&self) -> Rectangle {
+        self.bounds
     }
 
     pub fn save(&mut self) -> () {

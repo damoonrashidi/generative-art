@@ -19,7 +19,16 @@ fn main() {
     const MAX_LINE_LENGTH: f64 = 800.0;
     const MIN_LINE_LENGHT: f64 = 150.0;
 
-    let mut svg = SVG::new("Forces", WIDTH, HEIGHT);
+    let mut svg = SVG::new(
+        "Forces",
+        Rectangle {
+            x: 0.0,
+            y: 0.0,
+            width: WIDTH,
+            height: HEIGHT,
+            color: None,
+        },
+    );
     let mut rng = ChaCha20Rng::from_entropy();
 
     let bounds = Rectangle {

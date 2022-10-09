@@ -3,7 +3,7 @@ use std::f64::consts::PI;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 use rust_gen_art::{
-    circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
+    blob::Blob, circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
     rectangle::Rectangle, Shape, SVG,
 };
 
@@ -15,11 +15,11 @@ fn main() {
         height: 1000.0,
         color: None,
     };
-    let mut svg = SVG::new("Swirl", bounds.width, bounds.height);
+    let mut svg = SVG::new("Swirl", bounds);
     let mut rng = ChaCha20Rng::from_entropy();
-    let mut point_map = PointMap::new(&bounds, 20);
+    let mut point_map = PointMap::new(&bounds, 10);
 
-    for _ in 0..500 {
+    for _ in 0..5000 {
         let mut g = Group::new();
         g.set_style(rust_gen_art::group::GroupStyle {
             fill: None,
@@ -29,21 +29,20 @@ fn main() {
         let mut circles: Vec<Circle> = vec![];
         let mut x: f64 = rng.gen_range(0.0..bounds.width);
         let mut y: f64 = rng.gen_range(0.0..bounds.height);
-        let mut r = 0.2;
-        let step_size = rng.gen_range(0.1..0.8);
+        let step_size = 5.0;
         let mut count = 0;
 
         while count < 500 && bounds.contains(Point { x, y }) {
-            let n = swirl(x, y, &bounds);
-            x += (n * 10.0).sin() * step_size;
-            y += (n * 10.0).cos() * step_size;
+            let n = swirl(x / 2.0, y / 2.0, &bounds);
+            x += (n * 2.5).sin() * step_size;
+            y += (n * 2.5).cos() * step_size;
             count += 1;
-            let circle = Circle::new(x, y, r);
+            let circle = Circle::new(x, y, 2.5);
 
             if let Some(neighbors) = point_map.get_neighbors(circle) {
                 let collides_with_any = neighbors
                     .iter()
-                    .any(|neighbor| circle.distance(neighbor) < (circle.r + neighbor.r).powf(2.0));
+                    .any(|neighbor| circle.distance(neighbor) < (circle.r + neighbor.r).powf(0.5));
 
                 if collides_with_any {
                     break;
@@ -51,13 +50,16 @@ fn main() {
             }
 
             circles.push(circle);
-            r += 0.09;
         }
 
         if circles.len() > 5 {
             circles.iter().for_each(|circle| {
                 let _ = point_map.insert(Circle::new(circle.x, circle.y, circle.r));
-                g.add_shape(Box::new(Circle::new(circle.x, circle.y, circle.r)));
+                g.add_shape(Box::new(Blob::new(
+                    circle.center(),
+                    circle.r,
+                    Some(Color::HSLa((0, 0.5, 0.5, 1.0))),
+                )));
             });
 
             svg.add_group(Box::new(g));

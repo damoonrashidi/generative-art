@@ -15,7 +15,16 @@ fn main() {
         height: 1000.0 * 1.4,
         color: None,
     };
-    let mut svg = SVG::new("drop", WIDTH, HEIGHT);
+    let mut svg = SVG::new(
+        "drop",
+        Rectangle {
+            x: 0.0,
+            y: 0.0,
+            width: WIDTH,
+            height: HEIGHT,
+            color: None,
+        },
+    );
     let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 75);
 
     let bounds = Rectangle {

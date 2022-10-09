@@ -3,7 +3,7 @@ use std::{fmt::Display, ops::Range};
 use super::Shape;
 use crate::{palette::Color, point::Point};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Rectangle {
     pub x: f64,
     pub y: f64,
@@ -26,8 +26,8 @@ impl Rectangle {
 
     pub fn center(&self) -> Point {
         return Point {
-            x: self.x,
-            y: self.y,
+            x: (self.x + self.width) / 2.0,
+            y: (self.y + self.height) / 2.0,
         };
     }
 

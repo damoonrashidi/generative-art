@@ -14,15 +14,15 @@ pub struct Blob {
 impl Blob {
     pub fn new(position: Point, radius: f64, color: Option<Color>) -> Blob {
         let mut rng = rand::thread_rng();
-        let count = rng.gen_range(5..12);
+        let count = rng.gen_range(7..24);
 
         let mut points = vec![];
 
         for i in 0..count {
             let angle = (i as f64 / count as f64) * PI * 2.0;
             points.push(Point {
-                x: position.x + angle.cos() * radius * rng.gen_range(0.8..1.1),
-                y: position.y + angle.sin() * radius * rng.gen_range(0.8..1.1),
+                x: position.x + angle.cos() * radius * rng.gen_range(0.8..1.2),
+                y: position.y + angle.sin() * radius * rng.gen_range(0.8..1.2),
             });
         }
 

@@ -1,30 +1,36 @@
 use std::cmp::min;
 
 use rand::Rng;
-use rust_gen_art::{circle::Circle, SVG};
+use rust_gen_art::{circle::Circle, rectangle::Rectangle, SVG};
 
 fn main() {
-    const WIDTH: f64 = 500.0;
-    const HEIGHT: f64 = 850.0;
-    const PADDING: f64 = WIDTH / 10.0;
-    let mut document = SVG::new("Grid", WIDTH, HEIGHT);
+    let bounds = Rectangle {
+        x: 0.0,
+        y: 0.0,
+        width: 1000.0,
+        height: 1000.0 * 1.4,
+        color: None,
+    };
 
-    let mut x: f64 = PADDING;
+    let padding = bounds.width / 10.0;
+    let mut document = SVG::new("Grid", bounds);
+
+    let mut x: f64 = padding;
     let mut rng = rand::thread_rng();
 
-    while x < WIDTH - PADDING {
-        let block_width = rng.gen_range(WIDTH * 0.003..WIDTH * 0.04);
-        let mut y: f64 = PADDING;
+    while x < bounds.width - padding {
+        let block_width = rng.gen_range(bounds.width * 0.003..bounds.width * 0.04);
+        let mut y: f64 = padding;
 
-        while y < HEIGHT - PADDING {
+        while y < bounds.height - padding {
             let block_height = if rng.gen_bool(0.2) {
-                HEIGHT * rng.gen_range(0.03..0.045)
+                bounds.height * rng.gen_range(0.03..0.045)
             } else {
-                HEIGHT * rng.gen_range(0.002..0.01)
+                bounds.height * rng.gen_range(0.002..0.01)
             };
 
             let area = block_width * block_height;
-            let dot_count = get_dot_count(y, area, HEIGHT);
+            let dot_count = get_dot_count(y, area, bounds.height);
 
             for _ in 0..dot_count {
                 let cy: f64 = rng.gen_range(y..(y + block_height));
