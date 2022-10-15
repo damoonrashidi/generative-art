@@ -61,14 +61,17 @@ impl<'a> PointMap<'a, Circle> {
     *  |xx|xx|xx|  |  |  |  |
     *  ----------------------
     */
-    pub fn get_neighbors(&self, circle: Circle) -> Option<Vec<Circle>> {
+    pub fn get_neighbors(&self, circle: Circle) -> Result<Vec<Circle>, String> {
         if !self.bounds.contains(circle.center()) {
-            return None;
+            return Err(format!(
+                "{} {} is out of bounds for this pointmap",
+                circle.x, circle.y
+            ));
         }
 
         let i = self.get_index(circle);
 
-        return Some(self.points.get(i).unwrap().to_vec());
+        return Ok(self.points.get(i).unwrap().to_vec());
     }
 
     fn get_index(&self, circle: Circle) -> usize {

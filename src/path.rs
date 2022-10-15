@@ -8,6 +8,14 @@ pub struct Path {
 }
 
 impl Path {
+    pub fn new(points: Vec<Point>, stroke_width: f64, color: Option<Color>) -> Path {
+        Path {
+            points,
+            stroke_width,
+            color,
+        }
+    }
+
     pub fn add_point(&mut self, point: Point) {
         self.points.push(point);
     }
@@ -42,7 +50,7 @@ impl Shape for Path {
             format!("stroke-width=\"{:.2}\" ", &self.stroke_width)
         };
 
-        let mut str = format!("<path {}{}d=\"M ", stroke, stroke_weight,);
+        let mut str = format!("<path fill=\"none\" {}{}d=\"M ", stroke, stroke_weight);
 
         for point in &self.points {
             str.push_str(&format!("{:.2} {:.2}, ", point.x, point.y));

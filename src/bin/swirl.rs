@@ -39,7 +39,7 @@ fn main() {
             count += 1;
             let circle = Circle::new(x, y, 2.5);
 
-            if let Some(neighbors) = point_map.get_neighbors(circle) {
+            if let Ok(neighbors) = point_map.get_neighbors(circle) {
                 let collides_with_any = neighbors
                     .iter()
                     .any(|neighbor| circle.distance(neighbor) < (circle.r + neighbor.r).powf(0.5));

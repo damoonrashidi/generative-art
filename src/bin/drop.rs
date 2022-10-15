@@ -59,7 +59,7 @@ fn main() {
             let n = noise.get([x / 150.0, y / 150.0]);
             let circle = Circle::new(x, y, r);
 
-            if let Some(neighbors) = point_map.get_neighbors(circle) {
+            if let Ok(neighbors) = point_map.get_neighbors(circle) {
                 let collides_with_any = neighbors
                     .iter()
                     .any(|neighbor| circle.distance(neighbor) < (circle.r + neighbor.r + 10.0));
