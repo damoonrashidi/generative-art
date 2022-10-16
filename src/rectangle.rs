@@ -35,6 +35,21 @@ impl Rectangle {
         self.color = Some(color);
     }
 
+    pub fn scale(&self, scale: f64) -> Rectangle {
+        let width = self.width * scale;
+        let height = self.height * scale;
+        let x = self.x - (width - self.width) / 2.0;
+        let y = self.y - (height - self.height) / 2.0;
+
+        Rectangle {
+            x,
+            y,
+            width,
+            height,
+            color: self.color,
+        }
+    }
+
     pub fn x_range(&self) -> Range<f64> {
         return self.x..(self.x + self.width);
     }
@@ -117,5 +132,63 @@ mod test {
         let point = Point { x: 10.0, y: 30.0 };
 
         assert_eq!(rect.contains(point), false);
+    }
+
+    #[test]
+    fn scale_rect_up() {
+        let rect = Rectangle {
+            x: 0.0,
+            y: 0.0,
+            width: 100.0,
+            height: 100.0,
+            color: None,
+        };
+
+        let scaled = rect.scale(1.1);
+        assert_eq!(
+            Rectangle {
+                x: scaled.x.round(),
+                y: scaled.y.round(),
+                width: scaled.width.round(),
+                height: scaled.height.round(),
+                ..scaled
+            },
+            Rectangle {
+                x: -5.0,
+                y: -5.0,
+                width: 110.0,
+                height: 110.0,
+                color: None
+            }
+        );
+    }
+
+    #[test]
+    fn scale_rect_down() {
+        let rect = Rectangle {
+            x: 0.0,
+            y: 0.0,
+            width: 100.0,
+            height: 100.0,
+            color: None,
+        };
+
+        let scaled = rect.scale(0.9);
+        assert_eq!(
+            Rectangle {
+                x: scaled.x.round(),
+                y: scaled.y.round(),
+                width: scaled.width.round(),
+                height: scaled.height.round(),
+                ..scaled
+            },
+            Rectangle {
+                x: 5.0,
+                y: 5.0,
+                width: 90.0,
+                height: 90.0,
+                color: None
+            }
+        );
     }
 }

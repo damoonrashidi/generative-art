@@ -104,9 +104,9 @@ mod test {
         let point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
         assert_eq!(point_map.get_index(Circle::new(9.0, 0.0, 0.0)), 0);
         assert_eq!(point_map.get_index(Circle::new(11.0, 0.0, 0.0)), 0);
-        assert_eq!(point_map.get_index(Circle::new(20.0, 0.0, 0.0)), 2);
-        assert_eq!(point_map.get_index(Circle::new(34.0, 0.0, 0.0)), 3);
-        assert_eq!(point_map.get_index(Circle::new(99.999, 0.0, 0.0)), 9);
+        assert_eq!(point_map.get_index(Circle::new(20.0, 0.0, 0.0)), 1);
+        assert_eq!(point_map.get_index(Circle::new(34.0, 0.0, 0.0)), 2);
+        assert_eq!(point_map.get_index(Circle::new(99.999, 0.0, 0.0)), 8);
     }
 
     #[test]
@@ -123,7 +123,7 @@ mod test {
         let result = point_map.insert(circle);
         let points = point_map.points.get_mut(1).unwrap();
         assert_eq!(points.len(), 0);
-        assert_eq!(result, Ok(1));
+        assert_eq!(result, Ok(10));
     }
 
     #[test]
@@ -181,7 +181,7 @@ mod test {
 
         let neighbors = point_map.get_neighbors(circle).unwrap();
 
-        assert_eq!(neighbors.len(), 2);
+        assert_eq!(neighbors.len(), 1);
         assert_eq!(neighbors.first().unwrap().to_owned(), circle);
     }
 }
