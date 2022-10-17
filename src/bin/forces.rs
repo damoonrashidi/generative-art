@@ -9,7 +9,8 @@ use rust_gen_art::{
     point::Point,
     pointmap::PointMap,
     rectangle::Rectangle,
-    Shape, SVG,
+    svg::SVG,
+    Shape,
 };
 
 fn main() {
@@ -69,7 +70,7 @@ fn main() {
             let n = noise.get([x / zoom, y / zoom]);
             x += (distort * n).cos() * step_size;
             y += (distort * n).sin() * step_size;
-            let circle = Circle::new(x, y, r);
+            let circle = Circle::new(Point { x, y }, r);
 
             if let Ok(neighbors) = point_map.get_neighbors(circle) {
                 if circle.instersects_any(neighbors) {
@@ -82,7 +83,7 @@ fn main() {
 
         if line.length() > MIN_LINE_LENGHT {
             line.points.iter().for_each(|point| {
-                let _ = point_map.insert(Circle::new(point.x, point.y, r));
+                let _ = point_map.insert(Circle::new(point.clone(), r));
             });
 
             group.add_shape(Box::new(line));

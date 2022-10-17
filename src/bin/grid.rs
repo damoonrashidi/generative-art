@@ -1,7 +1,7 @@
 use std::cmp::min;
 
 use rand::Rng;
-use rust_gen_art::{circle::Circle, rectangle::Rectangle, SVG};
+use rust_gen_art::{circle::Circle, point::Point, rectangle::Rectangle, svg::SVG};
 
 fn main() {
     let bounds = Rectangle {
@@ -37,7 +37,7 @@ fn main() {
                 let cx: f64 = rng.gen_range(x..(x + block_width));
                 let r: f64 = 1.0;
 
-                document.add_shape(Box::new(Circle::new(cx, cy, r)));
+                document.add_shape(Box::new(Circle::new(Point { x: cx, y: cy }, r)));
             }
 
             y += block_height;

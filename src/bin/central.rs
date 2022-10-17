@@ -4,7 +4,7 @@ use rand_chacha::ChaCha20Rng;
 
 use rust_gen_art::{
     circle::Circle, helpers::map, palette::Color, path::Path, point::Point, pointmap::PointMap,
-    rectangle::Rectangle, Shape, SVG,
+    rectangle::Rectangle, svg::SVG, Shape,
 };
 
 fn main() {
@@ -18,44 +18,51 @@ fn main() {
 
     let mut svg = SVG::new("Central", bounds);
 
-    let mut pointmap = PointMap::new(&bounds, 5);
+    let inner_bounds = bounds.scale(0.9);
+    let mut pointmap = PointMap::new(&inner_bounds, 50);
 
     let mut rng = ChaCha20Rng::from_entropy();
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(0..500));
 
     for _ in 0..3000 {
-        let mut x = rng.gen_range(bounds.x_range());
-        let mut y = rng.gen_range(bounds.y_range());
-        let distance_to_center = bounds.center().distance(Point { x, y });
+        let mut x = rng.gen_range(inner_bounds.x_range());
+        let mut y = rng.gen_range(inner_bounds.y_range());
+        let distance_to_center = inner_bounds.center().distance(Point { x, y });
 
-        let r = 200.0 - map(distance_to_center, 0.0..bounds.height / 2., 50.0..250.0);
+        let r = map(
+            distance_to_center,
+            0.0..inner_bounds.height / 1.5,
+            40.0..2.0,
+        );
 
-        let step: f64 = if r > 80. { r } else { 20. };
+        let step: f64 = if r > 50. { r * 2. } else { 20. };
 
-        let mut points: Vec<Point> = vec![];
+        let mut line = Path::new(vec![], r, Some(Color::Hex("#111")));
 
         while bounds.contains(Point { x, y }) {
             let n = noise.get([x / 500.0, y / 500.0]);
 
             let point = Point { x, y };
-            points.push(point);
+            line.add_point(point);
+
+            if line.length() > 100. {
+                break;
+            }
 
             x += (n * 3.).cos() * step;
             y += (n * 3.).sin() * step;
 
-            if let Ok(neighbors) = pointmap.get_neighbors(Circle::new(x, y, r)) {
-                if Circle::new(x, y, r).instersects_any(neighbors) {
+            if let Ok(neighbors) = pointmap.get_neighbors(Circle::new(Point { x, y }, r)) {
+                if Circle::new(Point { x, y }, r).instersects_any(neighbors) {
                     break;
                 }
             }
         }
 
-        let line = Path::new(points, r, Some(Color::Hex("#111")));
-
         if line.length() > 50.0 {
             line.points.iter().for_each(|point| {
-                let _ = pointmap.insert(Circle::new(point.x, point.y, r));
+                let _ = pointmap.insert(Circle::new(point.clone(), r));
             });
             svg.add_shape(Box::new(line));
         }

@@ -4,7 +4,7 @@ use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 use rust_gen_art::{
     blob::Blob, circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
-    rectangle::Rectangle, Shape, SVG,
+    rectangle::Rectangle, svg::SVG, Shape,
 };
 
 fn main() {
@@ -37,7 +37,7 @@ fn main() {
             x += (n * 2.5).sin() * step_size;
             y += (n * 2.5).cos() * step_size;
             count += 1;
-            let circle = Circle::new(x, y, 2.5);
+            let circle = Circle::new(Point { x, y }, 2.5);
 
             if let Ok(neighbors) = point_map.get_neighbors(circle) {
                 let collides_with_any = neighbors
@@ -54,7 +54,7 @@ fn main() {
 
         if circles.len() > 5 {
             circles.iter().for_each(|circle| {
-                let _ = point_map.insert(Circle::new(circle.x, circle.y, circle.r));
+                let _ = point_map.insert(Circle::new(circle.center(), circle.r));
                 g.add_shape(Box::new(Blob::new(
                     circle.center(),
                     circle.r,

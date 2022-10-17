@@ -90,7 +90,7 @@ impl<'a> PointMap<'a, Circle> {
 #[cfg(test)]
 mod test {
 
-    use crate::{circle::Circle, pointmap::PointMap, rectangle::Rectangle};
+    use crate::{circle::Circle, point::Point, pointmap::PointMap, rectangle::Rectangle};
 
     #[test]
     fn get_index() {
@@ -102,11 +102,26 @@ mod test {
             color: Rectangle::default().color,
         };
         let point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
-        assert_eq!(point_map.get_index(Circle::new(9.0, 0.0, 0.0)), 0);
-        assert_eq!(point_map.get_index(Circle::new(11.0, 0.0, 0.0)), 0);
-        assert_eq!(point_map.get_index(Circle::new(20.0, 0.0, 0.0)), 1);
-        assert_eq!(point_map.get_index(Circle::new(34.0, 0.0, 0.0)), 2);
-        assert_eq!(point_map.get_index(Circle::new(99.999, 0.0, 0.0)), 8);
+        assert_eq!(
+            point_map.get_index(Circle::new(Point { x: 9.0, y: 0.0 }, 0.0)),
+            0
+        );
+        assert_eq!(
+            point_map.get_index(Circle::new(Point { x: 11.0, y: 0.0 }, 0.0)),
+            0
+        );
+        assert_eq!(
+            point_map.get_index(Circle::new(Point { x: 20.0, y: 0.0 }, 0.0)),
+            1
+        );
+        assert_eq!(
+            point_map.get_index(Circle::new(Point { x: 34.0, y: 0.0 }, 0.0)),
+            2
+        );
+        assert_eq!(
+            point_map.get_index(Circle::new(Point { x: 99.999, y: 0.0 }, 0.0)),
+            8
+        );
     }
 
     #[test]
@@ -119,7 +134,7 @@ mod test {
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(11.0, 11.0, 10.0);
+        let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
         let result = point_map.insert(circle);
         let points = point_map.points.get_mut(1).unwrap();
         assert_eq!(points.len(), 0);
@@ -136,7 +151,13 @@ mod test {
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(1000.0, 100.0, 10.0);
+        let circle = Circle::new(
+            Point {
+                x: 1000.0,
+                y: 100.0,
+            },
+            10.0,
+        );
         let result = point_map.insert(circle);
         assert_eq!(result, Err(circle));
     }
@@ -151,8 +172,8 @@ mod test {
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(11.0, 11.0, 5.0);
-        let non_neighbor = Circle::new(30.3, 50.4, 10.0);
+        let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 5.0);
+        let non_neighbor = Circle::new(Point { x: 30.3, y: 50.4 }, 10.0);
 
         let _ = point_map.insert(circle);
         let __ = point_map.insert(non_neighbor);
@@ -173,8 +194,8 @@ mod test {
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(99.0, 11.0, 5.0);
-        let non_neighbor = Circle::new(101.1, 50.4, 10.0);
+        let circle = Circle::new(Point { x: 99.0, y: 11.0 }, 5.0);
+        let non_neighbor = Circle::new(Point { x: 101.1, y: 50.4 }, 10.0);
 
         let _ = point_map.insert(circle);
         let __ = point_map.insert(non_neighbor);

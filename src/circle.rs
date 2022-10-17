@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::{palette::Color, point::Point};
+use crate::{palette::Color, point::Point, Shape};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Circle {
@@ -11,10 +11,10 @@ pub struct Circle {
 }
 
 impl Circle {
-    pub fn new(x: f64, y: f64, r: f64) -> Circle {
+    pub fn new(center: Point, r: f64) -> Circle {
         Circle {
-            x,
-            y,
+            x: center.x,
+            y: center.y,
             r,
             color: None,
         }
@@ -50,12 +50,21 @@ impl Circle {
             x: self.x,
             y: self.y,
             r: self.r,
-            color: None,
+            color: self.color,
+        }
+    }
+
+    pub fn scale(&self, scale: f64) -> Circle {
+        Circle {
+            r: self.r * scale,
+            x: self.x,
+            y: self.y,
+            color: self.color,
         }
     }
 }
 
-impl super::Shape for Circle {
+impl Shape for Circle {
     fn as_svg(&self) -> String {
         let fill: String = match self.color {
             Some(color) => format!("{}", color),
@@ -69,7 +78,7 @@ impl super::Shape for Circle {
     }
 
     fn contains(&self, point: super::point::Point) -> bool {
-        self.distance(&Circle::new(point.x, point.y, 0.0)) < self.r
+        self.distance(&Circle::new(point, 0.0)) < self.r
     }
 }
 

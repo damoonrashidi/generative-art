@@ -1,7 +1,7 @@
 use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{helpers::map, palette::Color, point::Point, rectangle::Rectangle, SVG};
+use rust_gen_art::{helpers::map, palette::Color, point::Point, rectangle::Rectangle, svg::SVG};
 
 fn main() {
     let bounds: Rectangle = Rectangle::new(0.0, 0.0, 1000.0, 1000.0);

@@ -2,7 +2,7 @@ use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::{thread_rng, Rng};
 use rust_gen_art::{
     blob::Blob, circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
-    rectangle::Rectangle, Shape, SVG,
+    rectangle::Rectangle, svg::SVG, Shape,
 };
 
 fn main() {
@@ -57,7 +57,7 @@ fn main() {
 
         while bounds.contains(Point { x, y }) {
             let n = noise.get([x / 150.0, y / 150.0]);
-            let circle = Circle::new(x, y, r);
+            let circle = Circle::new(Point { x, y }, r);
 
             if let Ok(neighbors) = point_map.get_neighbors(circle) {
                 let collides_with_any = neighbors
@@ -76,7 +76,7 @@ fn main() {
 
         if circles.len() > 3 {
             circles.iter().for_each(|circle| {
-                let _ = point_map.insert(Circle::new(circle.x, circle.y, circle.r));
+                let _ = point_map.insert(Circle::new(circle.center(), circle.r));
                 let blob = Blob::new(
                     Point {
                         x: circle.x,
