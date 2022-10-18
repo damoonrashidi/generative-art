@@ -4,7 +4,7 @@ use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
 pub struct PointMap<'a, T> {
     bounds: &'a Rectangle,
-    points: Vec<Vec<T>>,
+    items: Vec<Vec<T>>,
     grid_resolution: usize,
 }
 
@@ -18,7 +18,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
 
         return PointMap {
             bounds: &bounds,
-            points: map,
+            items: map,
             grid_resolution: resolution,
         };
     }
@@ -26,7 +26,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
     pub fn insert(&mut self, shape: T) -> Result<usize, T> {
         let i = self.get_index(shape.center());
 
-        if let Some(points) = self.points.get_mut(i) {
+        if let Some(points) = self.items.get_mut(i) {
             points.push(shape);
             return Ok(i);
         }
@@ -72,7 +72,11 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
 
         let i = self.get_index(shape.center());
 
-        return Ok(self.points.get(i).unwrap().to_vec());
+        if let Some(list) = self.items.get(i) {
+            Ok(list.to_vec())
+        } else {
+            Err(format!("{} is out of bounds", i))
+        }
     }
 
     fn get_index(&self, shape: Point) -> usize {
@@ -120,9 +124,10 @@ mod test {
         let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
         let result = point_map.insert(circle);
-        let points = point_map.points.get_mut(1).unwrap();
-        assert_eq!(points.len(), 0);
-        assert_eq!(result, Ok(10));
+        if let Some(points) = point_map.items.get_mut(1) {
+            assert_eq!(points.len(), 0);
+            assert_eq!(result, Ok(10));
+        }
     }
 
     #[test]
@@ -162,10 +167,10 @@ mod test {
         let _ = point_map.insert(circle);
         let __ = point_map.insert(non_neighbor);
 
-        let neighbors = point_map.get_neighbors(circle).unwrap();
-
-        assert_eq!(neighbors.len(), 1);
-        assert_eq!(neighbors.first().unwrap().to_owned(), circle);
+        if let Ok(neighbors) = point_map.get_neighbors(circle) {
+            assert_eq!(neighbors.len(), 1);
+            assert_eq!(neighbors.first().unwrap().to_owned(), circle);
+        }
     }
 
     #[test]
