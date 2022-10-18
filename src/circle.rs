@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::{palette::Color, point::Point, Shape};
+use crate::{palette::Color, point::Point, shape::Shape};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Circle {
@@ -38,13 +38,6 @@ impl Circle {
         self.color = Some(color);
     }
 
-    pub fn center(&self) -> Point {
-        return Point {
-            x: self.x,
-            y: self.y,
-        };
-    }
-
     pub fn copy(&self) -> Circle {
         Circle {
             x: self.x,
@@ -79,6 +72,13 @@ impl Shape for Circle {
 
     fn contains(&self, point: super::point::Point) -> bool {
         self.distance(&Circle::new(point, 0.0)) < self.r
+    }
+
+    fn center(&self) -> Point {
+        Point {
+            x: self.x,
+            y: self.y,
+        }
     }
 }
 

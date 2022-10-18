@@ -9,8 +9,8 @@ use rust_gen_art::{
     point::Point,
     pointmap::PointMap,
     rectangle::Rectangle,
+    shape::Shape,
     svg::SVG,
-    Shape,
 };
 
 fn main() {
@@ -40,7 +40,7 @@ fn main() {
         color: Rectangle::default().color,
     };
 
-    let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 30);
+    let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 30);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(1..100_000));
 

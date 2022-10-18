@@ -4,7 +4,7 @@ use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 use rust_gen_art::{
     blob::Blob, circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
-    rectangle::Rectangle, svg::SVG, Shape,
+    rectangle::Rectangle, shape::Shape, svg::SVG,
 };
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     };
     let mut svg = SVG::new("Swirl", bounds);
     let mut rng = ChaCha20Rng::from_entropy();
-    let mut point_map = PointMap::new(&bounds, 10);
+    let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
 
     for _ in 0..5000 {
         let mut g = Group::new();

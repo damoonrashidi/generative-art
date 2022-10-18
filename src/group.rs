@@ -1,4 +1,4 @@
-use crate::{palette::Color, Shape};
+use crate::{palette::Color, shape::Shape};
 
 pub struct GroupStyle {
     pub fill: Option<Color>,

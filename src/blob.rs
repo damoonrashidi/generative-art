@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use rand::Rng;
 
-use crate::{palette::Color, point::Point, Shape};
+use crate::{palette::Color, point::Point, shape::Shape};
 
 pub struct Blob {
     pub position: Point,
@@ -58,6 +58,10 @@ impl Shape for Blob {
 
     fn contains(&self, _point: Point) -> bool {
         todo!();
+    }
+
+    fn center(&self) -> Point {
+        self.position
     }
 }
 

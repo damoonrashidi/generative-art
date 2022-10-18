@@ -2,7 +2,7 @@ use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::{thread_rng, Rng};
 use rust_gen_art::{
     blob::Blob, circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
-    rectangle::Rectangle, svg::SVG, Shape,
+    rectangle::Rectangle, shape::Shape, svg::SVG,
 };
 
 fn main() {
@@ -25,7 +25,7 @@ fn main() {
             color: None,
         },
     );
-    let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 75);
+    let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 75);
 
     let bounds = Rectangle {
         x: 0.0,

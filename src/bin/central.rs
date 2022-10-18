@@ -4,7 +4,7 @@ use rand_chacha::ChaCha20Rng;
 
 use rust_gen_art::{
     circle::Circle, helpers::map, palette::Color, path::Path, point::Point, pointmap::PointMap,
-    rectangle::Rectangle, svg::SVG, Shape,
+    rectangle::Rectangle, shape::Shape, svg::SVG,
 };
 
 fn main() {
@@ -19,7 +19,7 @@ fn main() {
     let mut svg = SVG::new("Central", bounds);
 
     let inner_bounds = bounds.scale(0.9);
-    let mut pointmap = PointMap::new(&inner_bounds, 50);
+    let mut pointmap: PointMap<Circle> = PointMap::new::<Circle>(&inner_bounds, 50);
 
     let mut rng = ChaCha20Rng::from_entropy();
     let noise = OpenSimplex::new();

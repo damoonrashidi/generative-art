@@ -1,4 +1,4 @@
-use crate::{palette::Color, point::Point, Shape};
+use crate::{palette::Color, point::Point, shape::Shape};
 
 #[derive(Debug)]
 pub struct Path {
@@ -62,5 +62,9 @@ impl Shape for Path {
 
     fn contains(&self, _point: Point) -> bool {
         false
+    }
+
+    fn center(&self) -> Point {
+        todo!()
     }
 }

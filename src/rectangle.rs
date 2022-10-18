@@ -1,6 +1,6 @@
 use std::{fmt::Display, ops::Range};
 
-use super::Shape;
+use super::shape::Shape;
 use crate::{palette::Color, point::Point};
 
 #[derive(Debug, Clone, Copy)]
@@ -22,13 +22,6 @@ impl Rectangle {
             height,
             color: Rectangle::default().color,
         }
-    }
-
-    pub fn center(&self) -> Point {
-        return Point {
-            x: (self.x + self.width) / 2.0,
-            y: (self.y + self.height) / 2.0,
-        };
     }
 
     pub fn set_color(&mut self, color: Color) {
@@ -84,6 +77,13 @@ impl Shape for Rectangle {
         (self.x..(self.x + self.width)).contains(&point.x)
             && (self.y..(self.y + self.height)).contains(&point.y)
     }
+
+    fn center(&self) -> Point {
+        Point {
+            x: (self.x + self.width) / 2.0,
+            y: (self.y + self.height) / 2.0,
+        }
+    }
 }
 
 impl Default for Rectangle {
@@ -115,7 +115,7 @@ impl Display for Rectangle {
 
 #[cfg(test)]
 mod test {
-    use crate::{point::Point, Shape};
+    use crate::{point::Point, shape::Shape};
 
     use super::Rectangle;
 

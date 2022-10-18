@@ -1,5 +1,7 @@
 use std::fmt::Display;
 
+use crate::shape::Shape;
+
 #[derive(Clone, Copy, Debug)]
 pub struct Point {
     pub x: f64,
@@ -35,6 +37,23 @@ impl Display for Point {
 impl PartialEq for Point {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
+    }
+}
+
+impl Shape for Point {
+    fn as_svg(&self) -> String {
+        return String::from("");
+    }
+
+    fn center(&self) -> Point {
+        Point {
+            x: self.x,
+            y: self.y,
+        }
+    }
+
+    fn contains(&self, point: Point) -> bool {
+        self.eq(&point)
     }
 }
 

@@ -1,7 +1,9 @@
 use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{helpers::map, palette::Color, point::Point, rectangle::Rectangle, svg::SVG};
+use rust_gen_art::{
+    helpers::map, palette::Color, point::Point, rectangle::Rectangle, shape::Shape, svg::SVG,
+};
 
 fn main() {
     let bounds: Rectangle = Rectangle::new(0.0, 0.0, 1000.0, 1000.0);
@@ -17,13 +19,13 @@ fn main() {
             y: rng.gen_range(bounds.y_range()),
         };
 
-        let n = noise.get([point.x / 800.0, point.y / 800.0]);
+        let n = noise.get([point.x as f64 / 800.0, point.y as f64 / 800.0]) as f64;
 
         let size = point.distance(bounds.center()).sqrt();
         let mut rect = snap_to_cell(point, size);
         rect.set_width(size);
         rect.set_height(size);
-        let hue = map::<f64>(n, -1.0..1.0, 200.0..260.0) as u16;
+        let hue = map(n, -1.0..1.0, 200.0..260.0) as u16;
         rect.set_color(Color::HSLa((hue, 50.0, 50.0, 1.0)));
         svg.add_shape(Box::new(rect));
 

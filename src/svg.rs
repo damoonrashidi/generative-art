@@ -2,7 +2,7 @@ use std::{fs::File, io::Write};
 
 use chrono::{Datelike, Utc};
 
-use crate::{group::Group, rectangle::Rectangle, Shape};
+use crate::{group::Group, rectangle::Rectangle, shape::Shape};
 
 pub struct SVG<'a> {
     pub name: &'a str,

@@ -1,9 +1,7 @@
 use noise::{OpenSimplex, Seedable};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{
-    circle::Circle, point::Point, pointmap::PointMap, rectangle::Rectangle, svg::SVG,
-};
+use rust_gen_art::{point::Point, pointmap::PointMap, rectangle::Rectangle, svg::SVG};
 
 fn main() {
     let bounds = Rectangle {
@@ -15,7 +13,7 @@ fn main() {
     };
 
     let mut svg = SVG::new("Nightfall", bounds);
-    let mut map = PointMap::new(&bounds, 5);
+    let mut map: PointMap<Point> = PointMap::new::<Point>(&bounds, 5);
 
     let mut rng = ChaCha20Rng::from_entropy();
     let noise = OpenSimplex::new();
@@ -27,7 +25,7 @@ fn main() {
 
         let point = Point { x, y };
 
-        let _ = map.insert(Circle::new(Point { x, y }, 0.0));
+        let _ = map.insert(point);
     }
 
     svg.save();
