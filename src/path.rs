@@ -1,4 +1,4 @@
-use crate::{palette::Color, point::Point, shape::Shape};
+use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
 
 #[derive(Debug)]
 pub struct Path {
@@ -60,11 +60,77 @@ impl Shape for Path {
         return str;
     }
 
-    fn contains(&self, _point: Point) -> bool {
-        false
-    }
-
     fn center(&self) -> Point {
         todo!()
+    }
+
+    fn bounding_box(&self) -> Rectangle {
+        if self.points.len() == 0 {
+            panic!()
+        }
+
+        let default_point = Point { x: 0., y: 0. };
+
+        let min_x = self.points.get(0).unwrap_or(&default_point).x;
+        let min_y = self.points.get(0).unwrap_or(&default_point).y;
+        let max_x = min_x;
+        let max_y = min_y;
+
+        let bounding =
+            self.points
+                .iter()
+                .fold((min_x, min_y, max_x, max_y), |(x1, y1, x2, y2), point| {
+                    (
+                        x1.min(point.x),
+                        y1.min(point.y),
+                        x2.max(point.x),
+                        y2.max(point.y),
+                    )
+                });
+
+        Rectangle {
+            x: bounding.0,
+            y: bounding.1,
+            width: bounding.2 - bounding.0,
+            height: bounding.3 - bounding.1,
+            color: None,
+        }
+    }
+
+    fn contains(&self, _point: Point) -> bool {
+        todo!("Not yet implemented")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::{point::Point, rectangle::Rectangle, shape::Shape};
+
+    use super::Path;
+
+    #[test]
+    fn get_bounding_box() {
+        let path = Path {
+            points: vec![
+                Point { x: 0., y: 0. },
+                Point { x: 5., y: 5. },
+                Point { x: -5., y: 10. },
+            ],
+            stroke_width: 1.,
+            color: None,
+        };
+
+        let bounding = path.bounding_box();
+
+        assert_eq!(
+            bounding,
+            Rectangle {
+                x: -5.,
+                y: 0.,
+                width: 10.,
+                height: 10.,
+                color: None
+            }
+        )
     }
 }

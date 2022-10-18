@@ -10,11 +10,7 @@ pub struct PointMap<'a, T> {
 
 impl<'a, T: Shape + Clone> PointMap<'a, T> {
     pub fn new<S>(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
-        let mut map = vec![Vec::new(); resolution.pow(2)];
-
-        for i in 0..map.len() {
-            map[i] = vec![];
-        }
+        let map = vec![vec![]; resolution.pow(2)];
 
         return PointMap {
             bounds: &bounds,
@@ -41,12 +37,13 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
     *
     *  -------------------------
     *  | 0 | 1 | 2 | 3 | 4 | 5 |
-    *  | 6 | 7 | 8 | 9 | . | . |
+    *  | 6 | 7 | 8 | 9 | 10| . |
     *  | . |   |   |   |   |   |
     *  -------------------------
 
     * So something that is x = 80% and y = 80% in the case above
-    * would yield
+    * would yield box 10.
+    *
     * The idea here is that we get all the points for this cell
     * and all the surrounding cells to avoid collisions at nodes
     * close to the one where we pop over to a neigboring grid cell.
@@ -64,9 +61,10 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
     pub fn get_neighbors(&self, shape: T) -> Result<Vec<T>, String> {
         if !self.bounds.contains(shape.center()) {
             return Err(format!(
-                "{} {} is out of bounds for this pointmap",
+                "{} {} is out of bounds for this pointmap {}",
                 shape.center().x,
-                shape.center().y
+                shape.center().y,
+                shape.bounding_box()
             ));
         }
 
@@ -80,13 +78,12 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
     }
 
     fn get_index(&self, shape: Point) -> usize {
-        let x =
-            ((shape.x / (self.bounds.x + self.bounds.width)) * self.grid_resolution as f64).floor();
+        let resolution = self.grid_resolution as f64;
 
-        let y = ((shape.y / (self.bounds.y + self.bounds.height)) * self.grid_resolution as f64)
-            .floor();
+        let x = ((shape.x / (self.bounds.x + self.bounds.width)) * resolution).floor();
+        let y = ((shape.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
 
-        return (y * (self.grid_resolution as f64) + x - 1.0) as usize;
+        return (y * resolution + x - 1.0) as usize;
     }
 }
 

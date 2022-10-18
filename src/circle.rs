@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::{palette::Color, point::Point, shape::Shape};
+use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Circle {
@@ -70,15 +70,25 @@ impl Shape for Circle {
         )
     }
 
-    fn contains(&self, point: super::point::Point) -> bool {
-        self.distance(&Circle::new(point, 0.0)) < self.r
-    }
-
     fn center(&self) -> Point {
         Point {
             x: self.x,
             y: self.y,
         }
+    }
+
+    fn bounding_box(&self) -> Rectangle {
+        Rectangle {
+            x: self.x - self.r,
+            y: self.y - self.r,
+            width: self.x + self.r,
+            height: self.y + self.r,
+            color: None,
+        }
+    }
+
+    fn contains(&self, point: super::point::Point) -> bool {
+        self.distance(&Circle::new(point, 0.0)) < self.r
     }
 }
 

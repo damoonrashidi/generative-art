@@ -84,6 +84,16 @@ impl Shape for Rectangle {
             y: (self.y + self.height) / 2.0,
         }
     }
+
+    fn bounding_box(&self) -> Rectangle {
+        Rectangle {
+            x: self.x,
+            y: self.y,
+            width: self.width,
+            height: self.height,
+            color: None,
+        }
+    }
 }
 
 impl Default for Rectangle {

@@ -63,6 +63,10 @@ impl Shape for Blob {
     fn center(&self) -> Point {
         self.position
     }
+
+    fn bounding_box(&self) -> crate::rectangle::Rectangle {
+        todo!()
+    }
 }
 
 impl Default for Blob {

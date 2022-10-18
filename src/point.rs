@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::shape::Shape;
+use crate::{rectangle::Rectangle, shape::Shape};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Point {
@@ -54,6 +54,16 @@ impl Shape for Point {
 
     fn contains(&self, point: Point) -> bool {
         self.eq(&point)
+    }
+
+    fn bounding_box(&self) -> crate::rectangle::Rectangle {
+        Rectangle {
+            x: self.x,
+            y: self.y,
+            width: 1.,
+            height: 1.,
+            color: None,
+        }
     }
 }
 
