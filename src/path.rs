@@ -71,8 +71,14 @@ impl Shape for Path {
 
         let default_point = Point { x: 0., y: 0. };
 
-        let min_x = self.points.get(0).unwrap_or(&default_point).x;
-        let min_y = self.points.get(0).unwrap_or(&default_point).y;
+        let mut min_x = default_point.x;
+        let mut min_y = default_point.y;
+
+        if let Some(p) = self.points.get(0) {
+            min_x = p.x;
+            min_y = p.y;
+        }
+
         let max_x = min_x;
         let max_y = min_y;
 
