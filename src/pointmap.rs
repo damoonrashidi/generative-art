@@ -30,6 +30,15 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
         Err(shape)
     }
 
+    pub fn get_items(&self) -> Vec<T> {
+        self.cells.iter().fold(vec![], |mut points, cell| {
+            cell.iter().for_each(|item| {
+                points.push(item.to_owned());
+            });
+            return points;
+        })
+    }
+
     /**
     * An easier way is using a vector of vectors of Circles.
     * We can easily see if a point is out of bounds by just doing (contains)
@@ -84,15 +93,6 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
         let y = ((shape.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
 
         return (y * resolution + x - 1.0) as usize;
-    }
-
-    fn get_items(&self) -> Vec<T> {
-        self.cells.iter().fold(vec![], |mut points, cell| {
-            cell.iter().for_each(|item| {
-                points.push(item.to_owned());
-            });
-            return points;
-        })
     }
 }
 

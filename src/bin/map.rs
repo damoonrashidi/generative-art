@@ -21,7 +21,7 @@ fn main() {
 
         let n = noise.get([point.x as f64 / 800.0, point.y as f64 / 800.0]) as f64;
 
-        let size = point.distance(bounds.center()).sqrt();
+        let size = point.distance(&bounds.center()).sqrt();
         let mut rect = snap_to_cell(point, size);
         rect.set_width(size);
         rect.set_height(size);

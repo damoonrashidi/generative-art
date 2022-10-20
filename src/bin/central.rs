@@ -28,7 +28,7 @@ fn main() {
     for _ in 0..3000 {
         let mut x = rng.gen_range(inner_bounds.x_range());
         let mut y = rng.gen_range(inner_bounds.y_range());
-        let distance_to_center = inner_bounds.center().distance(Point { x, y });
+        let distance_to_center = inner_bounds.center().distance(&Point { x, y });
 
         let r = map(
             distance_to_center,

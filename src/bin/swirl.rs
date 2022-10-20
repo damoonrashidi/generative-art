@@ -78,7 +78,7 @@ fn swirl(x: f64, y: f64, bounds: &Rectangle) -> f64 {
 
     let point = Point { x, y };
 
-    return point.distance(center).sqrt();
+    return point.distance(&center).sqrt();
 }
 
 #[allow(unused)]

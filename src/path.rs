@@ -27,7 +27,7 @@ impl Path {
 
         let mut total = 0.0;
         for i in 1..self.points.len() {
-            total += self.points[i - 1].distance(self.points[i])
+            total += self.points[i - 1].distance(&self.points[i])
         }
         return total;
     }
