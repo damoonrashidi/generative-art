@@ -4,7 +4,7 @@ use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
 pub struct PointMap<'a, T> {
     bounds: &'a Rectangle,
-    items: Vec<Vec<T>>,
+    cells: Vec<Vec<T>>,
     grid_resolution: usize,
 }
 
@@ -12,22 +12,22 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
     pub fn new<S>(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
         let map = vec![vec![]; resolution.pow(2)];
 
-        return PointMap {
+        PointMap {
             bounds: &bounds,
-            items: map,
+            cells: map,
             grid_resolution: resolution,
-        };
+        }
     }
 
     pub fn insert(&mut self, shape: T) -> Result<usize, T> {
         let i = self.get_index(shape.center());
 
-        if let Some(points) = self.items.get_mut(i) {
+        if let Some(points) = self.cells.get_mut(i) {
             points.push(shape);
             return Ok(i);
         }
 
-        return Err(shape);
+        Err(shape)
     }
 
     /**
@@ -41,7 +41,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
     *  | . |   |   |   |   |   |
     *  -------------------------
 
-    * So something that is x = 80% and y = 80% in the case above
+    * So something that is x = 80% and y = 65% in the case above
     * would yield box 10.
     *
     * The idea here is that we get all the points for this cell
@@ -70,7 +70,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
 
         let i = self.get_index(shape.center());
 
-        if let Some(list) = self.items.get(i) {
+        if let Some(list) = self.cells.get(i) {
             Ok(list.to_vec())
         } else {
             Err(format!("{} is out of bounds", i))
@@ -84,6 +84,15 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
         let y = ((shape.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
 
         return (y * resolution + x - 1.0) as usize;
+    }
+
+    fn get_items(&self) -> Vec<T> {
+        self.cells.iter().fold(vec![], |mut points, cell| {
+            cell.iter().for_each(|item| {
+                points.push(item.to_owned());
+            });
+            return points;
+        })
     }
 }
 
@@ -121,7 +130,7 @@ mod test {
         let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
         let result = point_map.insert(circle);
-        if let Some(points) = point_map.items.get_mut(1) {
+        if let Some(points) = point_map.cells.get_mut(1) {
             assert_eq!(points.len(), 0);
             assert_eq!(result, Ok(10));
         }
@@ -190,5 +199,23 @@ mod test {
 
         assert_eq!(neighbors.len(), 1);
         assert_eq!(neighbors.first().unwrap().to_owned(), circle);
+    }
+
+    #[test]
+    fn get_all_items() {
+        let bounds = Rectangle {
+            x: 0.0,
+            y: 0.0,
+            width: 100.0,
+            height: 100.0,
+            color: Rectangle::default().color,
+        };
+
+        let mut point_map: PointMap<Point> = PointMap::new::<Point>(&bounds, 10);
+        let point = Point { x: 0., y: 0. };
+        let _ = point_map.insert(point);
+        let points = point_map.get_items();
+
+        assert_eq!(points, vec![Point { x: 0., y: 0. }]);
     }
 }

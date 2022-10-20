@@ -1,9 +1,7 @@
 use noise::{OpenSimplex, Seedable};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{
-    blob::Blob, palette::Color, point::Point, pointmap::PointMap, rectangle::Rectangle, svg::SVG,
-};
+use rust_gen_art::{point::Point, pointmap::PointMap, rectangle::Rectangle, svg::SVG};
 
 fn main() {
     let bounds = Rectangle {
@@ -27,9 +25,10 @@ fn main() {
 
         let point = Point { x, y };
 
-        let _ = map.insert(point);
-
-        svg.add_shape(Box::new(Blob::new(point, 2., Some(Color::Hex("#111")))));
+        match map.insert(point) {
+            Ok(_) => (),
+            Err(_) => break,
+        }
     }
 
     svg.save();
