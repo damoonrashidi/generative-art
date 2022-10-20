@@ -1,5 +1,5 @@
 [package]
-name = "rust-gen-art"
+name = "generative-art"
 version = "0.1.0"
 edition = "2021"
 

@@ -2,7 +2,7 @@ use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 
-use rust_gen_art::{
+use generative_art::{
     circle::Circle,
     helpers::map,
     palette::Color,

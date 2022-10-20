@@ -1,9 +1,9 @@
+use generative_art::{
+    helpers::map, palette::Color, point::Point, rectangle::Rectangle, shape::Shape, svg::SVG,
+};
 use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{
-    helpers::map, palette::Color, point::Point, rectangle::Rectangle, shape::Shape, svg::SVG,
-};
 
 fn main() {
     let bounds: Rectangle = Rectangle::new(0.0, 0.0, 1000.0, 1000.0);
@@ -51,7 +51,7 @@ fn snap_to_cell(point: Point, cell_size: f64) -> Rectangle {
 
 #[cfg(test)]
 mod test {
-    use rust_gen_art::{point::Point, rectangle::Rectangle};
+    use generative_art::{point::Point, rectangle::Rectangle};
 
     use crate::snap_to_cell;
 

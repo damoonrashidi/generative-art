@@ -1,7 +1,4 @@
-use noise::{NoiseFn, OpenSimplex, Seedable};
-use rand::prelude::*;
-use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{
+use generative_art::{
     circle::Circle,
     group::{Group, GroupStyle},
     palette::Color,
@@ -12,6 +9,9 @@ use rust_gen_art::{
     shape::Shape,
     svg::SVG,
 };
+use noise::{NoiseFn, OpenSimplex, Seedable};
+use rand::prelude::*;
+use rand_chacha::ChaCha20Rng;
 
 fn main() {
     const WIDTH: f64 = 3000.0;

@@ -1,17 +1,18 @@
 use std::ops::Range;
 
-use noise::{OpenSimplex, Seedable};
-use num_traits::Float;
-use rand::{distributions::uniform::SampleUniform, Rng, SeedableRng};
-use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{
+use generative_art::{
     group::{Group, GroupStyle},
     palette::Color,
     path::{Path, PathStyle},
     point::Point,
+    pointmap::PointMap,
     rectangle::Rectangle,
     svg::SVG,
 };
+use noise::{OpenSimplex, Seedable};
+use num_traits::Float;
+use rand::{distributions::uniform::SampleUniform, Rng, SeedableRng};
+use rand_chacha::ChaCha20Rng;
 
 fn main() {
     let bounds = Rectangle {
@@ -25,11 +26,11 @@ fn main() {
 
     let mut svg = SVG::new("Nightfall", bounds);
 
+    let mut map: PointMap<Point> = PointMap::new::<Point>(&bounds, 10);
     let mut rng = ChaCha20Rng::from_entropy();
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(0..500));
 
-    let mut points: Vec<Point> = vec![];
     let mut g: Group = Group::new();
     g.set_style(GroupStyle {
         stroke: Some(Color::Hex("#111")),
@@ -42,28 +43,30 @@ fn main() {
         let y = gen_weighted(scaled_bounds.y_range());
 
         let point = Point { x, y };
-
-        points.push(point);
+        let _ = map.insert(point);
     }
 
-    points.iter().for_each(|point| {
-        let neighbors = points
-            .iter()
-            .filter(|n| n.distance(point) < 50.)
-            .collect::<Vec<&Point>>();
+    let points = map.get_items();
 
-        let max = neighbors.len().min(50);
-        let sliced = &neighbors[0..max];
-
-        sliced.iter().for_each(|n| {
-            g.add_shape(Box::new(Path::new(
-                vec![n.clone().to_owned(), point.clone().to_owned()],
-                PathStyle {
-                    ..Default::default()
-                },
-            )));
-        });
-    });
+    for point in points {
+        match map.get_neighbors(point) {
+            Ok(list) => list
+                .into_iter()
+                .filter(|neighbor| point.distance(neighbor) < 150.)
+                .take(10)
+                .for_each(|neighbor| {
+                    g.add_shape(Box::new(Path::new(
+                        vec![point, neighbor],
+                        PathStyle {
+                            stroke_width: Some(0.5),
+                            stroke: Some(Color::Hex("#111")),
+                            ..Default::default()
+                        },
+                    )))
+                }),
+            Err(_) => break,
+        };
+    }
 
     svg.add_group(Box::new(g));
     svg.save();

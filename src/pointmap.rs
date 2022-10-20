@@ -8,7 +8,7 @@ pub struct PointMap<'a, T> {
     grid_resolution: usize,
 }
 
-impl<'a, T: Shape + Clone> PointMap<'a, T> {
+impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
     pub fn new<S>(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
         let map = vec![vec![]; resolution.pow(2)];
 
@@ -68,36 +68,61 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
      *  |xx|xx|xx|  |  |  |  |
      *  ----------------------
      */
-    pub fn get_neighbors(&self, shape: T) -> Result<Vec<T>, String> {
+    pub fn get_neighbors(&self, shape: T) -> Result<Vec<T>, &str> {
         if !self.bounds.contains(shape.center()) {
-            return Err(format!(
-                "{} {} is out of bounds for this pointmap {}",
-                shape.center().x,
-                shape.center().y,
-                shape.bounding_box()
-            ));
+            return Err("out of bounds call for this pointmap");
         }
 
         let i = self.get_index(shape.center());
 
-        if let Some(list) = self.cells.get(i) {
-            Ok(list.to_vec())
-        } else {
-            Err(format!("{} is out of bounds", i))
-        }
+        let items = self
+            .get_neigboring_cells(i)
+            .iter()
+            .fold(vec![], |mut list, index| {
+                match self.cells.get(index.to_owned()) {
+                    Some(cell_items) => {
+                        cell_items
+                            .iter()
+                            .for_each(|item| list.push(item.to_owned()));
+                        list
+                    }
+                    None => return list,
+                }
+            });
+
+        Ok(items)
     }
 
-    fn get_index(&self, shape: Point) -> usize {
+    fn get_index(&self, point: Point) -> usize {
         let resolution = self.grid_resolution as f64;
 
-        let x = ((shape.x / (self.bounds.x + self.bounds.width)) * resolution).floor();
-        let y = ((shape.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
+        let x = ((point.x / (self.bounds.x + self.bounds.width)) * resolution).floor();
+        let y = ((point.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
 
         return (y * resolution + x - 1.0) as usize;
     }
 
-    fn get_neighboring_cells(&self, index: usize) -> [usize; 9] {
-        [index; 9]
+    fn get_neigboring_cells(&self, index: usize) -> Vec<usize> {
+        let i = index as i32;
+        let step = (self.cells.len() as f64).sqrt() as i32;
+        let over = i - step;
+        let under = i + step;
+
+        vec![
+            over - 1,
+            over,
+            over + 1,
+            i - 1,
+            i,
+            i + 1,
+            under - 1,
+            under,
+            under + 1,
+        ]
+        .into_iter()
+        .filter(|cell| cell > &0 || (cell.to_owned() as usize) < self.cells.len())
+        .map(|cell| cell as usize)
+        .collect::<Vec<usize>>()
     }
 }
 
@@ -222,5 +247,23 @@ mod test {
         let points = point_map.get_items();
 
         assert_eq!(points, vec![Point { x: 0., y: 0. }]);
+    }
+
+    #[test]
+    fn get_surrounding_cells() {
+        let bounds = Rectangle {
+            x: 0.0,
+            y: 0.0,
+            width: 100.0,
+            height: 100.0,
+            color: Rectangle::default().color,
+        };
+
+        let map: PointMap<Point> = PointMap::new::<Point>(&bounds, 10);
+
+        let indicies = map.get_neigboring_cells(25);
+        println!("{}", map.cells.len());
+
+        assert_eq!(indicies, vec![14, 15, 16, 24, 25, 26, 34, 35, 36]);
     }
 }

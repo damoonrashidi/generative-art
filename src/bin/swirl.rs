@@ -1,11 +1,11 @@
 use std::f64::consts::PI;
 
-use rand::{Rng, SeedableRng};
-use rand_chacha::ChaCha20Rng;
-use rust_gen_art::{
+use generative_art::{
     blob::Blob, circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
     rectangle::Rectangle, shape::Shape, svg::SVG,
 };
+use rand::{Rng, SeedableRng};
+use rand_chacha::ChaCha20Rng;
 
 fn main() {
     let bounds = Rectangle {
@@ -21,7 +21,7 @@ fn main() {
 
     for _ in 0..5000 {
         let mut g = Group::new();
-        g.set_style(rust_gen_art::group::GroupStyle {
+        g.set_style(generative_art::group::GroupStyle {
             fill: None,
             stroke: Some(Color::Hex("#111")),
             stroke_width: Some(5.0),

@@ -1,7 +1,7 @@
 use std::cmp::min;
 
+use generative_art::{circle::Circle, point::Point, rectangle::Rectangle, svg::SVG};
 use rand::Rng;
-use rust_gen_art::{circle::Circle, point::Point, rectangle::Rectangle, svg::SVG};
 
 fn main() {
     let bounds = Rectangle {

@@ -1,9 +1,9 @@
-use noise::{NoiseFn, OpenSimplex, Seedable};
-use rand::{thread_rng, Rng};
-use rust_gen_art::{
+use generative_art::{
     blob::Blob, circle::Circle, group::Group, palette::Color, point::Point, pointmap::PointMap,
     rectangle::Rectangle, shape::Shape, svg::SVG,
 };
+use noise::{NoiseFn, OpenSimplex, Seedable};
+use rand::{thread_rng, Rng};
 
 fn main() {
     const WIDTH: f64 = 1000.0;
