@@ -40,33 +40,34 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
     }
 
     /**
-    * An easier way is using a vector of vectors of Circles.
-    * We can easily see if a point is out of bounds by just doing (contains)
-    * To get the correct box we do div count % remainder
-    *
-    *  -------------------------
-    *  | 0 | 1 | 2 | 3 | 4 | 5 |
-    *  | 6 | 7 | 8 | 9 | 10| . |
-    *  | . |   |   |   |   |   |
-    *  -------------------------
-
-    * So something that is x = 80% and y = 65% in the case above
-    * would yield box 10.
-    *
-    * The idea here is that we get all the points for this cell
-    * and all the surrounding cells to avoid collisions at nodes
-    * close to the one where we pop over to a neigboring grid cell.
-    *
-    * this makes the search space larger, but yields a more accurate
-    * result.
-    *
-    *  ----------------------
-    *  |  |  |  |  |  |  |  |
-    *  |xx|xx|xx|  |  |  |  |
-    *  |xx|oo|xx|  |  |  |  |
-    *  |xx|xx|xx|  |  |  |  |
-    *  ----------------------
-    */
+     * The general idea here is to do some simple math to be able
+     * to overlay the bounds with cell after cell until we are
+     * out of bounds, when the bounds have been hit, we loop back
+     * to a new row using modulo and restart the overlaying.
+     *
+     *  -------------------------
+     *  | 0 | 1 | 2 | 3 | 4 | 5 |
+     *  | 6 | 7 | 8 | 9 | 10| . |
+     *  | . |   |   |   |   |   |
+     *  -------------------------
+     *
+     * This allows us to use <Vec<Vec<T>>> instead of Vec<Vec<Vec<T>>>
+     * meaning we don't have to think of the bounds as a grid,
+     * but rather a list of cells.
+     *
+     * We also get all the surrounding cells to avoid collissions at nodes
+     * close to the one where we pop over to a neigboring grid cell.
+     *
+     * this makes the search space larger, but yields a more accurate
+     * result.
+     *
+     *  ----------------------
+     *  |  |  |  |  |  |  |  |
+     *  |xx|xx|xx|  |  |  |  |
+     *  |xx|oo|xx|  |  |  |  |
+     *  |xx|xx|xx|  |  |  |  |
+     *  ----------------------
+     */
     pub fn get_neighbors(&self, shape: T) -> Result<Vec<T>, String> {
         if !self.bounds.contains(shape.center()) {
             return Err(format!(
@@ -93,6 +94,10 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
         let y = ((shape.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
 
         return (y * resolution + x - 1.0) as usize;
+    }
+
+    fn get_neighboring_cells(&self, index: usize) -> [usize; 9] {
+        [index; 9]
     }
 }
 

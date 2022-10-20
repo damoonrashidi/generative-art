@@ -3,8 +3,15 @@ use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 
 use rust_gen_art::{
-    circle::Circle, helpers::map, palette::Color, path::Path, point::Point, pointmap::PointMap,
-    rectangle::Rectangle, shape::Shape, svg::SVG,
+    circle::Circle,
+    helpers::map,
+    palette::Color,
+    path::{Path, PathStyle},
+    point::Point,
+    pointmap::PointMap,
+    rectangle::Rectangle,
+    shape::Shape,
+    svg::SVG,
 };
 
 fn main() {
@@ -38,7 +45,13 @@ fn main() {
 
         let step: f64 = if r > 50. { r * 2. } else { 20. };
 
-        let mut line = Path::new(vec![], r, Some(Color::Hex("#111")));
+        let mut line = Path::new(
+            vec![],
+            PathStyle {
+                stroke_width: Some(r),
+                ..Default::default()
+            },
+        );
 
         while bounds.contains(Point { x, y }) {
             let n = noise.get([x / 500.0, y / 500.0]);

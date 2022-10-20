@@ -5,7 +5,12 @@ use num_traits::Float;
 use rand::{distributions::uniform::SampleUniform, Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 use rust_gen_art::{
-    circle::Circle, palette::Color, path::Path, point::Point, rectangle::Rectangle, svg::SVG,
+    group::{Group, GroupStyle},
+    palette::Color,
+    path::{Path, PathStyle},
+    point::Point,
+    rectangle::Rectangle,
+    svg::SVG,
 };
 
 fn main() {
@@ -16,7 +21,6 @@ fn main() {
         height: 1500. * 1.4,
         color: None,
     };
-
     let scaled_bounds = bounds.scale(0.9);
 
     let mut svg = SVG::new("Nightfall", bounds);
@@ -26,19 +30,20 @@ fn main() {
     Seedable::set_seed(noise, rng.gen_range(0..500));
 
     let mut points: Vec<Point> = vec![];
+    let mut g: Group = Group::new();
+    g.set_style(GroupStyle {
+        stroke: Some(Color::Hex("#111")),
+        stroke_width: Some(0.5),
+        ..Default::default()
+    });
 
-    for _ in 0..10000 {
+    for _ in 0..3000 {
         let x = rng.gen_range(scaled_bounds.x_range());
         let y = gen_weighted(scaled_bounds.y_range());
 
         let point = Point { x, y };
 
         points.push(point);
-
-        let mut circle = Circle::new(point, 1.);
-        circle.set_color(Color::Hex("#111"));
-
-        svg.add_shape(Box::new(circle));
     }
 
     points.iter().for_each(|point| {
@@ -51,14 +56,16 @@ fn main() {
         let sliced = &neighbors[0..max];
 
         sliced.iter().for_each(|n| {
-            svg.add_shape(Box::new(Path::new(
+            g.add_shape(Box::new(Path::new(
                 vec![n.clone().to_owned(), point.clone().to_owned()],
-                0.5,
-                Some(Color::Hex("#111")),
+                PathStyle {
+                    ..Default::default()
+                },
             )));
         });
     });
 
+    svg.add_group(Box::new(g));
     svg.save();
 }
 

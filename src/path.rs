@@ -3,17 +3,29 @@ use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
 #[derive(Debug)]
 pub struct Path {
     pub points: Vec<Point>,
-    pub stroke_width: f64,
+    pub style: PathStyle,
+}
+
+#[derive(Debug)]
+pub struct PathStyle {
+    pub stroke_width: Option<f64>,
+    pub stroke: Option<Color>,
     pub color: Option<Color>,
 }
 
-impl Path {
-    pub fn new(points: Vec<Point>, stroke_width: f64, color: Option<Color>) -> Path {
-        Path {
-            points,
-            stroke_width,
-            color,
+impl Default for PathStyle {
+    fn default() -> Self {
+        PathStyle {
+            stroke_width: None,
+            stroke: None,
+            color: None,
         }
+    }
+}
+
+impl Path {
+    pub fn new(points: Vec<Point>, style: PathStyle) -> Path {
+        Path { points, style }
     }
 
     pub fn add_point(&mut self, point: Point) {
@@ -39,18 +51,22 @@ impl Shape for Path {
             return String::from("");
         }
 
-        let stroke: String = match &self.color {
+        let stroke: String = match &self.style.stroke {
             Some(color) => format!("stroke=\"{}\" ", color),
             _ => String::from(""),
         };
 
-        let stroke_weight: String = if &self.stroke_width == &0.0 {
-            String::from("")
-        } else {
-            format!("stroke-width=\"{:.2}\" ", &self.stroke_width)
+        let fill: String = match &self.style.stroke {
+            Some(color) => format!("fill=\"{}\" ", color),
+            _ => String::from(""),
         };
 
-        let mut str = format!("<path fill=\"none\" {}{}d=\"M ", stroke, stroke_weight);
+        let stroke_weight: String = match &self.style.stroke_width {
+            Some(stroke) => format!("stroke-width=\"{:.2}\" ", stroke),
+            None => String::from(""),
+        };
+
+        let mut str = format!("<path {}{}{}d=\"M ", fill, stroke, stroke_weight);
 
         for point in &self.points {
             str.push_str(&format!("{:.2} {:.2}, ", point.x, point.y));
@@ -122,8 +138,7 @@ mod test {
                 Point { x: 5., y: 5. },
                 Point { x: -5., y: 10. },
             ],
-            stroke_width: 1.,
-            color: None,
+            style: super::PathStyle::default(),
         };
 
         let bounding = path.bounding_box();

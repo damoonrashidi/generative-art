@@ -5,7 +5,7 @@ use rust_gen_art::{
     circle::Circle,
     group::{Group, GroupStyle},
     palette::Color,
-    path::Path,
+    path::{Path, PathStyle},
     point::Point,
     pointmap::PointMap,
     rectangle::Rectangle,
@@ -62,8 +62,10 @@ fn main() {
         let step_size = 25.0;
         let mut line = Path {
             points: vec![],
-            stroke_width: r,
-            color: None,
+            style: PathStyle {
+                stroke_width: Some(r),
+                ..Default::default()
+            },
         };
 
         while bounds.contains(Point { x, y }) && line.length() < MAX_LINE_LENGTH {
