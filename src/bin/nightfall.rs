@@ -5,7 +5,6 @@ use generative_art::{
     palette::Color,
     path::{Path, PathStyle},
     point::Point,
-    pointmap::PointMap,
     rectangle::Rectangle,
     svg::SVG,
 };
@@ -26,7 +25,6 @@ fn main() {
 
     let mut svg = SVG::new("Nightfall", bounds);
 
-    let mut map: PointMap<Point> = PointMap::new::<Point>(&bounds, 10);
     let mut rng = ChaCha20Rng::from_entropy();
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(0..500));
@@ -38,35 +36,30 @@ fn main() {
         ..Default::default()
     });
 
-    for _ in 0..3000 {
+    let mut points: Vec<Point> = vec![];
+
+    for _ in 0..2000 {
         let x = rng.gen_range(scaled_bounds.x_range());
         let y = gen_weighted(scaled_bounds.y_range());
 
         let point = Point { x, y };
-        let _ = map.insert(point);
+        points.push(point);
     }
 
-    let points = map.get_items();
+    points.iter().for_each(|point| {
+        let neighbors = get_neighbors(&points, point, 80.);
 
-    for point in points {
-        match map.get_neighbors(point) {
-            Ok(list) => list
-                .into_iter()
-                .filter(|neighbor| point.distance(neighbor) < 150.)
-                .take(10)
-                .for_each(|neighbor| {
-                    g.add_shape(Box::new(Path::new(
-                        vec![point, neighbor],
-                        PathStyle {
-                            stroke_width: Some(0.5),
-                            stroke: Some(Color::Hex("#111")),
-                            ..Default::default()
-                        },
-                    )))
-                }),
-            Err(_) => break,
-        };
-    }
+        neighbors.iter().for_each(|neighbor| {
+            g.add_shape(Box::new(Path::new(
+                vec![point.to_owned(), neighbor.to_owned()],
+                PathStyle {
+                    stroke_width: Some(0.5),
+                    stroke: Some(Color::Hex("#111")),
+                    ..Default::default()
+                },
+            )))
+        })
+    });
 
     svg.add_group(Box::new(g));
     svg.save();
@@ -79,4 +72,13 @@ fn gen_weighted<T: Float + SampleUniform>(range: Range<T>) -> T {
     let b = rng.gen_range(range.start..range.end);
 
     return (b - a).max(range.start);
+}
+
+fn get_neighbors(points: &Vec<Point>, point: &Point, proximity: f64) -> Vec<Point> {
+    points
+        .iter()
+        .filter(|neighbor| neighbor.distance(point) < proximity)
+        .map(|p| p.to_owned())
+        .take(60)
+        .collect::<Vec<Point>>()
 }

@@ -32,7 +32,7 @@ fn main() {
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(0..500));
 
-    for _ in 0..3000 {
+    for _ in 0..5000 {
         let mut x = rng.gen_range(inner_bounds.x_range());
         let mut y = rng.gen_range(inner_bounds.y_range());
         let distance_to_center = inner_bounds.center().distance(&Point { x, y });
@@ -49,6 +49,7 @@ fn main() {
             vec![],
             PathStyle {
                 stroke_width: Some(r),
+                stroke: Some(Color::Hex("#111")),
                 ..Default::default()
             },
         );
