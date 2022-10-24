@@ -2,7 +2,6 @@ use std::ops::Range;
 
 use generative_art::{
     group::{Group, GroupStyle},
-    helpers::map,
     palette::Color,
     path::{Path, PathStyle},
     point::Point,
@@ -39,7 +38,7 @@ fn main() {
 
     let mut points: Vec<Point> = vec![];
 
-    for _ in 0..500 {
+    for _ in 0..5000 {
         let x = rng.gen_range(scaled_bounds.x_range());
         let y = gen_weighted(scaled_bounds.y_range(), &mut rng);
 
@@ -48,7 +47,7 @@ fn main() {
     }
 
     points.iter().for_each(|point| {
-        let neighbors = get_neighbors(&points, point, 80.);
+        let neighbors = get_neighbors(&points, point, 50.);
 
         neighbors.iter().for_each(|neighbor| {
             let path = Path::new(
@@ -69,9 +68,10 @@ fn main() {
 }
 
 fn gen_weighted(range: Range<f64>, rng: &mut ChaCha20Rng) -> f64 {
-    let sample = 1. - (1. - rng.gen_range(range.clone()).sqrt());
+    let a = rng.gen_range(0.0..1.0) as f64;
+    let b = rng.gen_range(0.0..1.0);
 
-    map(sample, 0.0..20.0, range)
+    ((b - a).abs() * (1.0 + range.end - range.start) + range.start).floor()
 }
 
 fn get_neighbors(points: &[Point], point: &Point, proximity: f64) -> Vec<Point> {
