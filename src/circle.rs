@@ -31,20 +31,11 @@ impl Circle {
     }
 
     pub fn instersects_any(&self, others: Vec<Circle>) -> bool {
-        others.into_iter().any(|circle| self.intersects(&circle))
+        others.iter().any(|circle| self.intersects(circle))
     }
 
     pub fn set_color(&mut self, color: Color) {
         self.color = Some(color);
-    }
-
-    pub fn copy(&self) -> Circle {
-        Circle {
-            x: self.x,
-            y: self.y,
-            r: self.r,
-            color: self.color,
-        }
     }
 
     pub fn scale(&self, scale: f64) -> Circle {
@@ -87,8 +78,8 @@ impl Shape for Circle {
         }
     }
 
-    fn contains(&self, point: super::point::Point) -> bool {
-        self.distance(&Circle::new(point, 0.0)) < self.r
+    fn contains(&self, point: &Point) -> bool {
+        self.distance(&Circle::new(*point, 0.0)) < self.r
     }
 }
 

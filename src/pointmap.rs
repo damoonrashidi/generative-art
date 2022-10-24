@@ -8,7 +8,7 @@ pub struct PointMap<'a, T> {
     grid_resolution: usize,
 }
 
-impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
+impl<'a, T: Shape + Clone> PointMap<'a, T> {
     pub fn new<S>(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
         let map = vec![vec![]; resolution.pow(2)];
 
@@ -20,7 +20,8 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
     }
 
     pub fn insert(&mut self, shape: T) -> Result<usize, T> {
-        let i = self.get_index(shape.center());
+        let center = shape.center();
+        let i = self.get_index(&center);
 
         if let Some(points) = self.cells.get_mut(i) {
             points.push(shape);
@@ -30,10 +31,10 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
         Err(shape)
     }
 
-    pub fn get_items(&self) -> Vec<T> {
+    pub fn get_items(&self) -> Vec<&T> {
         self.cells.iter().fold(vec![], |mut points, cell| {
             cell.iter().for_each(|item| {
-                points.push(*item);
+                points.push(item);
             });
             points
         })
@@ -69,11 +70,11 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
      *  ----------------------
      */
     pub fn get_neighbors(&self, shape: T) -> Result<Vec<T>, &str> {
-        if !self.bounds.contains(shape.center()) {
+        if !self.bounds.contains(&shape.center()) {
             return Err("out of bounds call for this pointmap");
         }
 
-        let i = self.get_index(shape.center());
+        let i = self.get_index(&shape.center());
 
         let items = self
             .get_neigboring_cells(i)
@@ -93,7 +94,7 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
         Ok(items)
     }
 
-    fn get_index(&self, point: Point) -> usize {
+    fn get_index(&self, point: &Point) -> usize {
         let resolution = self.grid_resolution as f64;
 
         let x = ((point.x / (self.bounds.x + self.bounds.width)) * resolution).floor();
@@ -141,11 +142,11 @@ mod test {
             color: Rectangle::default().color,
         };
         let point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
-        assert_eq!(point_map.get_index(Point { x: 9.0, y: 0.0 }), 0);
-        assert_eq!(point_map.get_index(Point { x: 11.0, y: 0.0 }), 0);
-        assert_eq!(point_map.get_index(Point { x: 20.0, y: 0.0 }), 1);
-        assert_eq!(point_map.get_index(Point { x: 34.0, y: 0.0 }), 2);
-        assert_eq!(point_map.get_index(Point { x: 99.999, y: 0.0 }), 8);
+        assert_eq!(point_map.get_index(&Point { x: 9.0, y: 0.0 }), 0);
+        assert_eq!(point_map.get_index(&Point { x: 11.0, y: 0.0 }), 0);
+        assert_eq!(point_map.get_index(&Point { x: 20.0, y: 0.0 }), 1);
+        assert_eq!(point_map.get_index(&Point { x: 34.0, y: 0.0 }), 2);
+        assert_eq!(point_map.get_index(&Point { x: 99.999, y: 0.0 }), 8);
     }
 
     #[test]
@@ -160,10 +161,7 @@ mod test {
         let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
         let result = point_map.insert(circle);
-        if let Some(points) = point_map.cells.get_mut(1) {
-            assert_eq!(points.len(), 0);
-            assert_eq!(result, Ok(10));
-        }
+        assert_eq!(result.unwrap(), 1);
     }
 
     #[test]
@@ -246,7 +244,7 @@ mod test {
         let _ = point_map.insert(point);
         let points = point_map.get_items();
 
-        assert_eq!(points, vec![Point { x: 0., y: 0. }]);
+        assert_eq!(points, vec![&Point { x: 0., y: 0. }]);
     }
 
     #[test]

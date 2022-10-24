@@ -68,7 +68,7 @@ fn main() {
             },
         };
 
-        while bounds.contains(Point { x, y }) && line.length() < MAX_LINE_LENGTH {
+        while bounds.contains(&Point { x, y }) && line.length() < MAX_LINE_LENGTH {
             let n = noise.get([x / zoom, y / zoom]);
             x += (distort * n).cos() * step_size;
             y += (distort * n).sin() * step_size;
@@ -84,9 +84,10 @@ fn main() {
         }
 
         if line.length() > MIN_LINE_LENGHT {
-            line.points.iter().for_each(|point| {
-                let _ = point_map.insert(Circle::new(*point, r));
-            });
+            for point in line.points.iter() {
+                let circle = Circle::new(*point, r);
+                let _ = point_map.insert(circle);
+            }
 
             group.add_shape(Box::new(line));
         }

@@ -109,7 +109,7 @@ impl Shape for Path {
         }
     }
 
-    fn contains(&self, _point: Point) -> bool {
+    fn contains(&self, _point: &Point) -> bool {
         todo!("Not yet implemented")
     }
 }

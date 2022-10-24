@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use crate::{rectangle::Rectangle, shape::Shape};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Point {
     pub x: f64,
     pub y: f64,
@@ -35,12 +35,6 @@ impl Display for Point {
     }
 }
 
-impl PartialEq for Point {
-    fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y
-    }
-}
-
 impl Shape for Point {
     fn as_svg(&self) -> String {
         String::from("")
@@ -53,8 +47,8 @@ impl Shape for Point {
         }
     }
 
-    fn contains(&self, point: Point) -> bool {
-        self.eq(&point)
+    fn contains(&self, point: &Point) -> bool {
+        self.eq(point)
     }
 
     fn bounding_box(&self) -> crate::rectangle::Rectangle {

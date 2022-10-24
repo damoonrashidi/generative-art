@@ -56,12 +56,15 @@ impl Shape for Blob {
         str
     }
 
-    fn contains(&self, _point: Point) -> bool {
+    fn contains(&self, _point: &Point) -> bool {
         todo!();
     }
 
     fn center(&self) -> Point {
-        self.position
+        Point {
+            x: self.position.x,
+            y: self.position.y,
+        }
     }
 
     fn bounding_box(&self) -> crate::rectangle::Rectangle {

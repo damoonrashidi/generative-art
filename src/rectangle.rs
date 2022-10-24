@@ -73,7 +73,7 @@ impl Shape for Rectangle {
         )
     }
 
-    fn contains(&self, point: super::point::Point) -> bool {
+    fn contains(&self, point: &Point) -> bool {
         (self.x..(self.x + self.width)).contains(&point.x)
             && (self.y..(self.y + self.height)).contains(&point.y)
     }
@@ -141,7 +141,7 @@ mod test {
 
         let point = Point { x: 10.0, y: 30.0 };
 
-        assert_eq!(rect.contains(point), false);
+        assert_eq!(rect.contains(&point), false);
     }
 
     #[test]
