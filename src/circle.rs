@@ -23,11 +23,11 @@ impl Circle {
     pub fn distance(&self, other: &Circle) -> f64 {
         let d_x = self.x - other.x;
         let d_y = self.y - other.y;
-        return (d_x.powi(2) + d_y.powi(2)).sqrt() - (self.r * 2.0 + other.r * 2.0);
+        (d_x.powi(2) + d_y.powi(2)).sqrt() - (self.r * 2.0 + other.r * 2.0)
     }
 
     pub fn intersects(&self, other: &Circle) -> bool {
-        self.distance(&other) < self.r + other.r
+        self.distance(other) < self.r + other.r
     }
 
     pub fn instersects_any(&self, others: Vec<Circle>) -> bool {
@@ -94,7 +94,7 @@ impl Shape for Circle {
 
 impl PartialEq for Circle {
     fn eq(&self, other: &Self) -> bool {
-        return self.x == other.x && self.y == other.y && self.r == other.r;
+        self.x == other.x && self.y == other.y && self.r == other.r
     }
 }
 

@@ -44,11 +44,11 @@ impl Rectangle {
     }
 
     pub fn x_range(&self) -> Range<f64> {
-        return self.x..(self.x + self.width);
+        self.x..(self.x + self.width)
     }
 
     pub fn y_range(&self) -> Range<f64> {
-        return self.y..(self.y + self.height);
+        self.y..(self.y + self.height)
     }
 
     pub fn set_width(&mut self, width: f64) {
@@ -110,16 +110,16 @@ impl Default for Rectangle {
 
 impl PartialEq for Rectangle {
     fn eq(&self, other: &Self) -> bool {
-        return self.x == other.x
+        self.x == other.x
             && self.y == other.y
             && self.width == other.width
-            && self.height == other.height;
+            && self.height == other.height
     }
 }
 
 impl Display for Rectangle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        return write!(f, "{}", &self.as_svg());
+        write!(f, "{}", &self.as_svg())
     }
 }
 

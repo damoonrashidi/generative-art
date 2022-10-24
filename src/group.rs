@@ -1,21 +1,13 @@
 use crate::{palette::Color, shape::Shape};
 
+#[derive(Default)]
 pub struct GroupStyle {
     pub fill: Option<Color>,
     pub stroke: Option<Color>,
     pub stroke_width: Option<f64>,
 }
 
-impl Default for GroupStyle {
-    fn default() -> Self {
-        GroupStyle {
-            fill: None,
-            stroke: None,
-            stroke_width: None,
-        }
-    }
-}
-
+#[derive(Default)]
 pub struct Group {
     pub shapes: Vec<Box<dyn Shape>>,
     style: GroupStyle,
@@ -55,12 +47,14 @@ impl Group {
             None => String::from(" fill=\"none\""),
         };
 
-        let g = self.shapes.iter().fold(
-            String::from(format!("<g{fill}{stroke}{stroke_width}>")),
-            |r, shape| format!("{}{}", r, shape.as_svg().trim()),
-        );
+        let g = self
+            .shapes
+            .iter()
+            .fold(format!("<g{fill}{stroke}{stroke_width}>"), |r, shape| {
+                format!("{}{}", r, shape.as_svg().trim())
+            });
 
-        return format!("{}</g>", g);
+        format!("{}</g>", g)
     }
 }
 

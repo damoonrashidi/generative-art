@@ -37,7 +37,7 @@ impl Blob {
 
 impl Shape for Blob {
     fn as_svg(&self) -> String {
-        if self.points.len() == 0 {
+        if self.points.is_empty() {
             return String::from("");
         }
 
@@ -53,7 +53,7 @@ impl Shape for Blob {
         }
 
         str.push_str("\"/>\n");
-        return str;
+        str
     }
 
     fn contains(&self, _point: Point) -> bool {

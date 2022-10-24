@@ -63,5 +63,5 @@ fn get_dot_count(y: f64, area: f64, render_height: f64) -> i32 {
     let mut rng = rand::thread_rng();
     let count = (render_height - y) * rng.gen_range(2.0..4.0) + normalized_area;
 
-    return min(count as i32, 100);
+    min(count as i32, 100)
 }

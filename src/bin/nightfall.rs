@@ -2,6 +2,7 @@ use std::ops::Range;
 
 use generative_art::{
     group::{Group, GroupStyle},
+    helpers::map,
     palette::Color,
     path::{Path, PathStyle},
     point::Point,
@@ -9,8 +10,8 @@ use generative_art::{
     svg::SVG,
 };
 use noise::{OpenSimplex, Seedable};
-use num_traits::Float;
-use rand::{distributions::uniform::SampleUniform, Rng, SeedableRng};
+
+use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 
 fn main() {
@@ -38,9 +39,9 @@ fn main() {
 
     let mut points: Vec<Point> = vec![];
 
-    for _ in 0..2000 {
+    for _ in 0..500 {
         let x = rng.gen_range(scaled_bounds.x_range());
-        let y = gen_weighted(scaled_bounds.y_range());
+        let y = gen_weighted(scaled_bounds.y_range(), &mut rng);
 
         let point = Point { x, y };
         points.push(point);
@@ -50,35 +51,33 @@ fn main() {
         let neighbors = get_neighbors(&points, point, 80.);
 
         neighbors.iter().for_each(|neighbor| {
-            g.add_shape(Box::new(Path::new(
+            let path = Path::new(
                 vec![point.to_owned(), neighbor.to_owned()],
                 PathStyle {
-                    stroke_width: Some(0.5),
-                    stroke: Some(Color::Hex("#111")),
+                    stroke_width: None,
+                    stroke: None,
                     ..Default::default()
                 },
-            )))
+            );
+
+            g.add_shape(Box::new(path));
         })
     });
 
-    svg.add_group(Box::new(g));
+    svg.add_group(g);
     svg.save();
 }
 
-fn gen_weighted<T: Float + SampleUniform>(range: Range<T>) -> T {
-    let mut rng = ChaCha20Rng::from_entropy();
+fn gen_weighted(range: Range<f64>, rng: &mut ChaCha20Rng) -> f64 {
+    let sample = 1. - (1. - rng.gen_range(range.clone()).sqrt());
 
-    let a = rng.gen_range(range.start..range.end);
-    let b = rng.gen_range(range.start..range.end);
-
-    return (b - a).max(range.start);
+    map(sample, 0.0..20.0, range)
 }
 
-fn get_neighbors(points: &Vec<Point>, point: &Point, proximity: f64) -> Vec<Point> {
+fn get_neighbors(points: &[Point], point: &Point, proximity: f64) -> Vec<Point> {
     points
         .iter()
         .filter(|neighbor| neighbor.distance(point) < proximity)
-        .map(|p| p.to_owned())
-        .take(60)
+        .copied()
         .collect::<Vec<Point>>()
 }

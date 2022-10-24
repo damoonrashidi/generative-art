@@ -76,7 +76,7 @@ fn main() {
 
         if line.length() > 50.0 {
             line.points.iter().for_each(|point| {
-                let _ = pointmap.insert(Circle::new(point.clone(), r));
+                let _ = pointmap.insert(Circle::new(*point, r));
             });
             svg.add_shape(Box::new(line));
         }

@@ -85,14 +85,14 @@ fn main() {
 
         if line.length() > MIN_LINE_LENGHT {
             line.points.iter().for_each(|point| {
-                let _ = point_map.insert(Circle::new(point.clone(), r));
+                let _ = point_map.insert(Circle::new(*point, r));
             });
 
             group.add_shape(Box::new(line));
         }
     }
 
-    svg.add_group(Box::new(group));
+    svg.add_group(group);
 
     svg.save();
 }

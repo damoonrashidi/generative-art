@@ -22,11 +22,11 @@ impl SVG<'static> {
         }
     }
 
-    pub fn add_shape(&mut self, shape: Box<dyn Shape>) -> () {
+    pub fn add_shape(&mut self, shape: Box<dyn Shape>) {
         self.document.push_str(&shape.as_svg());
     }
 
-    pub fn add_group(&mut self, group: Box<Group>) -> () {
+    pub fn add_group(&mut self, group: Group) {
         self.document.push_str(&group.as_svg());
     }
 
@@ -34,7 +34,7 @@ impl SVG<'static> {
         self.bounds
     }
 
-    pub fn save(&mut self) -> () {
+    pub fn save(&mut self) {
         let _ = &self.document.push_str("</svg>");
 
         let now = Utc::now();
@@ -57,8 +57,7 @@ impl SVG<'static> {
 
         let mut f = File::create(&path).expect("could not open file for writing");
 
-        let _result = f
-            .write_all(self.document.as_bytes())
+        f.write_all(self.document.as_bytes())
             .expect("Could not write to file");
     }
 }

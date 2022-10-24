@@ -26,7 +26,7 @@ pub struct Palette {
 impl Palette {
     pub fn new(&mut self, colors: Vec<Color>) -> &Self {
         self.colors = colors;
-        return self;
+        self
     }
 
     pub fn get_random_color(&self) -> Option<Color> {

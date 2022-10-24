@@ -12,7 +12,8 @@ impl Point {
     pub fn distance(&self, other: &Point) -> f64 {
         let d_x = (self.x - other.x).abs();
         let d_y = (self.y - other.y).abs();
-        return (d_x.powi(2) + d_y.powi(2)).sqrt();
+
+        (d_x.powi(2) + d_y.powi(2)).sqrt()
     }
 
     pub fn move_self(&mut self, x: f64, y: f64) {
@@ -21,10 +22,10 @@ impl Point {
     }
 
     pub fn offset(&self, x: f64, y: f64) -> Point {
-        return Point {
+        Point {
             x: self.x + x,
             y: self.y + y,
-        };
+        }
     }
 }
 
@@ -42,7 +43,7 @@ impl PartialEq for Point {
 
 impl Shape for Point {
     fn as_svg(&self) -> String {
-        return String::from("");
+        String::from("")
     }
 
     fn center(&self) -> Point {

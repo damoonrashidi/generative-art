@@ -13,7 +13,7 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
         let map = vec![vec![]; resolution.pow(2)];
 
         PointMap {
-            bounds: &bounds,
+            bounds,
             cells: map,
             grid_resolution: resolution,
         }
@@ -33,9 +33,9 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
     pub fn get_items(&self) -> Vec<T> {
         self.cells.iter().fold(vec![], |mut points, cell| {
             cell.iter().for_each(|item| {
-                points.push(item.to_owned());
+                points.push(*item);
             });
-            return points;
+            points
         })
     }
 
@@ -86,7 +86,7 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
                             .for_each(|item| list.push(item.to_owned()));
                         list
                     }
-                    None => return list,
+                    None => list,
                 }
             });
 
@@ -99,7 +99,7 @@ impl<'a, T: Shape + Clone + Copy> PointMap<'a, T> {
         let x = ((point.x / (self.bounds.x + self.bounds.width)) * resolution).floor();
         let y = ((point.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
 
-        return (y * resolution + x - 1.0) as usize;
+        (y * resolution + x - 1.0) as usize
     }
 
     fn get_neigboring_cells(&self, index: usize) -> Vec<usize> {

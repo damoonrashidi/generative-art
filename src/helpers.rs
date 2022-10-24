@@ -9,5 +9,5 @@ pub fn map<
     from: Range<T>,
     to: Range<T>,
 ) -> T {
-    return ((value - from.start) * (to.end - to.start)) / (from.end - from.start) + to.start;
+    ((value - from.start) * (to.end - to.start)) / (from.end - from.start) + to.start
 }

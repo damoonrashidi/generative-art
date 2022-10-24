@@ -89,7 +89,7 @@ fn main() {
             });
         }
 
-        svg.add_group(Box::new(g));
+        svg.add_group(g);
     }
 
     svg.save();

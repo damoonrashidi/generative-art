@@ -1,26 +1,16 @@
 use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Path {
     pub points: Vec<Point>,
     pub style: PathStyle,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct PathStyle {
     pub stroke_width: Option<f64>,
     pub stroke: Option<Color>,
     pub color: Option<Color>,
-}
-
-impl Default for PathStyle {
-    fn default() -> Self {
-        PathStyle {
-            stroke_width: None,
-            stroke: None,
-            color: None,
-        }
-    }
 }
 
 impl Path {
@@ -33,7 +23,7 @@ impl Path {
     }
 
     pub fn length(&self) -> f64 {
-        if self.points.len() == 0 {
+        if self.points.is_empty() {
             return 0.0;
         }
 
@@ -41,13 +31,13 @@ impl Path {
         for i in 1..self.points.len() {
             total += self.points[i - 1].distance(&self.points[i])
         }
-        return total;
+        total
     }
 }
 
 impl Shape for Path {
     fn as_svg(&self) -> String {
-        if self.points.len() == 0 {
+        if self.points.is_empty() {
             return String::from("");
         }
 
@@ -73,7 +63,7 @@ impl Shape for Path {
         }
 
         str.push_str("\"/>\n");
-        return str;
+        str
     }
 
     fn center(&self) -> Point {
@@ -81,7 +71,7 @@ impl Shape for Path {
     }
 
     fn bounding_box(&self) -> Rectangle {
-        if self.points.len() == 0 {
+        if self.points.is_empty() {
             panic!()
         }
 
@@ -138,7 +128,7 @@ mod test {
                 Point { x: 5., y: 5. },
                 Point { x: -5., y: 10. },
             ],
-            style: super::PathStyle::default(),
+            style: Default::default(),
         };
 
         let bounding = path.bounding_box();

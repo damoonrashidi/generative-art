@@ -62,7 +62,7 @@ fn main() {
                 )));
             });
 
-            svg.add_group(Box::new(g));
+            svg.add_group(g);
         }
     }
 
@@ -78,12 +78,10 @@ fn swirl(x: f64, y: f64, bounds: &Rectangle) -> f64 {
 
     let point = Point { x, y };
 
-    return point.distance(&center).sqrt();
+    point.distance(&center).sqrt()
 }
 
 #[allow(unused)]
 fn to_center(x: f64, y: f64, bounds: &Rectangle) -> f64 {
-    let angle = (x - bounds.center().x).atan2((y - bounds.center().y).abs());
-
-    return angle * PI;
+    (x - bounds.center().x).atan2((y - bounds.center().y).abs()) * PI
 }
