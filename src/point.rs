@@ -27,6 +27,10 @@ impl Point {
             y: self.y + y,
         }
     }
+
+    pub fn angle_to(&self, other: &Point) -> f64 {
+        (other.y - self.y).atan2(other.x - self.x)
+    }
 }
 
 impl Display for Point {

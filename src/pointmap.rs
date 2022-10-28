@@ -77,7 +77,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
         let i = self.get_index(&shape.center());
 
         let items = self
-            .get_neigboring_cells(i)
+            .get_neighboring_cells(i)
             .iter()
             .fold(vec![], |mut list, index| match self.cells.get(*index) {
                 Some(cell_items) => {
@@ -87,7 +87,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
                             if let Some(distance) = distance {
                                 return shape.center().distance(&item.center()) < distance;
                             }
-                            return true;
+                            true
                         })
                         .for_each(|item| list.push(item.to_owned()));
                     list
@@ -107,7 +107,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
         (y * resolution + x - 1.0) as usize
     }
 
-    fn get_neigboring_cells(&self, index: usize) -> Vec<usize> {
+    fn get_neighboring_cells(&self, index: usize) -> Vec<usize> {
         let i = index as i32;
         let step = (self.cells.len() as f64).sqrt() as i32;
         let over = i - step;
@@ -263,7 +263,7 @@ mod test {
 
         let map: PointMap<Point> = PointMap::new::<Point>(&bounds, 10);
 
-        let indicies = map.get_neigboring_cells(25);
+        let indicies = map.get_neighboring_cells(25);
         println!("{}", map.cells.len());
 
         assert_eq!(indicies, vec![14, 15, 16, 24, 25, 26, 34, 35, 36]);
