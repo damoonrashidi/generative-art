@@ -53,8 +53,8 @@ fn main() {
             let path = Path::new(
                 vec![point.to_owned(), neighbor.to_owned()],
                 PathStyle {
-                    stroke_width: None,
-                    stroke: None,
+                    stroke_width: Some(1.),
+                    stroke: Some(Color::Hex("#111")),
                     ..Default::default()
                 },
             );
@@ -78,6 +78,7 @@ fn get_neighbors(points: &[Point], point: &Point, proximity: f64) -> Vec<Point> 
     points
         .iter()
         .filter(|neighbor| neighbor.distance(point) < proximity)
+        .take(10)
         .copied()
         .collect::<Vec<Point>>()
 }

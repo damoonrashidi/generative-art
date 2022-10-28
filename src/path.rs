@@ -56,12 +56,20 @@ impl Shape for Path {
             None => String::from(""),
         };
 
-        let mut str = format!("<path {}{}{}d=\"M ", fill, stroke, stroke_weight);
+        let first = self.points.first().unwrap();
 
-        for point in &self.points {
-            str.push_str(&format!("{:.2} {:.2}, ", point.x, point.y));
-        }
+        let mut str = self.points.iter().skip(1).fold(
+            format!(
+                "<path {}{}{}d=\"M {:.2} {:.2},",
+                fill, stroke, stroke_weight, first.x, first.y
+            ),
+            |mut path, point| {
+                path.push_str(&format!("L {:.2} {:.2},", point.x, point.y));
+                path
+            },
+        );
 
+        str.pop();
         str.push_str("\"/>\n");
         str
     }
