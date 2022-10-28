@@ -69,7 +69,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
      *  |xx|xx|xx|  |  |  |  |
      *  ----------------------
      */
-    pub fn get_neighbors(&self, shape: T) -> Result<Vec<T>, &str> {
+    pub fn get_neighbors(&self, shape: T, distance: Option<f64>) -> Result<Vec<T>, &str> {
         if !self.bounds.contains(&shape.center()) {
             return Err("out of bounds call for this pointmap");
         }
@@ -79,16 +79,20 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
         let items = self
             .get_neigboring_cells(i)
             .iter()
-            .fold(vec![], |mut list, index| {
-                match self.cells.get(index.to_owned()) {
-                    Some(cell_items) => {
-                        cell_items
-                            .iter()
-                            .for_each(|item| list.push(item.to_owned()));
-                        list
-                    }
-                    None => list,
+            .fold(vec![], |mut list, index| match self.cells.get(*index) {
+                Some(cell_items) => {
+                    cell_items
+                        .iter()
+                        .filter(|item| {
+                            if let Some(distance) = distance {
+                                return shape.center().distance(&item.center()) < distance;
+                            }
+                            return true;
+                        })
+                        .for_each(|item| list.push(item.to_owned()));
+                    list
                 }
+                None => list,
             });
 
         Ok(items)
@@ -201,7 +205,7 @@ mod test {
         let _ = point_map.insert(circle);
         let __ = point_map.insert(non_neighbor);
 
-        if let Ok(neighbors) = point_map.get_neighbors(circle) {
+        if let Ok(neighbors) = point_map.get_neighbors(circle, None) {
             assert_eq!(neighbors.len(), 1);
             assert_eq!(neighbors.first().unwrap().to_owned(), circle);
         }
@@ -223,7 +227,7 @@ mod test {
         let _ = point_map.insert(circle);
         let __ = point_map.insert(non_neighbor);
 
-        let neighbors = point_map.get_neighbors(circle).unwrap();
+        let neighbors = point_map.get_neighbors(circle, None).unwrap();
 
         assert_eq!(neighbors.len(), 1);
         assert_eq!(neighbors.first().unwrap().to_owned(), circle);

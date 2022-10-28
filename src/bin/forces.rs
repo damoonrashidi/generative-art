@@ -74,7 +74,7 @@ fn main() {
             y += (distort * n).sin() * step_size;
             let circle = Circle::new(Point { x, y }, r);
 
-            if let Ok(neighbors) = point_map.get_neighbors(circle) {
+            if let Ok(neighbors) = point_map.get_neighbors(circle, None) {
                 if circle.instersects_any(neighbors) {
                     break;
                 }
