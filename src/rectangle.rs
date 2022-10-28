@@ -50,14 +50,6 @@ impl Rectangle {
     pub fn y_range(&self) -> Range<f64> {
         self.y..(self.y + self.height)
     }
-
-    pub fn set_width(&mut self, width: f64) {
-        self.width = width;
-    }
-
-    pub fn set_height(&mut self, height: f64) {
-        self.height = height;
-    }
 }
 
 impl Shape for Rectangle {
@@ -74,8 +66,7 @@ impl Shape for Rectangle {
     }
 
     fn contains(&self, point: &Point) -> bool {
-        (self.x..(self.x + self.width)).contains(&point.x)
-            && (self.y..(self.y + self.height)).contains(&point.y)
+        self.x_range().contains(&point.x) && self.y_range().contains(&point.y)
     }
 
     fn center(&self) -> Point {
@@ -200,5 +191,19 @@ mod test {
                 color: None
             }
         );
+    }
+
+    #[test]
+    fn test_center_0_0() {
+        let rect = Rectangle::new(0.0, 0.0, 100.0, 100.0);
+
+        assert_eq!(rect.center(), Point { x: 50.0, y: 50.0 });
+    }
+
+    #[test]
+    fn test_center_other() {
+        let rect = Rectangle::new(50.0, 0.0, 100.0, 100.0);
+
+        assert_eq!(rect.center(), Point { x: 75.0, y: 100.0 });
     }
 }

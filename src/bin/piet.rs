@@ -1,4 +1,4 @@
-use generative_art::{palette::Color, rectangle::Rectangle, svg::SVG};
+use generative_art::{palette::Color, point::Point, rectangle::Rectangle, svg::SVG};
 use rand::{thread_rng, Rng};
 
 fn main() {
@@ -10,15 +10,15 @@ fn main() {
 
     let mut rng = thread_rng();
 
-    for split in 0..10 {
+    for _ in 0..10 {
         for i in (0..rects.len()).rev() {
             if let Some(rect) = rects.get(i) {
-                if rng.gen_bool(0.3) {
+                if rng.gen_bool(0.3) && rect.width > 0. {
                     let (mut a, mut b) = subdivide(rect);
                     rects.remove(i);
 
-                    a.set_color(random_color(split));
-                    b.set_color(random_color(split));
+                    a.set_color(random_color());
+                    b.set_color(random_color());
                     rects.push(a);
                     rects.push(b);
                 }
@@ -37,39 +37,53 @@ fn subdivide(rect: &Rectangle) -> (Rectangle, Rectangle) {
     let padding = 8.;
 
     let mut rng = thread_rng();
-    let split_horizontally = rng.gen_bool(0.5);
 
-    if split_horizontally {
-        let a = Rectangle::new(rect.x, rect.y, rect.width / 2. - padding, rect.height);
-        let b = Rectangle::new(
-            rect.x + rect.width / 2. + padding,
-            rect.y,
-            rect.width / 2. - padding,
-            rect.height,
-        );
+    let split_point = Point {
+        x: rng.gen_range(rect.x_range()),
+        y: rng.gen_range(rect.y_range()),
+    };
 
-        return (a, b);
+    if rng.gen_bool(0.5) {
+        return split_horizontally(rect, padding, &split_point);
     }
+    split_vertically(rect, padding, &split_point)
+}
 
+fn random_color() -> Color {
+    let mut rng = thread_rng();
+    let hue: u16 = rng.gen_range(0..70);
+    Color::HSLa((hue, 50., 50., 1.))
+}
+
+fn split_horizontally(
+    rect: &Rectangle,
+    padding: f64,
+    split_point: &Point,
+) -> (Rectangle, Rectangle) {
     let a = Rectangle::new(
         rect.x,
         rect.y,
-        rect.width,
-        rect.height - rect.height / 2. - padding,
+        split_point.x - padding - rect.x,
+        rect.height,
     );
     let b = Rectangle::new(
-        rect.x,
-        rect.y + rect.height / 2. + padding,
-        rect.width,
-        rect.height / 2. - padding,
+        split_point.x + padding,
+        rect.y,
+        rect.x + rect.width - split_point.x - padding,
+        rect.height,
     );
 
     (a, b)
 }
 
-fn random_color(split: u8) -> Color {
-    let mut rng = thread_rng();
-    let hue: u16 = rng.gen_range(0..70);
-    let saturation = 0.1 * split as f64;
-    Color::HSLa((hue, saturation, 50., 1.))
+fn split_vertically(rect: &Rectangle, padding: f64, split_point: &Point) -> (Rectangle, Rectangle) {
+    let a = Rectangle::new(rect.x, rect.y, rect.width, split_point.y - padding - rect.y);
+    let b = Rectangle::new(
+        rect.x,
+        split_point.y + padding,
+        rect.width,
+        rect.y + rect.height - split_point.y - padding,
+    );
+
+    (a, b)
 }
