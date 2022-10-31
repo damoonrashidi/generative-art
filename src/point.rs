@@ -31,6 +31,13 @@ impl Point {
     pub fn angle_to(&self, other: &Point) -> f64 {
         (other.y - self.y).atan2(other.x - self.x)
     }
+
+    pub fn between(&self, other: &Point, percent: f64) -> Point {
+        Point {
+            x: self.x + (other.x - self.x) * percent,
+            y: self.y + (other.y - self.y) * percent,
+        }
+    }
 }
 
 impl Display for Point {
@@ -51,18 +58,18 @@ impl Shape for Point {
         }
     }
 
-    fn contains(&self, point: &Point) -> bool {
-        self.eq(point)
-    }
-
-    fn bounding_box(&self) -> crate::rectangle::Rectangle {
-        Rectangle {
+    fn bounding_box(&self) -> Option<Rectangle> {
+        Some(Rectangle {
             x: self.x,
             y: self.y,
             width: 1.,
             height: 1.,
             color: None,
-        }
+        })
+    }
+
+    fn contains(&self, point: &Point) -> bool {
+        self.eq(point)
     }
 }
 

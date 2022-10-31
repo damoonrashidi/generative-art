@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use rand::Rng;
 
-use crate::{palette::Color, point::Point, shape::Shape};
+use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
 
 pub struct Blob {
     pub position: Point,
@@ -67,7 +67,7 @@ impl Shape for Blob {
         }
     }
 
-    fn bounding_box(&self) -> crate::rectangle::Rectangle {
+    fn bounding_box(&self) -> Option<Rectangle> {
         todo!()
     }
 }

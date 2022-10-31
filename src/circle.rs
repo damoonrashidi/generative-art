@@ -68,14 +68,14 @@ impl Shape for Circle {
         }
     }
 
-    fn bounding_box(&self) -> Rectangle {
-        Rectangle {
+    fn bounding_box(&self) -> Option<Rectangle> {
+        Some(Rectangle {
             x: self.x - self.r,
             y: self.y - self.r,
             width: self.x + self.r,
             height: self.y + self.r,
             color: None,
-        }
+        })
     }
 
     fn contains(&self, point: &Point) -> bool {

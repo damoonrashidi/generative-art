@@ -164,8 +164,9 @@ mod test {
         };
         let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
-        let result = point_map.insert(circle);
-        assert_eq!(result.unwrap(), 1);
+        if let Ok(result) = point_map.insert(circle) {
+            assert_eq!(result, 1);
+        }
     }
 
     #[test]

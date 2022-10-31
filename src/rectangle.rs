@@ -1,7 +1,11 @@
 use std::{fmt::Display, ops::Range};
 
 use super::shape::Shape;
-use crate::{palette::Color, point::Point};
+use crate::{
+    palette::Color,
+    path::{Path, PathStyle},
+    point::Point,
+};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Rectangle {
@@ -43,12 +47,31 @@ impl Rectangle {
         }
     }
 
+    pub fn area(&self) -> f64 {
+        self.width * self.height
+    }
+
     pub fn x_range(&self) -> Range<f64> {
         self.x..(self.x + self.width)
     }
 
     pub fn y_range(&self) -> Range<f64> {
         self.y..(self.y + self.height)
+    }
+
+    pub fn to_path(&self, style: PathStyle) -> Path {
+        let points = vec![
+            (self.x, self.y),
+            (self.x + self.width, self.y),
+            (self.x + self.width, self.y + self.height),
+            (self.x, self.y + self.height),
+            (self.x, self.y),
+        ]
+        .iter()
+        .map(|(x, y)| Point { x: *x, y: *y })
+        .collect();
+
+        Path::new(points, style)
     }
 }
 
@@ -76,14 +99,14 @@ impl Shape for Rectangle {
         }
     }
 
-    fn bounding_box(&self) -> Rectangle {
-        Rectangle {
+    fn bounding_box(&self) -> Option<Rectangle> {
+        Some(Rectangle {
             x: self.x,
             y: self.y,
             width: self.width,
             height: self.height,
             color: None,
-        }
+        })
     }
 }
 

@@ -22,6 +22,15 @@ impl Path {
         self.points.push(point);
     }
 
+    pub fn wobble(&mut self) {
+        for (i, point) in self.points.clone().iter_mut().rev().enumerate() {
+            if let Some(next) = &self.points.get(i + 1) {
+                let between = point.between(next, 0.5);
+                self.points.insert(i, between);
+            }
+        }
+    }
+
     pub fn length(&self) -> f64 {
         if self.points.is_empty() {
             return 0.0;
@@ -43,12 +52,12 @@ impl Shape for Path {
 
         let stroke: String = match &self.style.stroke {
             Some(color) => format!("stroke=\"{}\" ", color),
-            _ => String::from(""),
+            None => String::from(""),
         };
 
-        let fill: String = match &self.style.stroke {
+        let fill: String = match &self.style.color {
             Some(color) => format!("fill=\"{}\" ", color),
-            _ => String::from(""),
+            None => String::from(""),
         };
 
         let stroke_weight: String = match &self.style.stroke_width {
@@ -58,19 +67,27 @@ impl Shape for Path {
 
         let first = self.points.first().unwrap();
 
-        let mut str = self.points.iter().skip(1).fold(
+        let mut str = self.points.iter().skip(1).enumerate().fold(
             format!(
-                "<path {}{}{}d=\"M {:.2} {:.2},",
+                "<path {}{}{}d=\"M{:.2},{:.2}",
                 fill, stroke, stroke_weight, first.x, first.y
             ),
-            |mut path, point| {
-                path.push_str(&format!("L {:.2} {:.2},", point.x, point.y));
+            |mut path, (i, point)| {
+                if let Some(previous) = self.points.get(i) {
+                    if previous.x == point.x {
+                        path.push_str(&format!(" V{:.2}", point.y));
+                    } else if previous.y == point.y {
+                        path.push_str(&format!(" H{:.2}", point.x));
+                    } else {
+                        path.push_str(&format!(" L{:.2},{:.2}", point.x, point.y));
+                    }
+                }
+
                 path
             },
         );
 
-        str.pop();
-        str.push_str("\"/>\n");
+        str.push_str(" Z \"/>\n");
         str
     }
 
@@ -78,47 +95,47 @@ impl Shape for Path {
         todo!()
     }
 
-    fn bounding_box(&self) -> Rectangle {
+    fn bounding_box(&self) -> Option<Rectangle> {
         if self.points.is_empty() {
-            panic!()
+            return None;
         }
 
-        let default_point = Point { x: 0., y: 0. };
-
-        let mut min_x = default_point.x;
-        let mut min_y = default_point.y;
-
-        if let Some(p) = self.points.get(0) {
-            min_x = p.x;
-            min_y = p.y;
+        if self.points.get(0).is_none() {
+            return None;
         }
 
+        let p = self.points.get(0).unwrap();
+
+        let min_x = p.x;
+        let min_y = p.y;
         let max_x = min_x;
         let max_y = min_y;
 
-        let bounding =
-            self.points
-                .iter()
-                .fold((min_x, min_y, max_x, max_y), |(x1, y1, x2, y2), point| {
-                    (
-                        x1.min(point.x),
-                        y1.min(point.y),
-                        x2.max(point.x),
-                        y2.max(point.y),
-                    )
-                });
+        let bounding = self.points.clone().iter().fold(
+            (min_x, min_y, max_x, max_y),
+            |(x1, y1, x2, y2), point| {
+                (
+                    x1.min(point.x),
+                    y1.min(point.y),
+                    x2.max(point.x),
+                    y2.max(point.y),
+                )
+            },
+        );
 
-        Rectangle {
-            x: bounding.0,
-            y: bounding.1,
-            width: bounding.2 - bounding.0,
-            height: bounding.3 - bounding.1,
-            color: None,
-        }
+        Some(Rectangle::new(
+            bounding.0,
+            bounding.1,
+            bounding.2 - bounding.0,
+            bounding.3 - bounding.1,
+        ))
     }
 
-    fn contains(&self, _point: &Point) -> bool {
-        todo!("Not yet implemented")
+    fn contains(&self, point: &Point) -> bool {
+        if let Some(bounding) = self.bounding_box() {
+            return bounding.contains(point);
+        }
+        false
     }
 }
 
@@ -139,17 +156,17 @@ mod test {
             style: Default::default(),
         };
 
-        let bounding = path.bounding_box();
-
-        assert_eq!(
-            bounding,
-            Rectangle {
-                x: -5.,
-                y: 0.,
-                width: 10.,
-                height: 10.,
-                color: None
-            }
-        )
+        if let Some(bounding) = path.bounding_box() {
+            assert_eq!(
+                bounding,
+                Rectangle {
+                    x: -5.,
+                    y: 0.,
+                    width: 10.,
+                    height: 10.,
+                    color: None
+                }
+            )
+        }
     }
 }
