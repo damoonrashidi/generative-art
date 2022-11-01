@@ -12,7 +12,7 @@ fn main() {
     let mut group = Group::new();
     let mut rects: Vec<Rectangle> = vec![root];
 
-    for _ in 0..20 {
+    for _ in 0..5 {
         for i in (0..rects.len()).rev() {
             if let Some(rect) = rects.get(i) {
                 if rng.gen_bool(0.7) && rect.area() > bounds.area() * 0.01 {
@@ -28,7 +28,7 @@ fn main() {
         }
     }
 
-    bounds.set_color(Color::Hex("#000"));
+    bounds.set_color(Color::HSLa((30, 85., 95., 1.)));
     svg.add_shape(Box::new(bounds));
 
     for rect in rects {

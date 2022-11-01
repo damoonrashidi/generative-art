@@ -27,6 +27,7 @@ impl Path {
     pub fn wobble(&mut self) {
         let mut rng = thread_rng();
         let mut new_list: Vec<Point> = vec![];
+        let center = self.center();
 
         for (i, mut point) in self.points.clone().into_iter().enumerate() {
             point.x += rng.gen_range(-3.0..3.0);
@@ -35,10 +36,10 @@ impl Path {
             new_list.push(point);
 
             if let Some(next) = self.points.get(i + 1) {
-                for p in 1..5 {
-                    let mut between = point.between(next, 1. / p as f64);
-                    between.x += rng.gen_range(-5.0..5.0);
-                    between.y += rng.gen_range(-5.0..5.0);
+                for p in (1..10).step_by(2) {
+                    let mut between = point.between(next, p as f64 / 10.);
+                    between.x += between.angle_to(&center).cos() * rng.gen_range(-5.0..5.0);
+                    between.y += between.angle_to(&center).sin() * rng.gen_range(-5.0..5.0);
                     new_list.push(between);
                 }
             }
@@ -108,7 +109,11 @@ impl Shape for Path {
     }
 
     fn center(&self) -> Point {
-        todo!()
+        if let Some(bounding) = self.bounding_box() {
+            bounding.center();
+        }
+
+        return Point { x: 0.0, y: 0.0 };
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
