@@ -50,7 +50,7 @@ impl Group {
         let g = self
             .shapes
             .iter()
-            .fold(format!("<g{fill}{stroke}{stroke_width}>"), |r, shape| {
+            .fold(format!("<g {fill}{stroke}{stroke_width}>"), |r, shape| {
                 format!("{}{}", r, shape.as_svg().trim())
             });
 

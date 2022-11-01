@@ -1,3 +1,5 @@
+use rand::{thread_rng, Rng};
+
 use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
 
 #[derive(Debug, Default)]
@@ -23,12 +25,26 @@ impl Path {
     }
 
     pub fn wobble(&mut self) {
-        for (i, point) in self.points.clone().iter_mut().rev().enumerate() {
-            if let Some(next) = &self.points.get(i + 1) {
-                let between = point.between(next, 0.5);
-                self.points.insert(i, between);
+        let mut rng = thread_rng();
+        let mut new_list: Vec<Point> = vec![];
+
+        for (i, mut point) in self.points.clone().into_iter().enumerate() {
+            point.x += rng.gen_range(-3.0..3.0);
+            point.y += rng.gen_range(-3.0..3.0);
+
+            new_list.push(point);
+
+            if let Some(next) = self.points.get(i + 1) {
+                for p in 1..5 {
+                    let mut between = point.between(next, 1. / p as f64);
+                    between.x += rng.gen_range(-5.0..5.0);
+                    between.y += rng.gen_range(-5.0..5.0);
+                    new_list.push(between);
+                }
             }
         }
+
+        self.points = new_list
     }
 
     pub fn length(&self) -> f64 {
@@ -69,8 +85,8 @@ impl Shape for Path {
 
         let mut str = self.points.iter().skip(1).enumerate().fold(
             format!(
-                "<path {}{}{}d=\"M{:.2},{:.2}",
-                fill, stroke, stroke_weight, first.x, first.y
+                "<path {fill}{stroke}{stroke_weight}d=\"M{:.2},{:.2}",
+                first.x, first.y
             ),
             |mut path, (i, point)| {
                 if let Some(previous) = self.points.get(i) {
