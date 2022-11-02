@@ -1,9 +1,18 @@
-# rust-gen-art
-Generative Art while learning Rust
+# Generative Art while learning Rust
 
 The binaries in this repo create generative artworks that can be fed to an axidraw machine that uses a paint brush/pen/pencil to paint an actual painting. 
 
 Generate a new iteration of a given artwork by running `cargo run --bin {{name}}` e.g. `cargo run --bin forces`.
+
+Currently `Forces` and `Piet` will add their configuration (all parameters that created the final output) as a comment at the end of the svg and they can be recreated (somewhat) by supplying them as CLI parameters
+
+```bash
+forces --size=1500.0 --density=5000 --distort=1.5 --zoom=1000.0 --seed=999
+```
+
+```bash 
+piet --size=1000 --rounds=5 --split-chance=0.7
+```
 
 <div style="display: flex; flex-wrap: wrap;">
 <img src="https://user-images.githubusercontent.com/207421/199185441-fb38b139-a3f7-40c0-b848-1253ab2aef95.jpg" width="500px"/>
@@ -14,7 +23,3 @@ Generate a new iteration of a given artwork by running `cargo run --bin {{name}}
 <img src="https://user-images.githubusercontent.com/207421/199186595-2c2f2c9e-4f65-4780-85bf-008aba92dab2.svg" width="500px"/>
 </div>
 
-## Some stuff I want do add
-
-* Make a config (and/or read CLI params) and feed that to the generation
-* Store painting configurations (and seeds) as comments in the SVG's to re-render them when needed

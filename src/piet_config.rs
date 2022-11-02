@@ -9,7 +9,7 @@ pub struct PietConfig {
     #[arg(long, default_value_t = 5)]
     pub rounds: usize,
 
-    #[arg(long, default_value_t = 1.8)]
+    #[arg(long, default_value_t = 0.7)]
     pub split_chance: f64,
 }
 
