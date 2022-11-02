@@ -1,3 +1,4 @@
+use palette::palette::{Color, WeightedPalette};
 /**
 * Parameters
 * -----------------------------
@@ -6,15 +7,9 @@
 * subdivision_rounds: usize
 * subdivision_probability: f64
 */
-use generative_art::{
-    group::Group,
-    palette::{Color, WeightedPalette},
-    path::PathStyle,
-    point::Point,
-    rectangle::Rectangle,
-    svg::SVG,
-};
 use rand::{thread_rng, Rng};
+use shapes::{path::PathStyle, point::Point, rectangle::Rectangle};
+use svg::{group::Group, svg::SVG};
 
 fn main() {
     let mut rng = thread_rng();

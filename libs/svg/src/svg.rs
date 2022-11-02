@@ -1,8 +1,9 @@
 use std::{fs::File, io::Write};
 
 use chrono::{Datelike, Utc};
+use shapes::{rectangle::Rectangle, shape::Shape};
 
-use crate::{group::Group, rectangle::Rectangle, shape::Shape};
+use crate::group::Group;
 
 pub struct SVG<'a> {
     pub name: &'a str,

@@ -133,8 +133,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
 
 #[cfg(test)]
 mod test {
-
-    use crate::{circle::Circle, point::Point, pointmap::PointMap, rectangle::Rectangle};
+    use crate::point::Point;
 
     #[test]
     fn get_index() {

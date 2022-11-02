@@ -1,6 +1,7 @@
+use palette::palette::Color;
 use rand::{thread_rng, Rng};
 
-use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
+use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
 #[derive(Debug, Default)]
 pub struct Path {

@@ -137,11 +137,13 @@ checksum = "3f107b87b6afc2a64fd13cac55fe06d6c8859f12d4b14cbcdd2c67d0976781be"
 name = "generative-art"
 version = "0.1.0"
 dependencies = [
- "chrono",
  "noise",
- "num-traits",
+ "palette",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
+ "shapes",
+ "svg",
+ "transforms",
 ]
 
 [[package]]
@@ -316,6 +318,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18a6dbe30758c9f83eb00cbea4ac95966305f5a7772f3f42ebfc7fc7eddbd8e1"
 
 [[package]]
+name = "palette"
+version = "0.1.0"
+dependencies = [
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+]
+
+[[package]]
 name = "png"
 version = "0.16.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -450,6 +460,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
+name = "shapes"
+version = "0.1.0"
+dependencies = [
+ "noise",
+ "palette",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "transforms",
+]
+
+[[package]]
+name = "svg"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "palette",
+ "shapes",
+]
+
+[[package]]
 name = "tiff"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -469,6 +499,13 @@ dependencies = [
  "libc",
  "wasi 0.10.0+wasi-snapshot-preview1",
  "winapi",
+]
+
+[[package]]
+name = "transforms"
+version = "0.1.0"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]

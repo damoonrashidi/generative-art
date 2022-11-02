@@ -1,17 +1,18 @@
 use std::ops::Range;
 
-use generative_art::{
-    group::{Group, GroupStyle},
-    palette::Color,
+use palette::palette::Color;
+use rand::{Rng, SeedableRng};
+use rand_chacha::ChaCha20Rng;
+use shapes::{
     path::{Path, PathStyle},
     point::Point,
     pointmap::PointMap,
     rectangle::Rectangle,
+};
+use svg::{
+    group::{Group, GroupStyle},
     svg::SVG,
 };
-
-use rand::{Rng, SeedableRng};
-use rand_chacha::ChaCha20Rng;
 
 fn main() {
     let bounds = Rectangle {

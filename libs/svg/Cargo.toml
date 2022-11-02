@@ -1,0 +1,11 @@
+[package]
+name = "svg"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+chrono = "0.4.19"
+shapes = { path = "../shapes" }
+palette = { path = "../palette" }

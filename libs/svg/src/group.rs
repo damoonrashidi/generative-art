@@ -1,4 +1,5 @@
-use crate::{palette::Color, shape::Shape};
+use palette::palette::Color;
+use shapes::shape::Shape;
 
 #[derive(Default)]
 pub struct GroupStyle {

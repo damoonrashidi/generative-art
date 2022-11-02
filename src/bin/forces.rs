@@ -8,20 +8,22 @@
 * distort: f64
 * zoom: f64
 */
-use generative_art::{
+use noise::{NoiseFn, OpenSimplex, Seedable};
+use palette::palette::{Color, WeightedPalette};
+use rand::prelude::*;
+use rand_chacha::ChaCha20Rng;
+use shapes::{
     circle::Circle,
-    group::{Group, GroupStyle},
-    palette::{Color, WeightedPalette},
     path::{Path, PathStyle},
     point::Point,
     pointmap::PointMap,
     rectangle::Rectangle,
     shape::Shape,
+};
+use svg::{
+    group::{Group, GroupStyle},
     svg::SVG,
 };
-use noise::{NoiseFn, OpenSimplex, Seedable};
-use rand::prelude::*;
-use rand_chacha::ChaCha20Rng;
 
 fn main() {
     const MIN_LINE_LENGHT: f64 = 80.0;

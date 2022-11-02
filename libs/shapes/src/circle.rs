@@ -1,6 +1,8 @@
 use std::fmt::Display;
 
-use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
+use palette::palette::Color;
+
+use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Circle {

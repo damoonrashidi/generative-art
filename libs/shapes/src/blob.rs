@@ -1,8 +1,9 @@
 use std::f64::consts::PI;
 
+use palette::palette::Color;
 use rand::Rng;
 
-use crate::{palette::Color, point::Point, rectangle::Rectangle, shape::Shape};
+use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
 pub struct Blob {
     pub position: Point,

@@ -1,8 +1,9 @@
 use std::{fmt::Display, ops::Range};
 
+use palette::palette::Color;
+
 use super::shape::Shape;
 use crate::{
-    palette::Color,
     path::{Path, PathStyle},
     point::Point,
 };

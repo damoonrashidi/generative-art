@@ -3,14 +3,14 @@ name = "generative-art"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-
 [dependencies]
-chrono = "0.4.19"
 noise = "0.7.0"
-num-traits = "0.2.15"
 rand = "0.8.5"
 rand_chacha = "0.3.1"
+svg = { path = "libs/svg" }
+shapes = { path = "libs/shapes" }
+transforms = { path = "libs/transforms" }
+palette = { path = "libs/palette" }
 
 [[bin]]
 name = "grid"
