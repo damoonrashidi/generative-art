@@ -155,7 +155,7 @@ mod test {
 
         let point = Point { x: 10.0, y: 30.0 };
 
-        assert_eq!(rect.contains(&point), false);
+        assert!(!rect.contains(&point));
     }
 
     #[test]

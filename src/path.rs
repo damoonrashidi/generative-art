@@ -82,30 +82,31 @@ impl Shape for Path {
             None => String::from(""),
         };
 
-        let first = self.points.first().unwrap();
-
-        let mut str = self.points.iter().skip(1).enumerate().fold(
-            format!(
-                "<path {fill}{stroke}{stroke_weight}d=\"M{:.2},{:.2}",
-                first.x, first.y
-            ),
-            |mut path, (i, point)| {
-                if let Some(previous) = self.points.get(i) {
-                    if previous.x == point.x {
-                        path.push_str(&format!(" V{:.2}", point.y));
-                    } else if previous.y == point.y {
-                        path.push_str(&format!(" H{:.2}", point.x));
-                    } else {
-                        path.push_str(&format!(" L{:.2},{:.2}", point.x, point.y));
+        if let Some(first) = self.points.first() {
+            let mut str = self.points.iter().skip(1).enumerate().fold(
+                format!(
+                    "<path {fill}{stroke}{stroke_weight}d=\"M{:.2},{:.2}",
+                    first.x, first.y
+                ),
+                |mut path, (i, point)| {
+                    if let Some(previous) = self.points.get(i) {
+                        if previous.x == point.x {
+                            path.push_str(&format!(" V{:.2}", point.y));
+                        } else if previous.y == point.y {
+                            path.push_str(&format!(" H{:.2}", point.x));
+                        } else {
+                            path.push_str(&format!(" L{:.2},{:.2}", point.x, point.y));
+                        }
                     }
-                }
 
-                path
-            },
-        );
+                    path
+                },
+            );
 
-        str.push_str(" \"/>\n");
-        str
+            str.push_str(" \"/>\n");
+            return str;
+        }
+        String::from("")
     }
 
     fn center(&self) -> Point {
@@ -113,7 +114,7 @@ impl Shape for Path {
             bounding.center();
         }
 
-        return Point { x: 0.0, y: 0.0 };
+        Point { x: 0.0, y: 0.0 }
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
@@ -121,11 +122,11 @@ impl Shape for Path {
             return None;
         }
 
-        if self.points.get(0).is_none() {
+        let p = if let Some(p) = self.points.get(0) {
+            p
+        } else {
             return None;
-        }
-
-        let p = self.points.get(0).unwrap();
+        };
 
         let min_x = p.x;
         let min_y = p.y;
@@ -153,8 +154,8 @@ impl Shape for Path {
     }
 
     fn contains(&self, point: &Point) -> bool {
-        if let Some(bounding) = self.bounding_box() {
-            return bounding.contains(point);
+        if let Some(bounds) = self.bounding_box() {
+            return bounds.contains(point);
         }
         false
     }

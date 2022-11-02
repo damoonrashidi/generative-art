@@ -55,7 +55,12 @@ impl WeightedPalette {
             .map(|color| color.1)
             .collect::<Vec<usize>>();
 
-        let dist = WeightedIndex::new(&weights).unwrap();
+        let dist = if let Ok(dist) = WeightedIndex::new(&weights) {
+            dist
+        } else {
+            return None;
+        };
+
         let i = dist.sample(&mut rng);
 
         match self.colors.len() {

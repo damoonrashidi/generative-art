@@ -203,12 +203,12 @@ mod test {
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 5.0);
         let non_neighbor = Circle::new(Point { x: 30.3, y: 50.4 }, 10.0);
 
-        let _ = point_map.insert(circle);
-        let __ = point_map.insert(non_neighbor);
+        let _insertion = point_map.insert(circle);
+        let _neighbor_insertion = point_map.insert(non_neighbor);
 
         if let Ok(neighbors) = point_map.get_neighbors(circle, None) {
             assert_eq!(neighbors.len(), 1);
-            assert_eq!(neighbors.first().unwrap().to_owned(), circle);
+            assert_eq!(neighbors.first().unwrap(), &circle);
         }
     }
 
@@ -225,13 +225,13 @@ mod test {
         let circle = Circle::new(Point { x: 99.0, y: 11.0 }, 5.0);
         let non_neighbor = Circle::new(Point { x: 101.1, y: 50.4 }, 10.0);
 
-        let _ = point_map.insert(circle);
-        let __ = point_map.insert(non_neighbor);
+        let _insertion = point_map.insert(circle);
+        let _neighbor_insertion = point_map.insert(non_neighbor);
 
         let neighbors = point_map.get_neighbors(circle, None).unwrap();
 
         assert_eq!(neighbors.len(), 1);
-        assert_eq!(neighbors.first().unwrap().to_owned(), circle);
+        assert_eq!(neighbors.first().unwrap(), &circle);
     }
 
     #[test]
