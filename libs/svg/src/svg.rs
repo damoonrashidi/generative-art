@@ -35,8 +35,12 @@ impl SVG<'static> {
         self.bounds
     }
 
-    pub fn save(&mut self) {
-        let _ = &self.document.push_str("</svg>");
+    pub fn save(&mut self, config: Option<String>) {
+        let _ = self.document.push_str("</svg>");
+
+        if let Some(comment) = config {
+            self.document = format!("{}{}", self.document, comment);
+        }
 
         let now = Utc::now();
         let time = format!(
@@ -49,8 +53,8 @@ impl SVG<'static> {
 
         let path = format!(
             "./output/{}/{}-{}.svg",
-            &self.name.to_lowercase(),
-            &self.name,
+            self.name.to_lowercase(),
+            self.name,
             time
         );
 

@@ -1,19 +1,14 @@
+use generative_art::piet_config::PietConfig;
 use palette::palette::{Color, WeightedPalette};
-/**
-* Parameters
-* -----------------------------
-* size: f64
-* color_scheme: WeightedPalette
-* subdivision_rounds: usize
-* subdivision_probability: f64
-*/
+
 use rand::{thread_rng, Rng};
 use shapes::{path::PathStyle, point::Point, rectangle::Rectangle};
 use svg::{group::Group, svg::SVG};
 
 fn main() {
     let mut rng = thread_rng();
-    let mut bounds = Rectangle::new(0., 0., 2000., 2000.0);
+    let config = PietConfig::new();
+    let mut bounds = Rectangle::new(0., 0., config.size, config.size);
     let root = bounds.scale(0.95);
 
     let mut svg = SVG::new("piet", bounds);
@@ -26,10 +21,10 @@ fn main() {
         (Color::Hex("#f00"), 1),
     ]);
 
-    for _ in 0..5 {
+    for _ in 0..config.rounds {
         for i in (0..rects.len()).rev() {
             if let Some(rect) = rects.get(i) {
-                if rng.gen_bool(0.7) && rect.area() > bounds.area() * 0.01 {
+                if rng.gen_bool(config.split_chance) && rect.area() > bounds.area() * 0.01 {
                     let (mut a, mut b) = subdivide(rect);
                     rects.remove(i);
 
@@ -67,7 +62,7 @@ fn main() {
         });
 
     svg.add_group(group);
-    svg.save();
+    svg.save(Some(config.into()));
 }
 
 fn subdivide(rect: &Rectangle) -> (Rectangle, Rectangle) {

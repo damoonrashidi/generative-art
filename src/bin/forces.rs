@@ -1,13 +1,5 @@
-/**
-* Parameters
-* -----------------------------
-* size: f64
-* color_scheme: WeightedPalette
-* line_weights: Vec<{radius: f64, step_size: f64, probability: f64}>
-* density: f64
-* distort: f64
-* zoom: f64
-*/
+use generative_art::forces_config::ForcesConfig;
+
 use noise::{NoiseFn, OpenSimplex, Seedable};
 use palette::palette::{Color, WeightedPalette};
 use rand::prelude::*;
@@ -28,13 +20,10 @@ use svg::{
 fn main() {
     const MIN_LINE_LENGHT: f64 = 80.0;
 
-    let bounds = Rectangle {
-        x: 0.0,
-        y: 0.0,
-        width: 2000.,
-        height: 2000. * 1.4,
-        color: Some(Color::Hex("#181D31")),
-    };
+    let config = ForcesConfig::new();
+    let bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
+    let inner_bounds = bounds.scale(0.9);
+
     let mut svg = SVG::new("Forces", bounds);
     let mut rng = ChaCha20Rng::from_entropy();
     let palette = WeightedPalette::new(vec![
@@ -45,10 +34,8 @@ fn main() {
 
     let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 20);
     let noise = OpenSimplex::new();
-    Seedable::set_seed(noise, 5);
+    Seedable::set_seed(noise, config.seed);
 
-    let distort = 1.5;
-    let zoom = 800.;
     svg.add_shape(Box::new(bounds));
 
     let mut group = Group::new();
@@ -59,9 +46,9 @@ fn main() {
         stroke_width: Some(15.0),
     });
 
-    for i in 0..5000 {
-        let mut x: f64 = rng.gen_range(bounds.x_range());
-        let mut y: f64 = rng.gen_range(bounds.y_range());
+    for i in 0..config.density {
+        let mut x: f64 = rng.gen_range(inner_bounds.x_range());
+        let mut y: f64 = rng.gen_range(inner_bounds.y_range());
         let mut r = 65.0;
         let mut step_size = 50.0;
 
@@ -81,10 +68,10 @@ fn main() {
             },
         };
 
-        while bounds.contains(&Point { x, y }) {
-            let n = noise.get([x / zoom, y / zoom]);
-            x += (distort * n).cos() * step_size;
-            y += (distort * n).sin() * step_size;
+        while inner_bounds.contains(&Point { x, y }) {
+            let n = noise.get([x / config.zoom, y / config.zoom]);
+            x += (config.distort * n).cos() * step_size;
+            y += (config.distort * n).sin() * step_size;
             let circle = Circle::new(Point { x, y }, r);
 
             if let Ok(neighbors) = point_map.get_neighbors(circle, None) {
@@ -118,5 +105,5 @@ fn main() {
     }
 
     svg.add_group(group);
-    svg.save();
+    svg.save(Some(config.into()));
 }

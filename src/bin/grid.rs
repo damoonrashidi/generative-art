@@ -47,7 +47,7 @@ fn main() {
         x += block_width;
     }
 
-    document.save();
+    document.save(None);
 }
 
 fn get_dot_count(y: f64, area: f64, render_height: f64) -> i32 {

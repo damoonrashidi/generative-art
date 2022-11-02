@@ -74,7 +74,7 @@ fn main() {
     });
 
     svg.add_group(g);
-    svg.save();
+    svg.save(None);
 }
 
 fn gen_weighted(range: Range<f64>, rng: &mut ChaCha20Rng) -> f64 {
