@@ -23,7 +23,7 @@ impl Circle {
     pub fn distance(&self, other: &Circle) -> f64 {
         let d_x = self.x - other.x;
         let d_y = self.y - other.y;
-        (d_x.powi(2) + d_y.powi(2)).sqrt() - (self.r * 2.0 + other.r * 2.0)
+        (d_x.powi(2) + d_y.powi(2)).sqrt() - self.r - other.r
     }
 
     pub fn intersects(&self, other: &Circle) -> bool {
@@ -79,7 +79,7 @@ impl Shape for Circle {
     }
 
     fn contains(&self, point: &Point) -> bool {
-        self.distance(&Circle::new(*point, 0.0)) < self.r
+        self.center().distance(point) < self.r
     }
 }
 

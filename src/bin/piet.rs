@@ -1,3 +1,11 @@
+/**
+* Parameters
+* -----------------------------
+* size: f64
+* color_scheme: WeightedPalette
+* subdivision_rounds: usize
+* subdivision_probability: f64
+*/
 use generative_art::{
     group::Group,
     palette::{Color, WeightedPalette},
@@ -15,7 +23,7 @@ fn main() {
 
     let mut svg = SVG::new("piet", bounds);
     let mut group = Group::new();
-    let mut rects: Vec<Rectangle> = vec![root];
+    let mut rects = vec![root];
 
     let palette = WeightedPalette::new(vec![
         (Color::Hex("#fff"), 10),
