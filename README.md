@@ -14,6 +14,8 @@ forces --size=1500.0 --density=5000 --distort=1.5 --zoom=1000.0 --seed=999
 piet --size=1000 --rounds=5 --split-chance=0.7
 ```
 
+Generated artworks can be found in `./outputs/{name}/{name}-{timestamp}.svg`
+
 <div style="display: flex; flex-wrap: wrap;">
 <img src="https://user-images.githubusercontent.com/207421/199185441-fb38b139-a3f7-40c0-b848-1253ab2aef95.jpg" width="500px"/>
 <img src="https://user-images.githubusercontent.com/207421/199185514-8e032933-81d9-415d-8bb1-7372efe30a33.jpg" width="500px"/>
