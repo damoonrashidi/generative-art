@@ -70,11 +70,11 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
      *  ----------------------
      */
     pub fn get_neighbors(&self, shape: T, distance: Option<f64>) -> Result<Vec<T>, &str> {
-        if !self.bounds.contains(&shape.center()) {
+        let center = shape.center();
+        if !self.bounds.contains(&center) {
             return Err("out of bounds call for this pointmap");
         }
-
-        let i = self.get_index(&shape.center());
+        let i = self.get_index(&center);
 
         let items = self
             .get_neighboring_cells(i)
