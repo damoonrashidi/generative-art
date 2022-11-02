@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use rand::Rng;
+use rand::{distributions::WeightedIndex, prelude::Distribution, Rng};
 
 #[derive(Clone, Copy, Debug)]
 pub enum Color {
@@ -24,9 +24,8 @@ pub struct Palette {
 }
 
 impl Palette {
-    pub fn new(&mut self, colors: Vec<Color>) -> &Self {
-        self.colors = colors;
-        self
+    pub fn new(colors: Vec<Color>) -> Palette {
+        Palette { colors }
     }
 
     pub fn get_random_color(&self) -> Option<Color> {
@@ -34,6 +33,34 @@ impl Palette {
         match self.colors.len() {
             0 => None,
             i => Some(self.colors[rng.gen_range(0..i - 1)]),
+        }
+    }
+}
+
+pub struct WeightedPalette {
+    colors: Vec<(Color, usize)>,
+}
+
+impl WeightedPalette {
+    pub fn new(colors: Vec<(Color, usize)>) -> WeightedPalette {
+        WeightedPalette { colors }
+    }
+
+    pub fn get_random_color(&self) -> Option<Color> {
+        let mut rng = rand::thread_rng();
+        let weights = self
+            .colors
+            .clone()
+            .into_iter()
+            .map(|color| color.1)
+            .collect::<Vec<usize>>();
+
+        let dist = WeightedIndex::new(&weights).unwrap();
+        let i = dist.sample(&mut rng);
+
+        match self.colors.len() {
+            0 => None,
+            _ => Some(self.colors[i].0),
         }
     }
 }

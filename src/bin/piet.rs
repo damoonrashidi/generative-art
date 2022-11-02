@@ -1,5 +1,10 @@
 use generative_art::{
-    group::Group, palette::Color, path::PathStyle, point::Point, rectangle::Rectangle, svg::SVG,
+    group::Group,
+    palette::{Color, WeightedPalette},
+    path::PathStyle,
+    point::Point,
+    rectangle::Rectangle,
+    svg::SVG,
 };
 use rand::{thread_rng, Rng};
 
@@ -12,6 +17,12 @@ fn main() {
     let mut group = Group::new();
     let mut rects: Vec<Rectangle> = vec![root];
 
+    let palette = WeightedPalette::new(vec![
+        (Color::Hex("#fff"), 10),
+        (Color::Hex("#111"), 2),
+        (Color::Hex("#f00"), 1),
+    ]);
+
     for _ in 0..5 {
         for i in (0..rects.len()).rev() {
             if let Some(rect) = rects.get(i) {
@@ -19,8 +30,14 @@ fn main() {
                     let (mut a, mut b) = subdivide(rect);
                     rects.remove(i);
 
-                    a.set_color(random_color());
-                    b.set_color(random_color());
+                    if let Some(a_color) = palette.get_random_color() {
+                        a.set_color(a_color);
+                    }
+
+                    if let Some(b_color) = palette.get_random_color() {
+                        b.set_color(b_color);
+                    }
+
                     rects.push(a);
                     rects.push(b);
                 }
@@ -31,16 +48,20 @@ fn main() {
     bounds.set_color(Color::HSLa((30, 85., 95., 1.)));
     svg.add_shape(Box::new(bounds));
 
-    for rect in rects {
-        let mut path = rect.to_path(PathStyle {
-            color: rect.color,
-            stroke_width: None,
-            stroke: None,
+    rects
+        .iter()
+        .map(|rect| {
+            let mut path = rect.to_path(PathStyle {
+                color: rect.color,
+                stroke_width: None,
+                stroke: None,
+            });
+            path.wobble();
+            path
+        })
+        .for_each(|path| {
+            group.add_shape(Box::new(path));
         });
-
-        path.wobble();
-        group.add_shape(Box::new(path));
-    }
 
     svg.add_group(group);
     svg.save();
@@ -60,14 +81,6 @@ fn subdivide(rect: &Rectangle) -> (Rectangle, Rectangle) {
     }
 
     split_vertically(rect, 16., &split_point)
-}
-
-fn random_color() -> Color {
-    let mut rng = thread_rng();
-    let hue: u16 = rng.gen_range(0..359);
-    let s: f64 = rng.gen_range(40.0..80.0);
-    let l: f64 = rng.gen_range(40.0..100.);
-    Color::HSLa((hue, s, l, 1.))
 }
 
 fn split_horizontally(

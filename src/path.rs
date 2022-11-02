@@ -104,7 +104,7 @@ impl Shape for Path {
             },
         );
 
-        str.push_str(" Z \"/>\n");
+        str.push_str(" \"/>\n");
         str
     }
 
