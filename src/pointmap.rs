@@ -125,7 +125,7 @@ impl<'a, T: Shape + Clone> PointMap<'a, T> {
             under + 1,
         ]
         .into_iter()
-        .filter(|cell| cell > &0 || (cell.to_owned() as usize) < self.cells.len())
+        .filter(|cell| *cell > 0 || (*cell as usize) < self.cells.len())
         .map(|cell| cell as usize)
         .collect::<Vec<usize>>()
     }
