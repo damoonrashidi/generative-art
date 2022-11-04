@@ -7,4 +7,3 @@ edition = "2021"
 [dependencies]
 num-traits = "0.2.15"
 rand = "0.8.5"
-rand_chacha = "0.3.1"
