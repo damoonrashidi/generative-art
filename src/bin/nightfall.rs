@@ -25,7 +25,8 @@ fn main() {
     let scaled_bounds = bounds.scale(0.9);
 
     let mut svg = SVG::new("Nightfall", bounds);
-    let mut pointmap: PointMap<Point> = PointMap::new::<Point>(&bounds, 50);
+    let mut pointmap: PointMap<Point> =
+        PointMap::new::<Point>(&bounds, (config.distance / config.size * 1000.0) as usize);
 
     let mut rng = thread_rng();
 

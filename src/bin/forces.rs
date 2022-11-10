@@ -21,15 +21,18 @@ fn main() {
     const MIN_LINE_LENGHT: f64 = 80.0;
 
     let config = ForcesConfig::new();
-    let bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
+    let mut bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
     let inner_bounds = bounds.scale(0.9);
+
+    bounds.set_color(Color::Hex("#fff"));
 
     let mut svg = SVG::new("Forces", bounds);
     let mut rng = ChaCha20Rng::from_entropy();
     let palette = WeightedPalette::new(vec![
-        (Color::Hex("#678983"), 1),
-        (Color::Hex("#E6DDC4"), 3),
-        (Color::Hex("#F0E9D2"), 5),
+        (Color::Hex("#F9F2ED"), 1),
+        (Color::Hex("#3AB0FF"), 3),
+        (Color::Hex("#FFB562"), 3),
+        (Color::Hex("#F87474"), 3),
     ]);
 
     let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 20);
