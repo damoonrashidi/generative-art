@@ -7,7 +7,7 @@ Generate a new iteration of a given artwork by running `cargo run --bin {{name}}
 Currently `Forces` and `Piet` will add their configuration (all parameters that created the final output) as a comment at the end of the svg and they can be recreated (somewhat) by supplying them as CLI parameters
 
 ```bash
-forces --size=1500.0 --density=5000 --distort=1.5 --zoom=1000.0 --seed=999
+forces --size=1500.0 --line-count=5000 --chaos=1.5 --smoothness=1000.0 --seed=999
 ```
 
 ```bash 

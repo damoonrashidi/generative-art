@@ -9,7 +9,7 @@ pub struct PointMap<'a, T> {
 }
 
 impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
-    pub fn new<S>(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
+    pub fn new(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
         let map = vec![vec![]; resolution.pow(2)];
 
         PointMap {

@@ -35,7 +35,7 @@ fn main() {
         (Color::Hex("#F87474"), 3),
     ]);
 
-    let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 20);
+    let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, config.seed);
 
@@ -49,7 +49,7 @@ fn main() {
         stroke_width: Some(15.0),
     });
 
-    for i in 0..config.density {
+    for i in 0..config.line_count {
         let mut x: f64 = rng.gen_range(inner_bounds.x_range());
         let mut y: f64 = rng.gen_range(inner_bounds.y_range());
         let mut r = 65.0;
@@ -72,9 +72,9 @@ fn main() {
         };
 
         while inner_bounds.contains(&Point { x, y }) {
-            let n = noise.get([x / config.zoom, y / config.zoom]);
-            x += (config.distort * n).cos() * step_size;
-            y += (config.distort * n).sin() * step_size;
+            let n = noise.get([x / config.smoothness, y / config.smoothness]);
+            x += (config.chaos * n).cos() * step_size;
+            y += (config.chaos * n).sin() * step_size;
             let circle = Circle::new(Point { x, y }, r);
 
             if let Ok(neighbors) = point_map.get_neighbors(circle, None) {

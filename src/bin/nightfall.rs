@@ -26,7 +26,7 @@ fn main() {
 
     let mut svg = SVG::new("Nightfall", bounds);
     let mut pointmap: PointMap<Point> =
-        PointMap::new::<Point>(&bounds, (config.distance / config.size * 1000.0) as usize);
+        PointMap::new(&bounds, (config.distance / config.size * 1000.0) as usize);
 
     let mut rng = thread_rng();
 
