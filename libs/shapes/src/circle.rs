@@ -58,7 +58,7 @@ impl Shape for Circle {
         };
 
         format!(
-            "<circle cx=\"{}\" cy=\"{}\" r=\"{}\" fill=\"{}\" />",
+            "<circle cx=\"{:.2}\" cy=\"{:.2}\" r=\"{:.2}\" fill=\"{}\" />",
             self.x, self.y, self.r, fill
         )
     }

@@ -60,7 +60,7 @@ fn main() {
                     0.5,
                 );
 
-                circle.set_color(Color::Hex("#111"));
+                circle.set_color(Color::Hex("#1115"));
 
                 points.push(circle);
             }
@@ -92,5 +92,5 @@ fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64) -> i32 {
     let mut rng = rand::thread_rng();
     let count = (render_height - rect.y) * rng.gen_range(2.0..4.0) + normalized_area;
 
-    min(count as i32, 500)
+    min(count as i32, 100)
 }
