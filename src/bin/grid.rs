@@ -1,6 +1,6 @@
 use palette::palette::Color;
 use shapes::{circle::Circle, point::Point};
-use std::cmp::min;
+
 use std::sync::mpsc::channel;
 use threadpool::ThreadPool;
 
@@ -92,5 +92,5 @@ fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64) -> i32 {
     let mut rng = rand::thread_rng();
     let count = (render_height - rect.y) * rng.gen_range(2.0..4.0) + normalized_area;
 
-    min(count as i32, 100)
+    (count as i32).min(999)
 }
