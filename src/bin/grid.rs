@@ -1,7 +1,11 @@
+use palette::palette::Color;
+use shapes::{circle::Circle, point::Point};
 use std::cmp::min;
+use std::sync::mpsc::channel;
+use threadpool::ThreadPool;
 
-use rand::Rng;
-use shapes::{circle::Circle, point::Point, rectangle::Rectangle};
+use rand::{thread_rng, Rng};
+use shapes::rectangle::Rectangle;
 use svg::svg::SVG;
 
 fn main() {
@@ -13,45 +17,69 @@ fn main() {
         color: None,
     };
 
-    let padding = bounds.width / 10.0;
+    let inner_bounds = bounds.scale(0.9);
+    let mut rects: Vec<Rectangle> = vec![];
     let mut document = SVG::new("Grid", bounds);
-
-    let mut x: f64 = padding;
     let mut rng = rand::thread_rng();
 
-    while x < bounds.width - padding {
-        let block_width = rng.gen_range(bounds.width * 0.003..bounds.width * 0.04);
-        let mut y: f64 = padding;
+    let mut x: f64 = inner_bounds.x;
 
-        while y < bounds.height - padding {
+    while inner_bounds.x_range().contains(&x) {
+        let block_width = rng.gen_range(bounds.width * 0.003..bounds.width * 0.04);
+        let mut y = inner_bounds.y;
+
+        while inner_bounds.y_range().contains(&y) {
             let block_height = if rng.gen_bool(0.2) {
                 bounds.height * rng.gen_range(0.03..0.045)
             } else {
                 bounds.height * rng.gen_range(0.002..0.01)
             };
 
-            let area = block_width * block_height;
-            let dot_count = get_dot_count(y, area, bounds.height);
-
-            for _ in 0..dot_count {
-                let cy: f64 = rng.gen_range(y..(y + block_height));
-                let cx: f64 = rng.gen_range(x..(x + block_width));
-                let r: f64 = 1.0;
-
-                document.add_shape(Box::new(Circle::new(Point { x: cx, y: cy }, r)));
-            }
-
+            let rect = Rectangle::new(x, y, block_width, block_height);
+            rects.push(rect);
             y += block_height;
         }
-
         x += block_width;
     }
+
+    let count = rects.len();
+    let pool = ThreadPool::new(count);
+    let (sender, receiver) = channel::<Vec<Circle>>();
+    for rect in rects {
+        let sender = sender.clone();
+        pool.execute(move || {
+            let mut thread_rng = thread_rng();
+            let mut points: Vec<Circle> = vec![];
+            let dots = get_dot_count(&rect, bounds.height);
+            for _ in 0..dots {
+                let mut circle = Circle::new(
+                    Point {
+                        x: thread_rng.gen_range(rect.x_range()),
+                        y: thread_rng.gen_range(rect.y_range()),
+                    },
+                    0.5,
+                );
+
+                circle.set_color(Color::Hex("#111"));
+
+                points.push(circle);
+            }
+            sender.send(points).expect("error");
+        });
+    }
+
+    receiver.iter().take(count).for_each(|circles| {
+        for circle in circles {
+            document.add_shape(Box::new(circle));
+        }
+    });
 
     document.save(None);
 }
 
-fn get_dot_count(y: f64, area: f64, render_height: f64) -> i32 {
-    let area_str = format!("{}", area);
+#[allow(unused)]
+fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64) -> i32 {
+    let area_str = format!("{}", rect.area());
 
     let max_str_len = std::cmp::min(area_str.len(), 4);
 
@@ -62,7 +90,7 @@ fn get_dot_count(y: f64, area: f64, render_height: f64) -> i32 {
         .unwrap_or(0.);
 
     let mut rng = rand::thread_rng();
-    let count = (render_height - y) * rng.gen_range(2.0..4.0) + normalized_area;
+    let count = (render_height - rect.y) * rng.gen_range(2.0..4.0) + normalized_area;
 
-    min(count as i32, 100)
+    min(count as i32, 500)
 }
