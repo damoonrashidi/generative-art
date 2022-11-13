@@ -21,10 +21,8 @@ fn main() {
     const MIN_LINE_LENGHT: f64 = 80.0;
 
     let config = ForcesConfig::new();
-    let mut bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
+    let bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
     let inner_bounds = bounds.scale(0.9);
-
-    bounds.set_color(Color::Hex("#fff"));
 
     let mut svg = SVG::new("Forces", bounds);
     let mut rng = ChaCha20Rng::from_entropy();
@@ -38,8 +36,6 @@ fn main() {
     let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, config.seed);
-
-    svg.add_shape(Box::new(bounds));
 
     let mut group = Group::new();
 

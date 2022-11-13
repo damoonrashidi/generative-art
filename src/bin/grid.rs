@@ -1,3 +1,4 @@
+use generative_art::grid_config::GridConfig;
 use palette::palette::Color;
 use shapes::{circle::Circle, point::Point};
 
@@ -9,11 +10,13 @@ use shapes::rectangle::Rectangle;
 use svg::svg::SVG;
 
 fn main() {
+    let config = GridConfig::new();
+
     let bounds = Rectangle {
         x: 0.0,
         y: 0.0,
-        width: 1000.0,
-        height: 1000.0 * 1.4,
+        width: config.size,
+        height: config.size * 1.4,
         color: None,
     };
 
@@ -50,7 +53,7 @@ fn main() {
         pool.execute(move || {
             let mut thread_rng = thread_rng();
             let mut points: Vec<Circle> = vec![];
-            let dots = get_dot_count(&rect, bounds.height);
+            let dots = get_dot_count(&rect, bounds.height, config.max_dots);
             for _ in 0..dots {
                 let mut circle = Circle::new(
                     Point {
@@ -78,7 +81,7 @@ fn main() {
 }
 
 #[allow(unused)]
-fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64) -> i32 {
+fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64, max_count: usize) -> usize {
     let area_str = format!("{}", rect.area());
 
     let max_str_len = std::cmp::min(area_str.len(), 4);
@@ -92,5 +95,5 @@ fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64) -> i32 {
     let mut rng = rand::thread_rng();
     let count = (render_height - rect.y) * rng.gen_range(2.0..4.0) + normalized_area;
 
-    (count as i32).min(999)
+    (count as usize).min(max_count)
 }
