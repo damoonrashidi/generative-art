@@ -1,6 +1,6 @@
 use std::{fmt::Display, ops::Range};
 
-use palette::palette::Color;
+use palette::color::Color;
 
 use super::shape::Shape;
 use crate::{

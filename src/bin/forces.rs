@@ -1,7 +1,7 @@
 use generative_art::forces_config::ForcesConfig;
 
 use noise::{NoiseFn, OpenSimplex, Seedable};
-use palette::palette::{Color, WeightedPalette};
+use palette::{color::Color, weighted_palette::WeightedPalette};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use shapes::{

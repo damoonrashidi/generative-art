@@ -1,5 +1,5 @@
 use generative_art::piet_config::PietConfig;
-use palette::palette::{Color, WeightedPalette};
+use palette::{color::Color, weighted_palette::WeightedPalette};
 
 use rand::{thread_rng, Rng};
 use shapes::{path::PathStyle, point::Point, rectangle::Rectangle};

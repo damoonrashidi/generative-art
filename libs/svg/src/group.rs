@@ -1,4 +1,4 @@
-use palette::palette::Color;
+use palette::color::Color;
 use shapes::shape::Shape;
 
 #[derive(Default)]

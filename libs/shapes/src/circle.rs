@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use palette::palette::Color;
+use palette::color::Color;
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 

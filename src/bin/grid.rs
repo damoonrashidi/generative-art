@@ -1,5 +1,5 @@
 use generative_art::grid_config::GridConfig;
-use palette::palette::Color;
+use palette::color::Color;
 use shapes::{circle::Circle, point::Point};
 
 use std::sync::mpsc::channel;
