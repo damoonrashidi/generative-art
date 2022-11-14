@@ -1,19 +1,9 @@
-[package]
-name = "generative-art"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-noise = "0.7.0"
-rand = "0.8.5"
-rand_chacha = "0.3.1"
-threadpool = "1.8.1"
-clap = { version = "4.0.18", features = ["derive"] }
-svg = { path = "libs/svg" }
-shapes = { path = "libs/shapes" }
-transforms = { path = "libs/transforms" }
-palette = { path = "libs/palette" }
-
-[[bin]]
-name = "grid"
-path = "src/bin/grid.rs"
+[workspace]
+members = [
+				"art-lib",
+				"grid",
+				"palette",
+				"shapes",
+				"svg",
+				"transforms",
+]

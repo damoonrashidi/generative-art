@@ -15,6 +15,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
 
 [[package]]
+name = "art-lib"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "noise",
+ "palette",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "shapes",
+ "svg",
+ "threadpool",
+ "transforms",
+]
+
+[[package]]
 name = "atty"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -194,21 +209,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f107b87b6afc2a64fd13cac55fe06d6c8859f12d4b14cbcdd2c67d0976781be"
 
 [[package]]
-name = "generative-art"
-version = "0.1.0"
-dependencies = [
- "clap",
- "noise",
- "palette",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "shapes",
- "svg",
- "threadpool",
- "transforms",
-]
-
-[[package]]
 name = "getrandom"
 version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -238,6 +238,21 @@ checksum = "3edd93c6756b4dfaf2709eafcc345ba2636565295c198a9cfbf75fa5e3e00b06"
 dependencies = [
  "color_quant",
  "weezl",
+]
+
+[[package]]
+name = "grid"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "noise",
+ "palette",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "shapes",
+ "svg",
+ "threadpool",
+ "transforms",
 ]
 
 [[package]]
