@@ -1,7 +1,8 @@
-use palette::palette::Color;
+use itertools::Itertools;
+use palette::Color;
 use shapes::shape::Shape;
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct GroupStyle {
     pub fill: Option<Color>,
     pub stroke: Option<Color>,
@@ -16,10 +17,7 @@ pub struct Group {
 
 impl Group {
     pub fn new() -> Group {
-        Group {
-            shapes: vec![],
-            style: GroupStyle::default(),
-        }
+        Group::default()
     }
 
     pub fn set_style(&mut self, style: GroupStyle) {
@@ -28,40 +26,44 @@ impl Group {
         self.style.stroke_width = style.stroke_width;
     }
 
+    // FIXME: Don't use a trait object
     pub fn add_shape(&mut self, shape: Box<dyn Shape>) {
         self.shapes.push(shape);
     }
 
     pub fn as_svg(&self) -> String {
-        let stroke_width: String = match &self.style.stroke_width {
-            Some(width) => format!(" stroke-width=\"{}\"", width),
-            None => String::from(""),
-        };
+        let stroke_width = self
+            .style
+            .stroke_width
+            .map(|sw| format!(r#" stroke-width="{sw}""#))
+            .unwrap_or_default();
 
-        let stroke: String = match &self.style.stroke {
-            Some(color) => format!(" stroke=\"{}\"", color),
-            None => String::from(""),
-        };
+        let stroke = self
+            .style
+            .stroke
+            .map(|s| format!(r#" stroke="{s}""#))
+            .unwrap_or_default();
 
-        let fill: String = match &self.style.fill {
-            Some(color) => format!(" fill=\"{}\"", color),
-            None => String::from(" fill=\"none\""),
-        };
+        let fill = self
+            .style
+            .fill
+            .map(|f| format!(r#" fill="{f}""#))
+            .unwrap_or_else(|| String::from(r#" fill="none""#));
 
         let g = self
             .shapes
             .iter()
-            .fold(format!("<g {fill}{stroke}{stroke_width}>"), |r, shape| {
-                format!("{}{}", r, shape.as_svg().trim())
-            });
+            .map(|s| s.as_svg())
+            .join("");
 
-        format!("{}</g>", g)
+        format!("<g {fill}{stroke}{stroke_width}>{g}</g>")
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::{palette::Color, rectangle::Rectangle};
+    use palette::Color;
+    use shapes::rectangle::Rectangle;
 
     use super::Group;
 

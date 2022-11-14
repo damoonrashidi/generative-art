@@ -1,4 +1,4 @@
-use palette::palette::Color;
+use palette::Color;
 use shapes::{circle::Circle, point::Point};
 
 use std::sync::mpsc::channel;

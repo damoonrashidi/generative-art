@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
 
-use palette::palette::Color;
+use palette::Color;
 use rand::Rng;
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};

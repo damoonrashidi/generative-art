@@ -1,13 +1,12 @@
 use std::fmt::Display;
 
-use palette::palette::Color;
+use palette::Color;
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct Circle {
-    pub x: f64,
-    pub y: f64,
+    pub center: Point,
     pub r: f64,
     color: Option<Color>,
 }
@@ -15,16 +14,15 @@ pub struct Circle {
 impl Circle {
     pub fn new(center: Point, r: f64) -> Circle {
         Circle {
-            x: center.x,
-            y: center.y,
+            center,
             r,
             color: None,
         }
     }
 
     pub fn distance(&self, other: &Circle) -> f64 {
-        let d_x = self.x - other.x;
-        let d_y = self.y - other.y;
+        let d_x = self.center.x - other.center.x;
+        let d_y = self.center.y - other.center.y;
         (d_x.powi(2) + d_y.powi(2)).sqrt() - self.r - other.r
     }
 
@@ -43,8 +41,7 @@ impl Circle {
     pub fn scale(&self, scale: f64) -> Circle {
         Circle {
             r: self.r * scale,
-            x: self.x,
-            y: self.y,
+            center: self.center,
             color: self.color,
         }
     }
@@ -59,23 +56,21 @@ impl Shape for Circle {
 
         format!(
             "<circle cx=\"{:.2}\" cy=\"{:.2}\" r=\"{:.2}\" fill=\"{}\" />",
-            self.x, self.y, self.r, fill
+            self.center.x, self.center.y, self.r, fill
         )
     }
 
     fn center(&self) -> Point {
-        Point {
-            x: self.x,
-            y: self.y,
-        }
+        self.center
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
+        let corner = self.center - self.r;
         Some(Rectangle {
-            x: self.x - self.r,
-            y: self.y - self.r,
-            width: self.x + self.r,
-            height: self.y + self.r,
+            x: corner.x,
+            y: corner.y,
+            width: 2.0 * self.r,
+            height: 2.0 * self.r,
             color: None,
         })
     }
@@ -87,23 +82,12 @@ impl Shape for Circle {
 
 impl PartialEq for Circle {
     fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y && self.r == other.r
+        self.center == other.center && self.r == other.r
     }
 }
 
 impl Display for Circle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "x:{} y:{} r:{}", self.x, self.y, self.r)
-    }
-}
-
-impl Default for Circle {
-    fn default() -> Self {
-        Circle {
-            color: None,
-            x: 0.0,
-            y: 0.0,
-            r: 0.0,
-        }
+        write!(f, "x:{} y:{} r:{}", self.center.x, self.center.y, self.r)
     }
 }

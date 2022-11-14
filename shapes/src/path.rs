@@ -1,4 +1,4 @@
-use palette::palette::Color;
+use palette::Color;
 use rand::{thread_rng, Rng};
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};

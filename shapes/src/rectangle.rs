@@ -1,6 +1,6 @@
 use std::{fmt::Display, ops::Range};
 
-use palette::palette::Color;
+use palette::Color;
 
 use super::shape::Shape;
 use crate::{
@@ -228,6 +228,6 @@ mod test {
     fn test_center_other() {
         let rect = Rectangle::new(50.0, 0.0, 100.0, 100.0);
 
-        assert_eq!(rect.center(), Point { x: 75.0, y: 100.0 });
+        assert_eq!(rect.center(), Point { x: 75.0, y: 50.0 });
     }
 }
