@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -26,21 +28,14 @@ pub struct ForcesConfig {
 
 impl ForcesConfig {
     pub fn new() -> ForcesConfig {
-        let args = ForcesConfig::parse();
-
-        return ForcesConfig {
-            line_count: args.line_count,
-            chaos: args.chaos,
-            seed: args.seed,
-            smoothness: args.smoothness,
-            size: args.size,
-        };
+        ForcesConfig::parse()
     }
 }
 
-impl Into<String> for ForcesConfig {
-    fn into(self) -> String {
-        format!(
+impl Display for ForcesConfig {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
             "<!-- size={} density={} distort={} zoom={} seed={} -->",
             self.size, self.line_count, self.chaos, self.smoothness, self.seed
         )

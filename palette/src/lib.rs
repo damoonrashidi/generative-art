@@ -11,9 +11,9 @@ pub enum Color {
 impl Display for Color {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Color::Hex(x) => write!(f, "{}", x),
+            Color::Hex(x) => write!(f, "{x}"),
             Color::HSLa((h, s, l, a)) => {
-                write!(f, "hsla({}deg, {:.2}%, {:.2}%, {:.2})", h, s, l, a)
+                write!(f, "hsla({h}deg, {s:.2}%, {l:.2}%, {a:.2})")
             }
         }
     }
@@ -29,11 +29,9 @@ impl Palette {
     }
 
     pub fn get_random_color(&self) -> Option<Color> {
-        let mut rng = rand::thread_rng();
-        match self.colors.len() {
-            0 => None,
-            i => Some(self.colors[rng.gen_range(0..i - 1)]),
-        }
+        self.colors
+            .get(rand::thread_rng().gen_range(0..self.colors.len()))
+            .copied()
     }
 }
 
@@ -47,25 +45,15 @@ impl WeightedPalette {
     }
 
     pub fn get_random_color(&self) -> Option<Color> {
-        let mut rng = rand::thread_rng();
-        let weights = self
-            .colors
-            .clone()
-            .into_iter()
-            .map(|color| color.1)
-            .collect::<Vec<usize>>();
-
-        let dist = if let Ok(dist) = WeightedIndex::new(&weights) {
-            dist
-        } else {
+        if self.colors.is_empty() {
             return None;
-        };
-
-        let i = dist.sample(&mut rng);
-
-        match self.colors.len() {
-            0 => None,
-            _ => Some(self.colors[i].0),
         }
+
+        let mut rng = rand::thread_rng();
+        let weights: Vec<_> = self.colors.iter().map(|color| color.1).collect();
+
+        let dist = WeightedIndex::new(&weights).ok()?;
+        let i = dist.sample(&mut rng);
+        Some(self.colors[i].0)
     }
 }

@@ -26,7 +26,6 @@ impl Group {
         self.style.stroke_width = style.stroke_width;
     }
 
-    // FIXME: Don't use a trait object
     pub fn add_shape(&mut self, shape: Box<dyn Shape>) {
         self.shapes.push(shape);
     }
@@ -50,11 +49,7 @@ impl Group {
             .map(|f| format!(r#" fill="{f}""#))
             .unwrap_or_else(|| String::from(r#" fill="none""#));
 
-        let g = self
-            .shapes
-            .iter()
-            .map(|s| s.as_svg())
-            .join("");
+        let g = self.shapes.iter().map(|s| s.as_svg()).join("");
 
         format!("<g {fill}{stroke}{stroke_width}>{g}</g>")
     }
@@ -83,7 +78,7 @@ mod test {
         assert_eq!(
             g.as_svg(),
             String::from(
-                "<g fill=\"#111\"><rect x=\"0.00\" y=\"0.00\" width=\"10.00\" height=\"10.00\"/></g>"
+                r#"<g fill="\#111"><rect x="0.00" y="0.00" width="10.00" height="10.00"/></g>"#
             )
         );
     }

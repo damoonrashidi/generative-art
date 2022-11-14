@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -15,19 +17,14 @@ pub struct PietConfig {
 
 impl PietConfig {
     pub fn new() -> PietConfig {
-        let args = PietConfig::parse();
-
-        return PietConfig {
-            size: args.size,
-            rounds: args.rounds,
-            split_chance: args.split_chance,
-        };
+        PietConfig::parse()
     }
 }
 
-impl Into<String> for PietConfig {
-    fn into(self) -> String {
-        format!(
+impl Display for PietConfig {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
             "<!-- size={} rounds={} split_chance={} -->",
             self.size, self.rounds, self.split_chance
         )
