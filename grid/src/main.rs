@@ -31,11 +31,11 @@ fn main() {
     };
 
     let inner_bounds = bounds.scale(0.9);
-    let mut rects: Vec<Rectangle> = vec![];
+    let mut rects = vec![];
     let mut document = SVG::new("Grid".into(), bounds);
     let mut rng = rand::thread_rng();
 
-    let mut x: f64 = inner_bounds.x;
+    let mut x = inner_bounds.x;
 
     while inner_bounds.x_range().contains(&x) {
         let block_width = rng.gen_range(bounds.width * 0.003..bounds.width * 0.04);
@@ -62,7 +62,7 @@ fn main() {
         let sender = sender.clone();
         pool.execute(move || {
             let mut thread_rng = thread_rng();
-            let mut points: Vec<Circle> = vec![];
+            let mut points = vec![];
             let dots = get_dot_count(&rect, bounds.height);
             for _ in 0..dots {
                 let mut circle = Circle::new(
@@ -81,16 +81,13 @@ fn main() {
         });
     }
 
-    receiver.iter().take(count).for_each(|circles| {
-        for circle in circles {
-            document.add_shape(Box::new(circle));
-        }
-    });
+    for circle in receiver.iter().take(count).flatten() {
+        document.add_shape(Box::new(circle));
+    }
 
     document.save(None);
 }
 
-#[allow(unused)]
 fn get_dot_count(rect: &Rectangle, render_height: f64) -> i32 {
     let area_str = format!("{}", rect.area());
 
