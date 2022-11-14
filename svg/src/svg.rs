@@ -1,18 +1,19 @@
-use std::{fs::File, io::Write};
+use std::{fmt::Write, fs::File};
 
 use chrono::{Datelike, Utc};
 use shapes::{rectangle::Rectangle, shape::Shape};
 
 use crate::group::Group;
 
-pub struct SVG<'a> {
-    pub name: &'a str,
+#[derive(Debug, Clone, PartialEq)]
+pub struct SVG {
+    pub name: String,
     bounds: Rectangle,
     document: String,
 }
 
-impl SVG<'static> {
-    pub fn new(name: &str, bounds: Rectangle) -> SVG {
+impl SVG {
+    pub fn new(name: String, bounds: Rectangle) -> SVG {
         SVG {
             name,
             bounds,
@@ -36,10 +37,10 @@ impl SVG<'static> {
     }
 
     pub fn save(&mut self, config: Option<String>) {
-        let _ = self.document.push_str("</svg>");
+        self.document.push_str("</svg>");
 
         if let Some(comment) = config {
-            self.document = format!("{}{}", self.document, comment);
+            let _ = write!(self.document, "{comment}");
         }
 
         let now = Utc::now();
@@ -62,6 +63,7 @@ impl SVG<'static> {
 
         let mut f = File::create(&path).expect("could not open file for writing");
 
+        use std::io::Write;
         f.write_all(self.document.as_bytes())
             .expect("Could not write to file");
     }

@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use clap::Parser;
 
-#[derive(Parser, Debug)]
+#[derive(Debug, Clone, Default, Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct ForcesConfig {
     /// Set the size of the final SVG output

@@ -1,3 +1,16 @@
+#![warn(rust_2018_idioms)]
+#![deny(
+    dead_code,
+    // NOTE: This is very helpful to include
+    //missing_docs,
+    unused_variables,
+    unused_imports,
+    unused_import_braces,
+    rustdoc::broken_intra_doc_links,
+    missing_debug_implementations,
+    unreachable_pub
+)]
+
 use palette::Color;
 use shapes::{circle::Circle, point::Point};
 
@@ -19,7 +32,7 @@ fn main() {
 
     let inner_bounds = bounds.scale(0.9);
     let mut rects: Vec<Rectangle> = vec![];
-    let mut document = SVG::new("Grid", bounds);
+    let mut document = SVG::new("Grid".into(), bounds);
     let mut rng = rand::thread_rng();
 
     let mut x: f64 = inner_bounds.x;
@@ -78,7 +91,7 @@ fn main() {
 }
 
 #[allow(unused)]
-fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64) -> i32 {
+fn get_dot_count(rect: &Rectangle, render_height: f64) -> i32 {
     let area_str = format!("{}", rect.area());
 
     let max_str_len = std::cmp::min(area_str.len(), 4);

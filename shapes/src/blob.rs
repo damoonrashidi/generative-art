@@ -5,6 +5,7 @@ use rand::Rng;
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
+#[derive(Debug, Clone)]
 pub struct Blob {
     pub position: Point,
     pub radius: f64,

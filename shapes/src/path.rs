@@ -123,11 +123,7 @@ impl Shape for Path {
             return None;
         }
 
-        let p = if let Some(p) = self.points.get(0) {
-            p
-        } else {
-            return None;
-        };
+        let p = self.points.get(0)?;
 
         let min_x = p.x;
         let min_y = p.y;

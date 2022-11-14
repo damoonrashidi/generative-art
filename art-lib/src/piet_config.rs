@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use clap::Parser;
 
-#[derive(Parser, Debug)]
+#[derive(Debug, Clone, Default, Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct PietConfig {
     #[arg(long, default_value_t = 1500.0)]

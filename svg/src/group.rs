@@ -9,6 +9,7 @@ pub struct GroupStyle {
     pub stroke_width: Option<f64>,
 }
 
+#[allow(missing_debug_implementations)]
 #[derive(Default)]
 pub struct Group {
     pub shapes: Vec<Box<dyn Shape>>,
@@ -51,7 +52,7 @@ impl Group {
 
         let g = self.shapes.iter().map(|s| s.as_svg()).join("");
 
-        format!("<g {fill}{stroke}{stroke_width}>{g}</g>")
+        format!("<g{fill}{stroke}{stroke_width}>{g}</g>")
     }
 }
 
@@ -78,7 +79,7 @@ mod test {
         assert_eq!(
             g.as_svg(),
             String::from(
-                r#"<g fill="\#111"><rect x="0.00" y="0.00" width="10.00" height="10.00"/></g>"#
+                r##"<g fill="#111"><rect x="0.00" y="0.00" width="10.00" height="10.00"/></g>"##
             )
         );
     }

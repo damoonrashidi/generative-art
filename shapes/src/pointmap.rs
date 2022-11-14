@@ -1,5 +1,6 @@
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
+#[derive(Debug)]
 pub struct PointMap<T> {
     bounds: Rectangle,
     cells: Vec<Vec<T>>,
@@ -180,7 +181,7 @@ mod test {
         };
         let mut point_map = PointMap::new(bounds, 10);
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
-        assert_eq!(11, point_map.insert(circle).unwrap());
+        assert_eq!(Ok(10), point_map.insert(circle));
     }
 
     #[test]

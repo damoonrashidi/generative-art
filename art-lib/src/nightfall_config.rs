@@ -10,7 +10,7 @@ pub enum ForceMethod {
     Pull,
 }
 
-#[derive(Parser)]
+#[derive(Debug, Clone, Default, Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct NightfallConfig {
     #[arg(long, default_value_t = 1500.0)]
