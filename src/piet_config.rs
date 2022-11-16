@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Default)]
 #[command(author, version, about, long_about = None)]
 pub struct PietConfig {
     #[arg(long, default_value_t = 1500.0)]
@@ -17,19 +17,19 @@ impl PietConfig {
     pub fn new() -> PietConfig {
         let args = PietConfig::parse();
 
-        return PietConfig {
+        PietConfig {
             size: args.size,
             rounds: args.rounds,
             split_chance: args.split_chance,
-        };
+        }
     }
 }
 
-impl Into<String> for PietConfig {
-    fn into(self) -> String {
+impl From<PietConfig> for String {
+    fn from(val: PietConfig) -> Self {
         format!(
-            "<!-- size={} rounds={} split_chance={} -->",
-            self.size, self.rounds, self.split_chance
+            "<!-- size={} rounds={} split-chance={} -->",
+            val.size, val.rounds, val.split_chance
         )
     }
 }

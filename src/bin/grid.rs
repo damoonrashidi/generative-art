@@ -81,7 +81,7 @@ fn main() {
 }
 
 #[allow(unused)]
-fn get_dot_count<'a>(rect: &'a Rectangle, render_height: f64, max_count: usize) -> usize {
+fn get_dot_count(rect: &Rectangle, render_height: f64, max_count: usize) -> usize {
     let area_str = format!("{}", rect.area());
 
     let max_str_len = std::cmp::min(area_str.len(), 4);

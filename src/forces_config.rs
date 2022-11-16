@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Default)]
 #[command(author, version, about, long_about = None)]
 pub struct ForcesConfig {
     /// Set the size of the final SVG output
@@ -28,21 +28,21 @@ impl ForcesConfig {
     pub fn new() -> ForcesConfig {
         let args = ForcesConfig::parse();
 
-        return ForcesConfig {
+        ForcesConfig {
             line_count: args.line_count,
             chaos: args.chaos,
             seed: args.seed,
             smoothness: args.smoothness,
             size: args.size,
-        };
+        }
     }
 }
 
-impl Into<String> for ForcesConfig {
-    fn into(self) -> String {
+impl From<ForcesConfig> for String {
+    fn from(config: ForcesConfig) -> Self {
         format!(
             "<!-- size={} density={} distort={} zoom={} seed={} -->",
-            self.size, self.line_count, self.chaos, self.smoothness, self.seed
+            config.size, config.line_count, config.chaos, config.smoothness, config.seed
         )
     }
 }

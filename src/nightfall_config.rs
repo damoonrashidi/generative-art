@@ -2,7 +2,9 @@ use std::fmt::Display;
 
 use clap::Parser;
 
+#[derive(Default)]
 pub enum ForceMethod {
+    #[default]
     Distort,
     Push,
     Pull,
@@ -18,7 +20,7 @@ impl Display for ForceMethod {
     }
 }
 
-#[derive(Parser)]
+#[derive(Parser, Default)]
 #[command(author, version, about, long_about = None)]
 pub struct NightfallParams {
     #[arg(long, default_value_t = 1500.0)]
@@ -34,6 +36,7 @@ pub struct NightfallParams {
     force: String,
 }
 
+#[derive(Default)]
 pub struct NightfallConfig {
     pub size: f64,
     pub points: usize,
@@ -55,20 +58,20 @@ impl NightfallConfig {
             ),
         };
 
-        return NightfallConfig {
+        NightfallConfig {
             size: args.size,
             points: args.points,
             distance: args.distance,
             force,
-        };
+        }
     }
 }
 
-impl Into<String> for NightfallConfig {
-    fn into(self) -> String {
+impl From<NightfallConfig> for String {
+    fn from(confiig: NightfallConfig) -> Self {
         format!(
             "<!-- size={} point_count={} distance={} force={} -->",
-            self.size, self.points, self.distance, self.force
+            confiig.size, confiig.points, confiig.distance, confiig.force
         )
     }
 }
