@@ -61,29 +61,16 @@ impl Path {
         total
     }
 
-    pub fn intersects(l1: (&Point, &Point), l2: (&Point, &Point)) -> bool {
-        let a1 = l1.1.y - l1.1.x;
-        let b1 = l1.1.x - l1.1.y;
-        let c1 = (l1.1.y * l1.1.x) - (l1.1.x * l1.1.y);
-
-        let mut d1 = (a1 * l2.0.x) + (b1 * l2.1.x) + c1;
-        let mut d2 = (a1 * l2.0.y) + (b1 * l2.1.y) + c1;
-
-        if (d1 > 0. && d2 > 0.) || (d1 < 0. && d2 < 0.) {
-            return false;
-        }
-
-        let a2 = l2.1.y - l2.1.x;
-        let b2 = l2.0.x - l2.0.y;
-        let c2 = (l2.0.y * l2.1.x) - (l2.0.x * l2.1.y);
-        d1 = (a2 * l1.1.x) + (b2 * l1.1.x) + c2;
-        d2 = (a2 * l1.1.y) + (b2 * l1.1.y) + c2;
-
-        if (d1 > 0. && d2 > 0.) || (d1 < 0. && d2 < 0.) {
-            return false;
-        }
-
-        true
+    pub fn intersects(a: (&Point, &Point), b: (&Point, &Point)) -> bool {
+        let dx0 = a.1.x - a.0.x;
+        let dx1 = b.1.x - b.0.x;
+        let dy0 = a.1.y - a.0.y;
+        let dy1 = b.1.y - b.0.y;
+        let p0 = dy1 * (b.1.x - a.0.x) - dx1 * (b.1.y - a.0.y);
+        let p1 = dy1 * (b.1.x - a.1.x) - dx1 * (b.1.y - a.1.y);
+        let p2 = dy0 * (a.1.x - b.0.x) - dx0 * (a.1.y - b.0.y);
+        let p3 = dy0 * (a.1.x - b.1.x) - dx0 * (a.1.y - b.1.y);
+        return (p0 * p1 <= 0.0) & (p2 * p3 <= 0.0);
     }
 }
 
@@ -100,7 +87,7 @@ impl Shape for Path {
 
         let fill: String = match &self.style.color {
             Some(color) => format!("fill=\"{}\" ", color),
-            None => String::from(""),
+            None => String::from("fill=\"none\" "),
         };
 
         let stroke_weight: String = match &self.style.stroke_width {
@@ -249,19 +236,19 @@ impl Shape for Path {
         for ray in search {
             let mut intersections = 0;
 
-            for line in self.points.chunks(2) {
-                match line.len() {
-                    1 => break,
-                    _ => {
-                        let l1 = (&line[0], &line[1]);
-                        if Path::intersects(l1, ray) {
+            for i in 0..self.points.len() {
+                match self.points.get(i + 1) {
+                    None => break,
+                    Some(_) => {
+                        let line = (&self.points[i], &self.points[i + 1]);
+                        if Path::intersects(line, ray) {
                             intersections += 1;
                         }
                     }
                 }
             }
 
-            if intersections % 2 != 0 {
+            if intersections % 2 == 0 {
                 return false;
             }
         }
