@@ -86,7 +86,7 @@ fn main() {
     }
 
     pointmap.get_items().into_iter().for_each(|point| {
-        match pointmap.get_neighbors(*point, Some(config.distance)) {
+        match pointmap.get_neighbors(point, Some(config.distance)) {
             Err(_) => {}
             Ok(neighbors) => {
                 let max_count = map(

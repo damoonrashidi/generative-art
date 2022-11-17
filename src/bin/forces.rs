@@ -73,7 +73,7 @@ fn main() {
             y += (config.chaos * n).sin() * step_size;
             let circle = Circle::new(Point { x, y }, r);
 
-            if let Ok(neighbors) = point_map.get_neighbors(circle, None) {
+            if let Ok(neighbors) = point_map.get_neighbors(&circle, None) {
                 if neighbors
                     .iter()
                     .any(|neighbor| neighbor.distance(&circle) < 0.)

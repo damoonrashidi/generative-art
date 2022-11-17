@@ -73,7 +73,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
      * close to the one where we pop over to a neigboring grid cell.
      *
      * this makes the search space larger, but yields a more accurate
-     * result.
+     * result, so no shapes overlap at the edges of cells.
      *
      *  ----------------------
      *  |  |  |  |  |  |  |  |
@@ -82,7 +82,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
      *  |xx|xx|xx|  |  |  |  |
      *  ----------------------
      */
-    pub fn get_neighbors(&self, shape: T, distance: Option<f64>) -> Result<Vec<T>, &str> {
+    pub fn get_neighbors(&self, shape: &T, distance: Option<f64>) -> Result<Vec<T>, &str> {
         let center = shape.center();
         if !self.bounds.contains(&center) {
             return Err("out of bounds call for this pointmap");
@@ -220,7 +220,7 @@ mod test {
         let _insertion = point_map.insert(circle);
         let _neighbor_insertion = point_map.insert(non_neighbor);
 
-        if let Ok(neighbors) = point_map.get_neighbors(circle, None) {
+        if let Ok(neighbors) = point_map.get_neighbors(&circle, None) {
             assert_eq!(neighbors.len(), 1);
             assert_eq!(neighbors.first().unwrap(), &circle);
         }
@@ -242,7 +242,7 @@ mod test {
         let _insertion = point_map.insert(circle);
         let _neighbor_insertion = point_map.insert(non_neighbor);
 
-        let neighbors = point_map.get_neighbors(circle, None).unwrap();
+        let neighbors = point_map.get_neighbors(&circle, None).unwrap();
 
         assert_eq!(neighbors.len(), 1);
         assert_eq!(neighbors.first().unwrap(), &circle);

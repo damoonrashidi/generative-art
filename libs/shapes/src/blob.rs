@@ -5,11 +5,18 @@ use rand::Rng;
 
 use crate::{path::Path, point::Point, rectangle::Rectangle, shape::Shape};
 
+#[derive(Clone)]
 pub struct Blob {
     pub position: Point,
     pub radius: f64,
     pub color: Option<Color>,
     points: Vec<Point>,
+}
+
+impl PartialEq for Blob {
+    fn eq(&self, other: &Self) -> bool {
+        self.position == other.position && self.radius == other.radius
+    }
 }
 
 impl Blob {
@@ -33,6 +40,10 @@ impl Blob {
             points,
             color,
         }
+    }
+
+    pub fn distance(&self, other: &Blob) -> f64 {
+        self.center().distance(&other.center()) - self.radius - other.radius
     }
 }
 
