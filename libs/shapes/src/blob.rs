@@ -3,7 +3,7 @@ use std::f64::consts::PI;
 use palette::color::Color;
 use rand::Rng;
 
-use crate::{point::Point, rectangle::Rectangle, shape::Shape};
+use crate::{path::Path, point::Point, rectangle::Rectangle, shape::Shape};
 
 pub struct Blob {
     pub position: Point,
@@ -57,8 +57,9 @@ impl Shape for Blob {
         str
     }
 
-    fn contains(&self, _point: &Point) -> bool {
-        todo!();
+    fn contains(&self, point: &Point) -> bool {
+        let path = Path::new(self.points.clone(), Default::default());
+        path.contains(point)
     }
 
     fn center(&self) -> Point {
@@ -69,7 +70,8 @@ impl Shape for Blob {
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
-        todo!()
+        let path = Path::new(self.points.clone(), Default::default());
+        path.bounding_box()
     }
 }
 

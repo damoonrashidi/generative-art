@@ -189,6 +189,8 @@ impl Shape for Path {
          * times each search ray intersects with each line,
          * if the intersection count is even, then the point is inside the polygon,
          * if the intersection count is uneven, then the point is outside the polygon.
+         * **Note:** this is for each search ray, so if any ray has uneven hits
+         * the line is outside
          *
          * Illustrated below with an exaggerated bounding box for legabillity.
          *
@@ -244,21 +246,26 @@ impl Shape for Path {
             ),
         ];
 
-        let mut intersections: usize = 0;
+        for ray in search {
+            let mut intersections = 0;
 
-        for line in self.points.chunks(2) {
-            if line.len() == 1 {
-                return intersections % 2 == 0;
-            }
-            let l1 = (&line[0], &line[1]);
-            for l2 in search {
-                if Path::intersects(l1, l2) {
-                    intersections += 1;
+            for line in self.points.chunks(2) {
+                match line.len() {
+                    1 => break,
+                    _ => {
+                        let l1 = (&line[0], &line[1]);
+                        if Path::intersects(l1, ray) {
+                            intersections += 1;
+                        }
+                    }
                 }
             }
-        }
 
-        intersections % 2 == 0
+            if intersections % 2 != 0 {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
