@@ -5,6 +5,7 @@ use palette::{color::Color, weighted_palette::WeightedPalette};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use shapes::{
+    blob::Blob,
     circle::Circle,
     path::{Path, PathStyle},
     point::Point,
@@ -27,11 +28,26 @@ fn main() {
     let mut svg = SVG::new("Forces", bounds);
     let mut rng = ChaCha20Rng::from_entropy();
     let palette = WeightedPalette::new(vec![
-        (Color::Hex("#F9F2ED"), 1),
-        (Color::Hex("#3AB0FF"), 3),
-        (Color::Hex("#FFB562"), 3),
-        (Color::Hex("#F87474"), 3),
+        (Color::HSLa((0, 100., 98., 1.)), 1),
+        (Color::HSLa((75, 100., 81., 1.)), 1),
+        (Color::HSLa((34, 61., 91., 1.)), 1),
+        (Color::HSLa((28, 82., 56., 1.)), 1),
+        (Color::HSLa((0, 8., 21., 1.)), 1),
+        (Color::HSLa((0, 44., 44., 1.)), 1),
     ]);
+
+    let mut color_bounds: Vec<Blob> = vec![];
+
+    for _ in 0..20 {
+        let x = rng.gen_range(bounds.x_range());
+        let y = rng.gen_range(bounds.y_range());
+        let r = rng.gen_range((bounds.width / 10.0)..(bounds.width / 7.));
+        let color = palette.get_random_color();
+
+        let blob = Blob::new(Point { x, y }, r, color);
+
+        color_bounds.push(blob);
+    }
 
     let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
@@ -48,6 +64,15 @@ fn main() {
     for i in 0..config.line_count {
         let mut x: f64 = rng.gen_range(inner_bounds.x_range());
         let mut y: f64 = rng.gen_range(inner_bounds.y_range());
+
+        let line_color: Option<Color> = match color_bounds
+            .iter()
+            .find(|region| region.contains(&Point { x, y }))
+        {
+            Some(region) => region.color,
+            _ => Some(Color::HSLa((0, 44., 44., 1.))),
+        };
+
         let mut r = 65.0;
         let mut step_size = 50.0;
 
@@ -93,16 +118,50 @@ fn main() {
                 let _ = point_map.insert(circle);
             }
 
-            line.style = PathStyle {
-                stroke_width: Some(r),
-                stroke: palette.get_random_color(),
-                color: None,
-            };
+            if rng.gen_bool(0.5) {
+                let (first, second) = split_line(line.points);
 
-            group.add_shape(Box::new(line));
+                let l1 = Path::new(
+                    first,
+                    PathStyle {
+                        stroke_width: Some(r),
+                        stroke: line_color,
+                        color: None,
+                    },
+                );
+
+                let l2 = Path::new(
+                    second,
+                    PathStyle {
+                        stroke_width: Some(r),
+                        stroke: palette.get_random_color(),
+                        color: None,
+                    },
+                );
+
+                group.add_shape(Box::new(l1));
+                group.add_shape(Box::new(l2));
+            } else {
+                line.style = PathStyle {
+                    stroke_width: Some(r),
+                    stroke: line_color,
+                    color: None,
+                };
+                group.add_shape(Box::new(line));
+            }
         }
     }
 
     svg.add_group(group);
     svg.save(Some(config.into()));
+}
+
+fn split_line(line: Vec<Point>) -> (Vec<Point>, Vec<Point>) {
+    let mut rng = thread_rng();
+    let split_point: usize = rng.gen_range(1..line.len());
+
+    let first = line[0..split_point + 1].into();
+    let second = line[split_point - 1..line.len()].into();
+
+    (first, second)
 }
