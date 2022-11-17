@@ -60,6 +60,31 @@ impl Path {
         }
         total
     }
+
+    pub fn intersects(l1: (&Point, &Point), l2: (&Point, &Point)) -> bool {
+        let a1 = l1.1.y - l1.1.x;
+        let b1 = l1.1.x - l1.1.y;
+        let c1 = (l1.1.y * l1.1.x) - (l1.1.x * l1.1.y);
+
+        let mut d1 = (a1 * l2.0.x) + (b1 * l2.1.x) + c1;
+        let mut d2 = (a1 * l2.0.y) + (b1 * l2.1.y) + c1;
+
+        if (d1 > 0. && d2 > 0.) || (d1 < 0. && d2 < 0.) {
+            return false;
+        }
+
+        let a2 = l2.1.y - l2.1.x;
+        let b2 = l2.0.x - l2.0.y;
+        let c2 = (l2.0.y * l2.1.x) - (l2.0.x * l2.1.y);
+        d1 = (a2 * l1.1.x) + (b2 * l1.1.x) + c2;
+        d2 = (a2 * l1.1.y) + (b2 * l1.1.y) + c2;
+
+        if (d1 > 0. && d2 > 0.) || (d1 < 0. && d2 < 0.) {
+            return false;
+        }
+
+        true
+    }
 }
 
 impl Shape for Path {
@@ -155,10 +180,85 @@ impl Shape for Path {
     }
 
     fn contains(&self, point: &Point) -> bool {
-        if let Some(bounds) = self.bounding_box() {
-            return bounds.contains(point);
+        /*
+         * How this works: it starts by getting the bounding box for the polygon.
+         * After which it creates four search rays from the point out in each direction
+         * to the bounding box.
+         *
+         * It then takes two pairs of points (in other words a line) and checks how many
+         * times each search ray intersects with each line,
+         * if the intersection count is even, then the point is inside the polygon,
+         * if the intersection count is uneven, then the point is outside the polygon.
+         *
+         * Illustrated below with an exaggerated bounding box for legabillity.
+         *
+         * -----------------------------
+         * |           |                |
+         * |       ____|______          |
+         * |      /    |      |         |
+         * |-----|-----*------/---------|
+         * |     |__   |     /          |
+         * |        |__|____/           |
+         * |           |                |
+         * -----------------------------
+         */
+
+        let bounds = if let Some(bounding) = self.bounding_box() {
+            bounding
+        } else {
+            return false;
+        };
+
+        if !bounds.contains(point) {
+            return false;
         }
-        false
+
+        let search = [
+            (
+                point,
+                &Point {
+                    x: point.x,
+                    y: bounds.y,
+                },
+            ),
+            (
+                point,
+                &Point {
+                    x: point.x,
+                    y: bounds.y + bounds.height,
+                },
+            ),
+            (
+                point,
+                &Point {
+                    x: bounds.x + bounds.width,
+                    y: point.y,
+                },
+            ),
+            (
+                point,
+                &Point {
+                    x: bounds.x,
+                    y: point.y,
+                },
+            ),
+        ];
+
+        let mut intersections: usize = 0;
+
+        for line in self.points.chunks(2) {
+            if line.len() == 1 {
+                return intersections % 2 == 0;
+            }
+            let l1 = (&line[0], &line[1]);
+            for l2 in search {
+                if Path::intersects(l1, l2) {
+                    intersections += 1;
+                }
+            }
+        }
+
+        intersections % 2 == 0
     }
 }
 
@@ -191,5 +291,30 @@ mod test {
                 }
             )
         }
+    }
+
+    #[test]
+    fn does_intersect() {
+        let line1 = (&Point { x: 0., y: 0. }, &Point { x: 0., y: 50. });
+        let line2 = (&Point { x: -25., y: 25. }, &Point { x: 25., y: 25. });
+
+        assert!(Path::intersects(line1, line2));
+    }
+
+    #[test]
+    fn point_inside_polygon() {
+        let path = Path::new(
+            vec![
+                Point { x: 0.0, y: 0.0 },
+                Point { x: 100.0, y: 10.0 },
+                Point { x: 100.0, y: 100.0 },
+                Point { x: 20.0, y: 80.0 },
+                Point { x: 0.0, y: 0.0 },
+            ],
+            Default::default(),
+        );
+
+        assert!(path.contains(&Point { x: 50., y: 50. }));
+        assert!(!path.contains(&Point { x: 500., y: 50. }))
     }
 }

@@ -17,7 +17,6 @@ fn main() {
     let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(0..2000));
-
     let palette = WeightedPalette::new(vec![
         (Color::Hex("#F9F2ED"), 1),
         (Color::Hex("#3AB0FF"), 3),
@@ -25,19 +24,43 @@ fn main() {
         (Color::Hex("#F87474"), 3),
     ]);
 
+    let mut color_bounds: Vec<Rectangle> = vec![];
+
+    for _ in 2..rng.gen_range(2..7) {
+        let x = rng.gen_range(bounds.x_range());
+        let y = rng.gen_range(bounds.y_range());
+        let width = rng.gen_range(bounds.x..bounds.width);
+        let height = rng.gen_range(bounds.y..bounds.height);
+        let color = palette.get_random_color();
+
+        color_bounds.push(Rectangle {
+            x,
+            y,
+            width,
+            height,
+            color,
+        });
+    }
+
     for _ in 0..10_000 {
         let mut x = rng.gen_range(bounds.x_range());
         let mut y = rng.gen_range(bounds.y_range());
 
         let mut line: Vec<Circle> = vec![];
-        let line_color = palette.get_random_color().unwrap();
+        let line_color: Option<Color> = match color_bounds
+            .iter()
+            .find(|region| region.contains(&Point { x, y }))
+        {
+            Some(region) => region.color,
+            _ => Some(Color::Hex("#F87474")),
+        };
 
         while bounds.contains(&Point { x, y }) && line.len() < 20 {
             let n = noise.get([x / 350., y / 350.]);
             x += (4.2 * n).cos() * step_size;
             y += (4.2 * n).sin() * step_size;
             let mut circle = Circle::new(Point { x, y }, r);
-            circle.set_color(line_color);
+            circle.set_color(line_color.unwrap());
 
             if let Ok(neighbors) = point_map.get_neighbors(circle, None) {
                 if neighbors

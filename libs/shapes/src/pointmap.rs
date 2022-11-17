@@ -146,7 +146,9 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
 
 #[cfg(test)]
 mod test {
-    use crate::point::Point;
+    use crate::{circle::Circle, point::Point, rectangle::Rectangle};
+
+    use super::PointMap;
 
     #[test]
     fn get_index() {
@@ -157,7 +159,7 @@ mod test {
             height: 100.0,
             color: Rectangle::default().color,
         };
-        let point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
+        let point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
         assert_eq!(point_map.get_index(&Point { x: 9.0, y: 0.0 }), 0);
         assert_eq!(point_map.get_index(&Point { x: 11.0, y: 0.0 }), 0);
         assert_eq!(point_map.get_index(&Point { x: 20.0, y: 0.0 }), 1);
@@ -174,10 +176,10 @@ mod test {
             height: 100.0,
             color: Rectangle::default().color,
         };
-        let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
+        let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
         if let Ok(result) = point_map.insert(circle) {
-            assert_eq!(result, 1);
+            assert_eq!(result, 10);
         }
     }
 
@@ -190,7 +192,7 @@ mod test {
             height: 100.0,
             color: Rectangle::default().color,
         };
-        let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
+        let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
         let circle = Circle::new(
             Point {
                 x: 1000.0,
@@ -211,7 +213,7 @@ mod test {
             height: 100.0,
             color: Rectangle::default().color,
         };
-        let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
+        let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
         let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 5.0);
         let non_neighbor = Circle::new(Point { x: 30.3, y: 50.4 }, 10.0);
 
@@ -233,7 +235,7 @@ mod test {
             height: 100.0,
             color: Rectangle::default().color,
         };
-        let mut point_map: PointMap<Circle> = PointMap::new::<Circle>(&bounds, 10);
+        let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 10);
         let circle = Circle::new(Point { x: 99.0, y: 11.0 }, 5.0);
         let non_neighbor = Circle::new(Point { x: 101.1, y: 50.4 }, 10.0);
 
@@ -256,7 +258,7 @@ mod test {
             color: Rectangle::default().color,
         };
 
-        let mut point_map: PointMap<Point> = PointMap::new::<Point>(&bounds, 10);
+        let mut point_map: PointMap<Point> = PointMap::new(&bounds, 10);
         let point = Point { x: 0., y: 0. };
         let _ = point_map.insert(point);
         let points = point_map.get_items();
@@ -274,7 +276,7 @@ mod test {
             color: Rectangle::default().color,
         };
 
-        let map: PointMap<Point> = PointMap::new::<Point>(&bounds, 10);
+        let map: PointMap<Point> = PointMap::new(&bounds, 10);
 
         let indicies = map.get_neighboring_cells(25);
         println!("{}", map.cells.len());
