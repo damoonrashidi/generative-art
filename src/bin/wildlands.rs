@@ -18,8 +18,8 @@ fn main() {
     let mut document = SVG::new("Wildlands", bounds);
     document.add_shape(Box::new(bounds));
 
-    let r: f64 = 2.5;
-    let step_size: f64 = r.powf(2.0);
+    let r: f64 = 3.5;
+    let step_size: f64 = r * 2.5;
     let mut rng = ChaCha20Rng::from_entropy();
     let mut point_map: PointMap<Blob> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
@@ -35,7 +35,7 @@ fn main() {
 
     let mut color_bounds: Vec<Blob> = vec![];
 
-    for _ in 10..25 {
+    for _ in 0..20 {
         let x = rng.gen_range(bounds.x_range());
         let y = rng.gen_range(bounds.y_range());
         let r = rng.gen_range((bounds.width / 10.0)..(bounds.width / 7.));
