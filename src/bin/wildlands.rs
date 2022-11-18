@@ -1,11 +1,19 @@
 use noise::{NoiseFn, OpenSimplex, Seedable};
-use palette::{color::Color, palette::Palette};
+use palette::{color::Color, simple_palette::SimplePalette, Palette};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 use shapes::{blob::Blob, point::Point, pointmap::PointMap, rectangle::Rectangle, shape::Shape};
 use svg::svg::SVG;
 
 fn main() {
+    let palette = SimplePalette::new(vec![
+        Color::HSLa((0, 100., 98., 1.)),
+        Color::HSLa((75, 100., 81., 1.)),
+        Color::HSLa((34, 61., 91., 1.)),
+        Color::HSLa((28, 82., 56., 1.)),
+        Color::HSLa((0, 8., 21., 1.)),
+        Color::HSLa((0, 44., 44., 1.)),
+    ]);
     let bounds = Rectangle {
         x: 0.,
         y: 0.,
@@ -24,14 +32,6 @@ fn main() {
     let mut point_map: PointMap<Blob> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(0..2000));
-    let palette = Palette::new(vec![
-        Color::HSLa((0, 100., 98., 1.)),
-        Color::HSLa((75, 100., 81., 1.)),
-        Color::HSLa((34, 61., 91., 1.)),
-        Color::HSLa((28, 82., 56., 1.)),
-        Color::HSLa((0, 8., 21., 1.)),
-        Color::HSLa((0, 44., 44., 1.)),
-    ]);
 
     let mut color_bounds: Vec<Blob> = vec![];
 

@@ -1,7 +1,7 @@
-use generative_art::forces_config::ForcesConfig;
+use generative_art::forces_config::{ForcesConfig, ForcesPalette};
 
 use noise::{NoiseFn, OpenSimplex, Seedable};
-use palette::{color::Color, weighted_palette::WeightedPalette};
+use palette::{color::Color, palettes::Palettes};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use shapes::{
@@ -16,23 +16,18 @@ use shapes::{
 use svg::svg::SVG;
 
 fn main() {
-    const MIN_LINE_LENGHT: f64 = 80.0;
-
     let config = ForcesConfig::new();
     let mut bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
-    bounds.set_color(Color::Hex("#181D31"));
+    let (background, palette) = match config.palette {
+        ForcesPalette::PeachesAndCream => Palettes::peaches_and_cream(),
+        ForcesPalette::OrangeAutumn => Palettes::orange_autumn(),
+    };
+    bounds.set_color(background);
     let inner_bounds = bounds.scale(0.9);
 
     let mut svg = SVG::new("Forces", bounds);
     svg.add_shape(Box::new(bounds));
     let mut rng = ChaCha20Rng::from_entropy();
-    let palette = WeightedPalette::new(vec![
-        (Color::Hex("#E1B31E"), 3),
-        (Color::Hex("#678983"), 1),
-        (Color::Hex("#FB5252"), 1),
-        (Color::Hex("#F0E9D2"), 2),
-        (Color::Hex("#E6DDC4"), 2),
-    ]);
 
     let mut color_bounds: Vec<Blob> = vec![];
 
@@ -82,7 +77,7 @@ fn main() {
             },
         };
 
-        while inner_bounds.contains(&Point { x, y }) {
+        while inner_bounds.contains(&Point { x, y }) && line.length() < config.maximum_line_length {
             let n = noise.get([x / config.smoothness, y / config.smoothness]);
             x += (config.chaos * n).cos() * step_size;
             y += (config.chaos * n).sin() * step_size;
@@ -102,16 +97,15 @@ fn main() {
             line.add_point(Point { x, y });
         }
 
-        if line.length() > MIN_LINE_LENGHT {
+        if line.length() > config.minimum_line_length {
             for point in line.points.iter() {
                 let circle = Circle::new(*point, r);
                 let _ = point_map.insert(circle);
             }
 
             //make the if short curcuit quicker since the gt is faster than rng
-            if config.multi_color_probability > 0.0 && rng.gen_bool(config.multi_color_probability)
-            {
-                for points in split_line(line.points) {
+            if config.split_line_chance > 0.0 && rng.gen_bool(config.split_line_chance) {
+                for points in split_line(line.points, config.split_with_gap) {
                     let path = Path::new(
                         points,
                         PathStyle {
@@ -133,16 +127,20 @@ fn main() {
         }
     }
 
-    svg.save(Some(config.into()));
+    svg.save(Some(config.to_string()));
 }
 
-fn split_line(line: Vec<Point>) -> Vec<Vec<Point>> {
+fn split_line(line: Vec<Point>, use_gap: bool) -> Vec<Vec<Point>> {
     let mut rng = thread_rng();
     let mut lines = vec![];
     let mut last_split = 1;
     for i in 1..line.len() - 1 {
         if rng.gen_bool(0.2) {
-            lines.push(line[last_split - 1..i + 1].into());
+            if use_gap {
+                lines.push(line[last_split..i].into());
+            } else {
+                lines.push(line[last_split - 1..i + 1].into());
+            }
             last_split = i
         }
     }

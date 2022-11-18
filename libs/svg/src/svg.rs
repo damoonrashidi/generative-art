@@ -36,10 +36,10 @@ impl SVG<'static> {
     }
 
     pub fn save(&mut self, config: Option<String>) {
-        let _ = self.document.push_str("</svg>");
+        self.document.push_str("</svg>");
 
         if let Some(comment) = config {
-            self.document = format!("{}{}", self.document, comment);
+            self.document = format!("{}\n{}", self.document, comment);
         }
 
         let now = Utc::now();

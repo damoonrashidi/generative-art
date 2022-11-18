@@ -1,8 +1,22 @@
+use std::fmt::Display;
+
 use clap::Parser;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum ForcesPalette {
+    PeachesAndCream,
+    OrangeAutumn,
+}
+
+impl Default for ForcesPalette {
+    fn default() -> Self {
+        ForcesPalette::OrangeAutumn
+    }
+}
 
 #[derive(Parser, Debug, Default)]
 #[command(author, version, about, long_about = None)]
-pub struct ForcesConfig {
+pub struct ForcesParams {
     /// Set the size of the final SVG output
     #[arg(long, default_value_t = 1500.0)]
     pub size: f64,
@@ -10,6 +24,18 @@ pub struct ForcesConfig {
     /// Number of lines to attempt to fill the image with
     #[arg(long, default_value_t = 5000)]
     pub line_count: usize,
+
+    /// Minimum length for a line, all lines that would be shorter will be discarded
+    #[arg(long, default_value_t = 80.0)]
+    pub minimum_line_length: f64,
+
+    /// Maximum length for a line
+    #[arg(long, default_value_t = 2500.0)]
+    pub maximum_line_length: f64,
+
+    /// Color palette to use for each line and background, some are weighted some are not.
+    #[arg(long, default_value_t = String::from("peaches_and_cream"))]
+    pub palette: String,
 
     /// How much each turn in a line is exaggerated, the higher the number the higher the more chaotic the output
     #[arg(long, default_value_t = 1.8)]
@@ -23,36 +49,72 @@ pub struct ForcesConfig {
     #[arg(long, default_value_t = 1)]
     pub seed: u32,
 
-    /// Seed for the RNG
+    /// The probability that a line has more than one color
     #[arg(long, default_value_t = 0.0)]
-    pub multi_color_probability: f64,
+    pub split_line_chance: f64,
+
+    /// If line is split into several should there be a gap between new lines
+    #[arg(long, default_value_t = false)]
+    pub split_with_gap: bool,
+}
+
+pub struct ForcesConfig {
+    pub size: f64,
+    pub line_count: usize,
+    pub minimum_line_length: f64,
+    pub maximum_line_length: f64,
+    pub palette: ForcesPalette,
+    pub chaos: f64,
+    pub smoothness: f64,
+    pub seed: u32,
+    pub split_line_chance: f64,
+    pub split_with_gap: bool,
 }
 
 impl ForcesConfig {
     pub fn new() -> ForcesConfig {
-        let args = ForcesConfig::parse();
+        let args = ForcesParams::parse();
+
+        println!("{}", args.palette);
+
+        let palette = match args.palette.to_ascii_lowercase().as_str() {
+            "peaches_and_cream" => ForcesPalette::PeachesAndCream,
+            "orange_autumn" => ForcesPalette::OrangeAutumn,
+            _ => panic!(
+                "{} is not a valid palette, valid values are peaches_and_cream, orange_autumn",
+                args.palette
+            ),
+        };
 
         ForcesConfig {
             line_count: args.line_count,
+            minimum_line_length: args.minimum_line_length,
+            maximum_line_length: args.maximum_line_length,
+            palette,
             chaos: args.chaos,
             seed: args.seed,
             smoothness: args.smoothness,
-            multi_color_probability: args.multi_color_probability,
+            split_line_chance: args.split_line_chance,
+            split_with_gap: args.split_with_gap,
             size: args.size,
         }
     }
 }
 
-impl From<ForcesConfig> for String {
-    fn from(config: ForcesConfig) -> Self {
-        format!(
-            "<!-- size={} density={} distort={} zoom={} seed={} multi-color-probability={} -->",
-            config.size,
-            config.line_count,
-            config.chaos,
-            config.smoothness,
-            config.seed,
-            config.multi_color_probability
+impl Display for ForcesConfig {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "<!-- size={} line-count={} minimum-line-length={} maximum-line-length={} distort={} zoom={} seed={} split-line-chance={} split-with-gap={} -->",
+            self.size,
+            self.line_count,
+            self.minimum_line_length,
+            self.maximum_line_length,
+            self.chaos,
+            self.smoothness,
+            self.seed,
+            self.split_line_chance,
+            self.split_with_gap
         )
     }
 }

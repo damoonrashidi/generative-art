@@ -1,4 +1,4 @@
-use crate::color::Color;
+use crate::{color::Color, Palette};
 use rand::{distributions::WeightedIndex, prelude::Distribution};
 
 pub struct WeightedPalette {
@@ -9,8 +9,10 @@ impl WeightedPalette {
     pub fn new(colors: Vec<(Color, usize)>) -> WeightedPalette {
         WeightedPalette { colors }
     }
+}
 
-    pub fn get_random_color(&self) -> Option<Color> {
+impl Palette for WeightedPalette {
+    fn get_random_color(&self) -> Option<Color> {
         let mut rng = rand::thread_rng();
         let weights = self
             .colors
