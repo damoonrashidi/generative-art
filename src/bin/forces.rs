@@ -30,8 +30,8 @@ fn main() {
         (Color::Hex("#E1B31E"), 3),
         (Color::Hex("#678983"), 1),
         (Color::Hex("#FB5252"), 1),
-        (Color::Hex("#F0E9D2"), 25),
-        (Color::Hex("#E6DDC4"), 25),
+        (Color::Hex("#F0E9D2"), 2),
+        (Color::Hex("#E6DDC4"), 2),
     ]);
 
     let mut color_bounds: Vec<Blob> = vec![];
@@ -108,29 +108,20 @@ fn main() {
                 let _ = point_map.insert(circle);
             }
 
-            if rng.gen_bool(0.5) {
-                let (first, second) = split_line(line.points);
-
-                let l1 = Path::new(
-                    first,
-                    PathStyle {
-                        stroke_width: Some(r),
-                        stroke: line_color,
-                        color: None,
-                    },
-                );
-
-                let l2 = Path::new(
-                    second,
-                    PathStyle {
-                        stroke_width: Some(r),
-                        stroke: palette.get_random_color(),
-                        color: None,
-                    },
-                );
-
-                svg.add_shape(Box::new(l1));
-                svg.add_shape(Box::new(l2));
+            //make the if short curcuit quicker since the gt is faster than rng
+            if config.multi_color_probability > 0.0 && rng.gen_bool(config.multi_color_probability)
+            {
+                for points in split_line(line.points) {
+                    let path = Path::new(
+                        points,
+                        PathStyle {
+                            stroke_width: Some(r),
+                            stroke: palette.get_random_color(),
+                            color: None,
+                        },
+                    );
+                    svg.add_shape(Box::new(path));
+                }
             } else {
                 line.style = PathStyle {
                     stroke_width: Some(r),
@@ -145,12 +136,16 @@ fn main() {
     svg.save(Some(config.into()));
 }
 
-fn split_line(line: Vec<Point>) -> (Vec<Point>, Vec<Point>) {
+fn split_line(line: Vec<Point>) -> Vec<Vec<Point>> {
     let mut rng = thread_rng();
-    let split_point: usize = rng.gen_range(1..line.len());
+    let mut lines = vec![];
+    let mut last_split = 1;
+    for i in 1..line.len() - 1 {
+        if rng.gen_bool(0.2) {
+            lines.push(line[last_split - 1..i + 1].into());
+            last_split = i
+        }
+    }
 
-    let first = line[0..split_point + 1].into();
-    let second = line[split_point - 1..line.len()].into();
-
-    (first, second)
+    lines
 }

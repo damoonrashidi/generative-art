@@ -22,6 +22,10 @@ pub struct ForcesConfig {
     /// Seed for the RNG
     #[arg(long, default_value_t = 1)]
     pub seed: u32,
+
+    /// Seed for the RNG
+    #[arg(long, default_value_t = 0.0)]
+    pub multi_color_probability: f64,
 }
 
 impl ForcesConfig {
@@ -33,6 +37,7 @@ impl ForcesConfig {
             chaos: args.chaos,
             seed: args.seed,
             smoothness: args.smoothness,
+            multi_color_probability: args.multi_color_probability,
             size: args.size,
         }
     }
@@ -41,8 +46,13 @@ impl ForcesConfig {
 impl From<ForcesConfig> for String {
     fn from(config: ForcesConfig) -> Self {
         format!(
-            "<!-- size={} density={} distort={} zoom={} seed={} -->",
-            config.size, config.line_count, config.chaos, config.smoothness, config.seed
+            "<!-- size={} density={} distort={} zoom={} seed={} multi-color-probability={} -->",
+            config.size,
+            config.line_count,
+            config.chaos,
+            config.smoothness,
+            config.seed,
+            config.multi_color_probability
         )
     }
 }
