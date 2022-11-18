@@ -13,27 +13,25 @@ use shapes::{
     rectangle::Rectangle,
     shape::Shape,
 };
-use svg::{
-    group::{Group, GroupStyle},
-    svg::SVG,
-};
+use svg::svg::SVG;
 
 fn main() {
     const MIN_LINE_LENGHT: f64 = 80.0;
 
     let config = ForcesConfig::new();
-    let bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
+    let mut bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
+    bounds.set_color(Color::Hex("#181D31"));
     let inner_bounds = bounds.scale(0.9);
 
     let mut svg = SVG::new("Forces", bounds);
+    svg.add_shape(Box::new(bounds));
     let mut rng = ChaCha20Rng::from_entropy();
     let palette = WeightedPalette::new(vec![
-        (Color::HSLa((0, 100., 98., 1.)), 1),
-        (Color::HSLa((75, 100., 81., 1.)), 1),
-        (Color::HSLa((34, 61., 91., 1.)), 1),
-        (Color::HSLa((28, 82., 56., 1.)), 1),
-        (Color::HSLa((0, 8., 21., 1.)), 1),
-        (Color::HSLa((0, 44., 44., 1.)), 1),
+        (Color::Hex("#E1B31E"), 3),
+        (Color::Hex("#678983"), 1),
+        (Color::Hex("#FB5252"), 1),
+        (Color::Hex("#F0E9D2"), 25),
+        (Color::Hex("#E6DDC4"), 25),
     ]);
 
     let mut color_bounds: Vec<Blob> = vec![];
@@ -53,14 +51,6 @@ fn main() {
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, config.seed);
 
-    let mut group = Group::new();
-
-    group.set_style(GroupStyle {
-        fill: None,
-        stroke: Some(Color::Hex("#111")),
-        stroke_width: Some(15.0),
-    });
-
     for i in 0..config.line_count {
         let mut x: f64 = rng.gen_range(inner_bounds.x_range());
         let mut y: f64 = rng.gen_range(inner_bounds.y_range());
@@ -70,7 +60,7 @@ fn main() {
             .find(|region| region.contains(&Point { x, y }))
         {
             Some(region) => region.color,
-            _ => Some(Color::HSLa((0, 44., 44., 1.))),
+            _ => palette.get_random_color(),
         };
 
         let mut r = 65.0;
@@ -139,20 +129,19 @@ fn main() {
                     },
                 );
 
-                group.add_shape(Box::new(l1));
-                group.add_shape(Box::new(l2));
+                svg.add_shape(Box::new(l1));
+                svg.add_shape(Box::new(l2));
             } else {
                 line.style = PathStyle {
                     stroke_width: Some(r),
                     stroke: line_color,
                     color: None,
                 };
-                group.add_shape(Box::new(line));
+                svg.add_shape(Box::new(line));
             }
         }
     }
 
-    svg.add_group(group);
     svg.save(Some(config.into()));
 }
 
