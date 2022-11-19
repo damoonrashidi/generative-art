@@ -1,3 +1,15 @@
+#![warn(rust_2018_idioms)]
+#![deny(
+    dead_code,
+    // NOTE: This is very helpful to include
+    //missing_docs,
+    unused_variables,
+    unused_imports,
+    unused_import_braces,
+    rustdoc::broken_intra_doc_links,
+    missing_debug_implementations,
+    unreachable_pub
+)]
 use generative_art::nightfall_config::{ForceMethod, NightfallConfig};
 use palette::color::Color;
 use rand::{thread_rng, Rng};
@@ -25,7 +37,7 @@ fn main() {
     let scaled_bounds = bounds.scale(0.9);
 
     let mut svg = SVG::new("Nightfall", bounds);
-    let mut pointmap: PointMap<Point> =
+    let mut pointmap: PointMap<'_, Point> =
         PointMap::new(&bounds, (config.distance / config.size * 1000.0) as usize);
 
     let mut rng = thread_rng();
@@ -68,13 +80,13 @@ fn main() {
             let angle = point.angle_to(&center);
 
             let force = match config.force {
-                ForceMethod::Distort => -distance / sphere.r,
-                ForceMethod::Push => -(sphere.r - distance) / sphere.r,
-                ForceMethod::Pull => sphere.r / distance,
+                ForceMethod::Distort => -distance / sphere.radius,
+                ForceMethod::Push => -(sphere.radius - distance) / sphere.radius,
+                ForceMethod::Pull => sphere.radius / distance,
             };
 
-            let new_x = point.x + map(angle.cos() * force, 0.0..1.0, 1.0..sphere.r);
-            let new_y = point.y + map(angle.sin() * force, 0.0..1.0, 1.0..sphere.r);
+            let new_x = point.x + map(angle.cos() * force, 0.0..1.0, 1.0..sphere.radius);
+            let new_y = point.y + map(angle.sin() * force, 0.0..1.0, 1.0..sphere.radius);
 
             let _ = pointmap.insert(Point {
                 x: new_x.min(bounds.width).max(bounds.x),

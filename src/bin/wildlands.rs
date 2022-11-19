@@ -1,3 +1,15 @@
+#![warn(rust_2018_idioms)]
+#![deny(
+    dead_code,
+    // NOTE: This is very helpful to include
+    //missing_docs,
+    unused_variables,
+    unused_imports,
+    unused_import_braces,
+    rustdoc::broken_intra_doc_links,
+    missing_debug_implementations,
+    unreachable_pub
+)]
 use noise::{NoiseFn, OpenSimplex, Seedable};
 use palette::{color::Color, palettes::Palettes};
 use rand::{Rng, SeedableRng};
@@ -22,7 +34,7 @@ fn main() {
     let r: f64 = 3.5;
     let step_size: f64 = r * 2.5;
     let mut rng = ChaCha20Rng::from_entropy();
-    let mut point_map: PointMap<Blob> = PointMap::new(&bounds, 20);
+    let mut point_map: PointMap<'_, Blob> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, rng.gen_range(0..2000));
 

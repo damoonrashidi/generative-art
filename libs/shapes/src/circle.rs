@@ -6,30 +6,28 @@ use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Circle {
-    pub x: f64,
-    pub y: f64,
-    pub r: f64,
+    pub center: Point,
+    pub radius: f64,
     color: Option<Color>,
 }
 
 impl Circle {
-    pub fn new(center: Point, r: f64) -> Circle {
+    pub fn new(center: Point, radius: f64) -> Circle {
         Circle {
-            x: center.x,
-            y: center.y,
-            r,
+            center,
+            radius,
             color: None,
         }
     }
 
     pub fn distance(&self, other: &Circle) -> f64 {
-        let d_x = self.x - other.x;
-        let d_y = self.y - other.y;
-        (d_x.powi(2) + d_y.powi(2)).sqrt() - self.r - other.r
+        let d_x = self.center.x - other.center.x;
+        let d_y = self.center.y - other.center.y;
+        (d_x.powi(2) + d_y.powi(2)).sqrt() - self.radius - other.radius
     }
 
     pub fn intersects(&self, other: &Circle) -> bool {
-        self.distance(other) < self.r + other.r
+        self.distance(other) < self.radius + other.radius
     }
 
     pub fn instersects_any(&self, others: Vec<Circle>) -> bool {
@@ -42,9 +40,8 @@ impl Circle {
 
     pub fn scale(&self, scale: f64) -> Circle {
         Circle {
-            r: self.r * scale,
-            x: self.x,
-            y: self.y,
+            radius: self.radius * scale,
+            center: self.center,
             color: self.color,
         }
     }
@@ -59,51 +56,56 @@ impl Shape for Circle {
 
         format!(
             "<circle cx=\"{:.2}\" cy=\"{:.2}\" r=\"{:.2}\" fill=\"{}\" />",
-            self.x, self.y, self.r, fill
+            self.center.x, self.center.y, self.radius, fill
         )
     }
 
     fn center(&self) -> Point {
         Point {
-            x: self.x,
-            y: self.y,
+            x: self.center.x,
+            y: self.center.y,
         }
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
         Some(Rectangle {
-            x: self.x - self.r,
-            y: self.y - self.r,
-            width: self.x + self.r,
-            height: self.y + self.r,
+            x: self.center.x - self.radius,
+            y: self.center.y - self.radius,
+            width: self.center.x + self.radius,
+            height: self.center.y + self.radius,
             color: None,
         })
     }
 
     fn contains(&self, point: &Point) -> bool {
-        self.center().distance(point) < self.r
+        self.center().distance(point) < self.radius
     }
 }
 
 impl PartialEq for Circle {
     fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y && self.r == other.r
+        self.center.x == other.center.x
+            && self.center.y == other.center.y
+            && self.radius == other.radius
     }
 }
 
 impl Display for Circle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "x:{} y:{} r:{}", self.x, self.y, self.r)
+        write!(
+            f,
+            "x:{} y:{} r:{}",
+            self.center.x, self.center.y, self.radius
+        )
     }
 }
 
 impl Default for Circle {
     fn default() -> Self {
         Circle {
+            center: Point { x: 0.0, y: 0.0 },
+            radius: 0.0,
             color: None,
-            x: 0.0,
-            y: 0.0,
-            r: 0.0,
         }
     }
 }

@@ -1,3 +1,15 @@
+#![warn(rust_2018_idioms)]
+#![deny(
+    dead_code,
+    // NOTE: This is very helpful to include
+    //missing_docs,
+    unused_variables,
+    unused_imports,
+    unused_import_braces,
+    rustdoc::broken_intra_doc_links,
+    missing_debug_implementations,
+    unreachable_pub,
+)]
 use generative_art::forces_config::{ForcesConfig, ForcesPalette};
 
 use noise::{NoiseFn, OpenSimplex, Seedable};
@@ -44,7 +56,7 @@ fn main() {
         color_bounds.push(blob);
     }
 
-    let mut point_map: PointMap<Circle> = PointMap::new(&bounds, 20);
+    let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new();
     Seedable::set_seed(noise, config.seed);
 

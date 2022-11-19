@@ -52,10 +52,7 @@ impl Shape for Point {
     }
 
     fn center(&self) -> Point {
-        Point {
-            x: self.x,
-            y: self.y,
-        }
+        *self
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {

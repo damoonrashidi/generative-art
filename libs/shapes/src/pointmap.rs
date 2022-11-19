@@ -10,11 +10,9 @@ pub struct PointMap<'a, T> {
 
 impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
     pub fn new(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
-        let map = vec![vec![]; resolution.pow(2)];
-
         PointMap {
             bounds,
-            cells: map,
+            cells: vec![Vec::with_capacity(resolution); resolution.pow(2)],
             grid_resolution: resolution,
         }
     }
@@ -23,12 +21,13 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
         let center = shape.center();
         let i = self.get_index(&center);
 
-        if let Some(points) = self.cells.get_mut(i) {
-            points.push(shape);
-            return Ok(i);
+        match self.cells.get_mut(i) {
+            Some(points) => {
+                points.push(shape);
+                Ok(i)
+            }
+            None => Err(shape),
         }
-
-        Err(shape)
     }
 
     pub fn remove(&mut self, shape: T) {
