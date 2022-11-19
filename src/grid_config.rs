@@ -14,12 +14,7 @@ pub struct GridConfig {
 
 impl GridConfig {
     pub fn new() -> GridConfig {
-        let args = GridConfig::parse();
-
-        GridConfig {
-            max_dots: args.max_dots,
-            size: args.size,
-        }
+        GridConfig::parse()
     }
 }
 

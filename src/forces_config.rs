@@ -109,7 +109,18 @@ impl Display for ForcesConfig {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "<!-- size={} line-count={} minimum-line-length={} maximum-line-length={} distort={} zoom={} seed={} split-line-chance={} split-with-gap={} -->",
+            r#"
+            <!--
+            size={}
+            line-count={}
+            minimum-line-length={} 
+            maximum-line-length={}
+            distort={}
+            zoom={}
+            seed={}
+            split-line-chance={}
+            split-with-gap={}
+            -->"#,
             self.size,
             self.line_count,
             self.min_line_length,

@@ -15,13 +15,7 @@ pub struct PietConfig {
 
 impl PietConfig {
     pub fn new() -> PietConfig {
-        let args = PietConfig::parse();
-
-        PietConfig {
-            size: args.size,
-            rounds: args.rounds,
-            split_chance: args.split_chance,
-        }
+        PietConfig::parse()
     }
 }
 
