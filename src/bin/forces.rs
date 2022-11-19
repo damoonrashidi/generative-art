@@ -21,6 +21,7 @@ fn main() {
     let (background, palette) = match config.palette {
         ForcesPalette::PeachesAndCream => Palettes::peaches_and_cream(),
         ForcesPalette::OrangeAutumn => Palettes::orange_autumn(),
+        ForcesPalette::SpringBreak => Palettes::spring_break(),
     };
     bounds.set_color(background);
     let inner_bounds = bounds.scale(0.9);
@@ -77,7 +78,7 @@ fn main() {
             },
         };
 
-        while inner_bounds.contains(&Point { x, y }) && line.length() < config.maximum_line_length {
+        while inner_bounds.contains(&Point { x, y }) && line.length() < config.max_line_length {
             let n = noise.get([x / config.smoothness, y / config.smoothness]);
             x += (config.chaos * n).cos() * step_size;
             y += (config.chaos * n).sin() * step_size;
@@ -97,13 +98,12 @@ fn main() {
             line.add_point(Point { x, y });
         }
 
-        if line.length() > config.minimum_line_length {
+        if line.length() > config.min_line_length {
             for point in line.points.iter() {
                 let circle = Circle::new(*point, r);
                 let _ = point_map.insert(circle);
             }
 
-            //make the if short curcuit quicker since the gt is faster than rng
             if config.split_line_chance > 0.0 && rng.gen_bool(config.split_line_chance) {
                 for points in split_line(line.points, config.split_with_gap) {
                     let path = Path::new(

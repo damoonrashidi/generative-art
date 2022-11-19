@@ -6,6 +6,7 @@ use clap::Parser;
 pub enum ForcesPalette {
     PeachesAndCream,
     OrangeAutumn,
+    SpringBreak,
 }
 
 impl Default for ForcesPalette {
@@ -27,11 +28,11 @@ pub struct ForcesParams {
 
     /// Minimum length for a line, all lines that would be shorter will be discarded
     #[arg(long, default_value_t = 80.0)]
-    pub minimum_line_length: f64,
+    pub min_line_length: f64,
 
     /// Maximum length for a line
     #[arg(long, default_value_t = 2500.0)]
-    pub maximum_line_length: f64,
+    pub max_line_length: f64,
 
     /// Color palette to use for each line and background, some are weighted some are not.
     #[arg(long, default_value_t = String::from("peaches_and_cream"))]
@@ -61,8 +62,8 @@ pub struct ForcesParams {
 pub struct ForcesConfig {
     pub size: f64,
     pub line_count: usize,
-    pub minimum_line_length: f64,
-    pub maximum_line_length: f64,
+    pub min_line_length: f64,
+    pub max_line_length: f64,
     pub palette: ForcesPalette,
     pub chaos: f64,
     pub smoothness: f64,
@@ -80,6 +81,7 @@ impl ForcesConfig {
         let palette = match args.palette.to_ascii_lowercase().as_str() {
             "peaches_and_cream" => ForcesPalette::PeachesAndCream,
             "orange_autumn" => ForcesPalette::OrangeAutumn,
+            "spring_break" => ForcesPalette::SpringBreak,
             _ => panic!(
                 "{} is not a valid palette, valid values are peaches_and_cream, orange_autumn",
                 args.palette
@@ -88,8 +90,8 @@ impl ForcesConfig {
 
         ForcesConfig {
             line_count: args.line_count,
-            minimum_line_length: args.minimum_line_length,
-            maximum_line_length: args.maximum_line_length,
+            min_line_length: args.min_line_length,
+            max_line_length: args.max_line_length,
             palette,
             chaos: args.chaos,
             seed: args.seed,
@@ -108,8 +110,8 @@ impl Display for ForcesConfig {
             "<!-- size={} line-count={} minimum-line-length={} maximum-line-length={} distort={} zoom={} seed={} split-line-chance={} split-with-gap={} -->",
             self.size,
             self.line_count,
-            self.minimum_line_length,
-            self.maximum_line_length,
+            self.min_line_length,
+            self.max_line_length,
             self.chaos,
             self.smoothness,
             self.seed,

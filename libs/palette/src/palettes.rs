@@ -29,4 +29,16 @@ impl Palettes {
 
         (background, Box::new(colors))
     }
+
+    pub fn spring_break() -> (Color, Box<dyn Palette>) {
+        let background = Color::Hex("#F9F9F9");
+        let colors = SimplePalette::new(vec![
+            Color::Hex("#ABD2EB"),
+            Color::Hex("#5AA9E6"),
+            Color::Hex("#DFC232"),
+            Color::Hex("#BE2C58"),
+        ]);
+
+        (background, Box::new(colors))
+    }
 }
