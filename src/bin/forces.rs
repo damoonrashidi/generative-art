@@ -22,6 +22,7 @@ fn main() {
         ForcesPalette::PeachesAndCream => Palettes::peaches_and_cream(),
         ForcesPalette::OrangeAutumn => Palettes::orange_autumn(),
         ForcesPalette::SpringBreak => Palettes::spring_break(),
+        ForcesPalette::RedWhiteBlack => Palettes::red_white_black(),
     };
     bounds.set_color(background);
     let inner_bounds = bounds.scale(0.9);

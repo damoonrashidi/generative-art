@@ -41,4 +41,15 @@ impl Palettes {
 
         (background, Box::new(colors))
     }
+
+    pub fn red_white_black() -> (Color, Box<dyn Palette>) {
+        let background = Color::Hex("#EC0000");
+        let colors = WeightedPalette::new(vec![
+            (Color::Hex("#ffffff"), 2),
+            (Color::Hex("#000231"), 1),
+            (Color::Hex("#002214"), 1),
+        ]);
+
+        (background, Box::new(colors))
+    }
 }

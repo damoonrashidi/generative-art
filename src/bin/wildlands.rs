@@ -1,25 +1,18 @@
 use noise::{NoiseFn, OpenSimplex, Seedable};
-use palette::{color::Color, simple_palette::SimplePalette, Palette};
+use palette::{color::Color, palettes::Palettes};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 use shapes::{blob::Blob, point::Point, pointmap::PointMap, rectangle::Rectangle, shape::Shape};
 use svg::svg::SVG;
 
 fn main() {
-    let palette = SimplePalette::new(vec![
-        Color::HSLa((0, 100., 98., 1.)),
-        Color::HSLa((75, 100., 81., 1.)),
-        Color::HSLa((34, 61., 91., 1.)),
-        Color::HSLa((28, 82., 56., 1.)),
-        Color::HSLa((0, 8., 21., 1.)),
-        Color::HSLa((0, 44., 44., 1.)),
-    ]);
+    let (background, palette) = Palettes::orange_autumn();
     let bounds = Rectangle {
         x: 0.,
         y: 0.,
-        width: 1500.,
-        height: 1500. * 1.4,
-        color: Some(Color::Hex("#111")),
+        width: 2500.,
+        height: 2500. * 1.4,
+        color: Some(background),
     };
     let inner_bounds = bounds.scale(0.9);
     let long_bounds = bounds.scale(0.94);
@@ -35,7 +28,7 @@ fn main() {
 
     let mut color_bounds: Vec<Blob> = vec![];
 
-    for _ in 0..20 {
+    for _ in 0..10 {
         let x = rng.gen_range(bounds.x_range());
         let y = rng.gen_range(bounds.y_range());
         let r = rng.gen_range((bounds.width / 10.0)..(bounds.width / 7.));
@@ -63,9 +56,9 @@ fn main() {
         while (is_long && long_bounds.contains(&point))
             || inner_bounds.contains(&point) && line.len() < 150
         {
-            let n = noise.get([point.x / 350., point.y / 350.]);
-            point.x += (5.5 * n).cos() * step_size;
-            point.y += (5.5 * n).sin() * step_size;
+            let n = noise.get([point.x / 500., point.y / 500.]);
+            point.x += (4.0 * n).cos() * step_size;
+            point.y += (4.0 * n).sin() * step_size;
             let blob = Blob::new(point, r, line_color);
 
             if let Ok(neighbors) = point_map.get_neighbors(&blob, None) {

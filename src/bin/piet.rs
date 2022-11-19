@@ -1,5 +1,5 @@
 use generative_art::piet_config::PietConfig;
-use palette::{color::Color, weighted_palette::WeightedPalette, Palette};
+use palette::palettes::Palettes;
 
 use rand::{thread_rng, Rng};
 use shapes::{path::PathStyle, point::Point, rectangle::Rectangle};
@@ -7,19 +7,14 @@ use svg::{group::Group, svg::SVG};
 
 fn main() {
     let mut rng = thread_rng();
+    let (background, palette) = Palettes::red_white_black();
     let config = PietConfig::new();
-    let mut bounds = Rectangle::new(0., 0., config.size, config.size);
+    let mut bounds = Rectangle::new(0., 0., config.size, config.size * 1.4);
     let root = bounds.scale(0.95);
 
     let mut svg = SVG::new("piet", bounds);
     let mut group = Group::new();
     let mut rects = vec![root];
-
-    let palette = WeightedPalette::new(vec![
-        (Color::Hex("#fff"), 10),
-        (Color::Hex("#111"), 2),
-        (Color::Hex("#f00"), 1),
-    ]);
 
     for _ in 0..config.rounds {
         for i in (0..rects.len()).rev() {
@@ -43,7 +38,7 @@ fn main() {
         }
     }
 
-    bounds.set_color(Color::HSLa((30, 85., 95., 1.)));
+    bounds.set_color(background);
     svg.add_shape(Box::new(bounds));
 
     rects

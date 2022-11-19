@@ -7,6 +7,7 @@ pub enum ForcesPalette {
     PeachesAndCream,
     OrangeAutumn,
     SpringBreak,
+    RedWhiteBlack,
 }
 
 impl Default for ForcesPalette {
@@ -82,6 +83,7 @@ impl ForcesConfig {
             "peaches_and_cream" => ForcesPalette::PeachesAndCream,
             "orange_autumn" => ForcesPalette::OrangeAutumn,
             "spring_break" => ForcesPalette::SpringBreak,
+            "red_white_black" => ForcesPalette::RedWhiteBlack,
             _ => panic!(
                 "{} is not a valid palette, valid values are peaches_and_cream, orange_autumn",
                 args.palette
