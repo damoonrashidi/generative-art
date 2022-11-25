@@ -1,7 +1,9 @@
+use std::fmt::Debug;
+
 use palette::color::Color;
 use shapes::shape::Shape;
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct GroupStyle {
     pub fill: Option<Color>,
     pub stroke: Option<Color>,
@@ -12,6 +14,12 @@ pub struct GroupStyle {
 pub struct Group {
     pub shapes: Vec<Box<dyn Shape>>,
     style: GroupStyle,
+}
+
+impl Debug for Group {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "")
+    }
 }
 
 impl Group {

@@ -16,16 +16,16 @@ impl Point {
         (d_x.powi(2) + d_y.powi(2)).sqrt()
     }
 
-    pub fn move_self(&mut self, x: f64, y: f64) {
-        self.x += x;
-        self.y += y;
-    }
-
     pub fn offset(&self, x: f64, y: f64) -> Point {
         Point {
             x: self.x + x,
             y: self.y + y,
         }
+    }
+
+    pub fn offset_mut(&mut self, x: f64, y: f64) {
+        self.x += x;
+        self.y += y;
     }
 
     pub fn angle_to(&self, other: &Point) -> f64 {

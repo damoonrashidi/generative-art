@@ -5,14 +5,15 @@ use shapes::{rectangle::Rectangle, shape::Shape};
 
 use crate::group::Group;
 
+#[derive(Debug)]
 pub struct SVG<'a> {
     pub name: &'a str,
     bounds: Rectangle,
     document: String,
 }
 
-impl SVG<'static> {
-    pub fn new(name: &str, bounds: Rectangle) -> SVG {
+impl<'a> SVG<'static> {
+    pub fn new(name: &'static str, bounds: Rectangle) -> SVG<'a> {
         SVG {
             name,
             bounds,

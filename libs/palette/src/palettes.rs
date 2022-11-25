@@ -2,6 +2,8 @@ use crate::{
     color::Color, simple_palette::SimplePalette, weighted_palette::WeightedPalette, Palette,
 };
 
+/// A list of predefined color palettes
+#[derive(Debug)]
 pub struct Palettes;
 
 impl Palettes {

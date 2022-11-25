@@ -1,3 +1,7 @@
+/**
+A splotch of a shape, like a circle but not symmetrical
+Not a binary large object
+*/
 use std::f64::consts::PI;
 
 use palette::color::Color;
@@ -5,21 +9,35 @@ use rand::Rng;
 
 use crate::{path::Path, point::Point, rectangle::Rectangle, shape::Shape};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Blob {
+    /// Center point of the shape.
     pub position: Point,
+
+    /// Approximetly how large the radius should, this cannot be guaranteed
+    /// due to the uneven nature of the shape, in this case, this is desired
+    /// behavior.
     pub radius: f64,
+
+    /// The color to use for the blob
     pub color: Option<Color>,
+
+    /// Each point in the shape of the blob
     points: Vec<Point>,
 }
 
 impl PartialEq for Blob {
+    /**
+    A blob is considered equal to another if the shapes are the same size
+    and positioned at the same point.
+    */
     fn eq(&self, other: &Self) -> bool {
         self.position == other.position && self.radius == other.radius
     }
 }
 
 impl Blob {
+    /// Create a new blob at a given {position} with a given @radius
     pub fn new(position: Point, radius: f64, color: Option<Color>) -> Blob {
         let mut rng = rand::thread_rng();
         let count = rng.gen_range(7..24);
@@ -42,6 +60,7 @@ impl Blob {
         }
     }
 
+    /// Calculates the distance between this blob and another given blob
     pub fn distance(&self, other: &Blob) -> f64 {
         self.center().distance(&other.center()) - self.radius - other.radius
     }

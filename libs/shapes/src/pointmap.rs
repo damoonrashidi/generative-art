@@ -2,6 +2,7 @@ use std::vec;
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
+#[derive(Debug)]
 pub struct PointMap<'a, T> {
     bounds: &'a Rectangle,
     cells: Vec<Vec<T>>,
@@ -9,7 +10,7 @@ pub struct PointMap<'a, T> {
 }
 
 impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
-    pub fn new(bounds: &Rectangle, resolution: usize) -> PointMap<T> {
+    pub fn new(bounds: &'a Rectangle, resolution: usize) -> PointMap<'a, T> {
         PointMap {
             bounds,
             cells: vec![Vec::with_capacity(resolution); resolution.pow(2)],

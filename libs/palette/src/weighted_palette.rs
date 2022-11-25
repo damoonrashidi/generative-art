@@ -1,6 +1,7 @@
 use crate::{color::Color, Palette};
 use rand::{distributions::WeightedIndex, prelude::Distribution};
 
+#[derive(Debug)]
 pub struct WeightedPalette {
     colors: Vec<(Color, usize)>,
 }

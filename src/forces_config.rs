@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use clap::Parser;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ForcesPalette {
     PeachesAndCream,
     OrangeAutumn,
@@ -60,6 +60,7 @@ pub struct ForcesParams {
     pub split_with_gap: bool,
 }
 
+#[derive(Debug, Default)]
 pub struct ForcesConfig {
     pub size: f64,
     pub line_count: usize,

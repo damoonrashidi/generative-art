@@ -2,6 +2,7 @@ use rand::Rng;
 
 use crate::{color::Color, Palette};
 
+#[derive(Debug)]
 pub struct SimplePalette {
     colors: Vec<Color>,
 }
