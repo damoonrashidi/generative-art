@@ -69,8 +69,10 @@ impl Shape for Circle {
 
     fn bounding_box(&self) -> Option<Rectangle> {
         Some(Rectangle {
-            x: self.center.x - self.radius,
-            y: self.center.y - self.radius,
+            position: Point {
+                x: self.center.x - self.radius,
+                y: self.center.y - self.radius,
+            },
             width: self.center.x + self.radius,
             height: self.center.y + self.radius,
             color: None,

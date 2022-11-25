@@ -25,8 +25,7 @@ fn main() {
     let config = GridConfig::new();
 
     let bounds = Rectangle {
-        x: 0.0,
-        y: 0.0,
+        position: Point { x: 0.0, y: 0.0 },
         width: config.size,
         height: config.size * 1.4,
         color: None,
@@ -37,11 +36,11 @@ fn main() {
     let mut document = SVG::new("Grid", bounds);
     let mut rng = rand::thread_rng();
 
-    let mut x: f64 = inner_bounds.x;
+    let mut x: f64 = inner_bounds.position.x;
 
     while inner_bounds.x_range().contains(&x) {
         let block_width = rng.gen_range(bounds.width * 0.003..bounds.width * 0.04);
-        let mut y = inner_bounds.y;
+        let mut y = inner_bounds.position.y;
 
         while inner_bounds.y_range().contains(&y) {
             let block_height = if rng.gen_bool(0.2) {
@@ -50,7 +49,7 @@ fn main() {
                 bounds.height * rng.gen_range(0.002..0.01)
             };
 
-            let rect = Rectangle::new(x, y, block_width, block_height);
+            let rect = Rectangle::new(Point { x, y }, block_width, block_height);
             rects.push(rect);
             y += block_height;
         }
@@ -105,7 +104,7 @@ fn get_dot_count(rect: &Rectangle, render_height: f64, max_count: usize) -> usiz
         .unwrap_or(0.);
 
     let mut rng = rand::thread_rng();
-    let count = (render_height - rect.y) * rng.gen_range(2.0..4.0) + normalized_area;
+    let count = (render_height - rect.position.y) * rng.gen_range(2.0..4.0) + normalized_area;
 
     (count as usize).min(max_count)
 }

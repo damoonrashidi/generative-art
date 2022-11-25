@@ -10,8 +10,7 @@ use crate::{
 
 #[derive(Debug, Clone, Copy)]
 pub struct Rectangle {
-    pub x: f64,
-    pub y: f64,
+    pub position: Point,
     pub width: f64,
     pub height: f64,
 
@@ -19,10 +18,9 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn new(x: f64, y: f64, width: f64, height: f64) -> Rectangle {
+    pub fn new(position: Point, width: f64, height: f64) -> Rectangle {
         Rectangle {
-            x,
-            y,
+            position,
             width,
             height,
             color: Rectangle::default().color,
@@ -36,12 +34,11 @@ impl Rectangle {
     pub fn scale(&self, scale: f64) -> Rectangle {
         let width = self.width * scale;
         let height = self.height * scale;
-        let x = self.x - (width - self.width) / 2.0;
-        let y = self.y - (height - self.height) / 2.0;
+        let x = self.position.x - (width - self.width) / 2.0;
+        let y = self.position.y - (height - self.height) / 2.0;
 
         Rectangle {
-            x,
-            y,
+            position: Point { x, y },
             width,
             height,
             color: self.color,
@@ -53,20 +50,20 @@ impl Rectangle {
     }
 
     pub fn x_range(&self) -> Range<f64> {
-        self.x..(self.x + self.width)
+        self.position.x..(self.position.x + self.width)
     }
 
     pub fn y_range(&self) -> Range<f64> {
-        self.y..(self.y + self.height)
+        self.position.y..(self.position.y + self.height)
     }
 
     pub fn to_path(&self, style: PathStyle) -> Path {
         let points = vec![
-            (self.x, self.y),
-            (self.x + self.width, self.y),
-            (self.x + self.width, self.y + self.height),
-            (self.x, self.y + self.height),
-            (self.x, self.y),
+            (self.position.x, self.position.y),
+            (self.position.x + self.width, self.position.y),
+            (self.position.x + self.width, self.position.y + self.height),
+            (self.position.x, self.position.y + self.height),
+            (self.position.x, self.position.y),
         ]
         .iter()
         .map(|(x, y)| Point { x: *x, y: *y })
@@ -85,7 +82,7 @@ impl Shape for Rectangle {
 
         format!(
             "<rect x=\"{:.2}\" y=\"{:.2}\" width=\"{:.2}\" height=\"{:.2}\"{}/>",
-            self.x, self.y, self.width, self.height, fill
+            self.position.x, self.position.y, self.width, self.height, fill
         )
     }
 
@@ -95,15 +92,14 @@ impl Shape for Rectangle {
 
     fn center(&self) -> Point {
         Point {
-            x: (self.x + self.width) / 2.0,
-            y: (self.y + self.height) / 2.0,
+            x: (self.position.x + self.width) / 2.0,
+            y: (self.position.y + self.height) / 2.0,
         }
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
         Some(Rectangle {
-            x: self.x,
-            y: self.y,
+            position: self.position,
             width: self.width,
             height: self.height,
             color: None,
@@ -114,8 +110,7 @@ impl Shape for Rectangle {
 impl Default for Rectangle {
     fn default() -> Self {
         Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0., y: 0. },
             width: 0.0,
             height: 0.0,
             color: None,
@@ -125,8 +120,8 @@ impl Default for Rectangle {
 
 impl PartialEq for Rectangle {
     fn eq(&self, other: &Self) -> bool {
-        self.x == other.x
-            && self.y == other.y
+        self.position.x == other.position.x
+            && self.position.y == other.position.y
             && self.width == other.width
             && self.height == other.height
     }
@@ -147,8 +142,7 @@ mod test {
     #[test]
     fn does_not_contain() {
         let rect = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0., y: 0. },
             width: 20.0,
             height: 20.0,
             color: None,
@@ -162,8 +156,7 @@ mod test {
     #[test]
     fn scale_rect_up() {
         let rect = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0., y: 0. },
             width: 100.0,
             height: 100.0,
             color: None,
@@ -172,15 +165,13 @@ mod test {
         let scaled = rect.scale(1.1);
         assert_eq!(
             Rectangle {
-                x: scaled.x.round(),
-                y: scaled.y.round(),
+                position: scaled.position,
                 width: scaled.width.round(),
                 height: scaled.height.round(),
                 ..scaled
             },
             Rectangle {
-                x: -5.0,
-                y: -5.0,
+                position: Point { x: -5., y: -5. },
                 width: 110.0,
                 height: 110.0,
                 color: None
@@ -191,8 +182,7 @@ mod test {
     #[test]
     fn scale_rect_down() {
         let rect = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0., y: 0. },
             width: 100.0,
             height: 100.0,
             color: None,
@@ -201,15 +191,13 @@ mod test {
         let scaled = rect.scale(0.9);
         assert_eq!(
             Rectangle {
-                x: scaled.x.round(),
-                y: scaled.y.round(),
+                position: scaled.position,
                 width: scaled.width.round(),
                 height: scaled.height.round(),
                 ..scaled
             },
             Rectangle {
-                x: 5.0,
-                y: 5.0,
+                position: Point { x: 5., y: 5. },
                 width: 90.0,
                 height: 90.0,
                 color: None
@@ -219,14 +207,14 @@ mod test {
 
     #[test]
     fn test_center_0_0() {
-        let rect = Rectangle::new(0.0, 0.0, 100.0, 100.0);
+        let rect = Rectangle::new(Point { x: 0.0, y: 0.0 }, 100.0, 100.0);
 
         assert_eq!(rect.center(), Point { x: 50.0, y: 50.0 });
     }
 
     #[test]
     fn test_center_other() {
-        let rect = Rectangle::new(50.0, 0.0, 100.0, 100.0);
+        let rect = Rectangle::new(Point { x: 50., y: 0. }, 100.0, 100.0);
 
         assert_eq!(rect.center(), Point { x: 75.0, y: 50.0 });
     }

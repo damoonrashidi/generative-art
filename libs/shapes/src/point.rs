@@ -57,8 +57,10 @@ impl Shape for Point {
 
     fn bounding_box(&self) -> Option<Rectangle> {
         Some(Rectangle {
-            x: self.x,
-            y: self.y,
+            position: Point {
+                x: self.x,
+                y: self.y,
+            },
             width: 1.,
             height: 1.,
             color: None,

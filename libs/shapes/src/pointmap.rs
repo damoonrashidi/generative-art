@@ -113,8 +113,8 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
     fn get_index(&self, point: &Point) -> usize {
         let resolution = self.grid_resolution as f64;
 
-        let x = ((point.x / (self.bounds.x + self.bounds.width)) * resolution).floor();
-        let y = ((point.y / (self.bounds.y + self.bounds.height)) * resolution).floor();
+        let x = ((point.x / (self.bounds.position.x + self.bounds.width)) * resolution).floor();
+        let y = ((point.y / (self.bounds.position.y + self.bounds.height)) * resolution).floor();
 
         (y * resolution + x - 1.0) as usize
     }
@@ -152,8 +152,7 @@ mod test {
     #[test]
     fn get_index() {
         let bounds = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0.0, y: 0.0 },
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
@@ -169,8 +168,7 @@ mod test {
     #[test]
     fn insert_point() {
         let bounds = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0.0, y: 0.0 },
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
@@ -185,8 +183,7 @@ mod test {
     #[test]
     fn insert_point_fail() {
         let bounds = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0.0, y: 0.0 },
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
@@ -206,8 +203,7 @@ mod test {
     #[test]
     fn get_neighbors() {
         let bounds = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0.0, y: 0.0 },
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
@@ -228,8 +224,7 @@ mod test {
     #[test]
     fn get_neighbors_edgecase() {
         let bounds = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0.0, y: 0.0 },
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
@@ -250,8 +245,7 @@ mod test {
     #[test]
     fn get_all_items() {
         let bounds = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0.0, y: 0.0 },
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
@@ -268,8 +262,7 @@ mod test {
     #[test]
     fn get_surrounding_cells() {
         let bounds = Rectangle {
-            x: 0.0,
-            y: 0.0,
+            position: Point { x: 0.0, y: 0.0 },
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,

@@ -159,8 +159,10 @@ impl Shape for Path {
         );
 
         Some(Rectangle::new(
-            bounding.0,
-            bounding.1,
+            Point {
+                x: bounding.0,
+                y: bounding.1,
+            },
             bounding.2 - bounding.0,
             bounding.3 - bounding.1,
         ))
@@ -207,27 +209,27 @@ impl Shape for Path {
                 point,
                 &Point {
                     x: point.x,
-                    y: bounds.y,
+                    y: bounds.position.y,
                 },
             ),
             (
                 point,
                 &Point {
                     x: point.x,
-                    y: bounds.y + bounds.height,
+                    y: bounds.position.y + bounds.height,
                 },
             ),
             (
                 point,
                 &Point {
-                    x: bounds.x + bounds.width,
+                    x: bounds.position.x + bounds.width,
                     y: point.y,
                 },
             ),
             (
                 point,
                 &Point {
-                    x: bounds.x,
+                    x: bounds.position.x,
                     y: point.y,
                 },
             ),
@@ -277,8 +279,7 @@ mod test {
             assert_eq!(
                 bounding,
                 Rectangle {
-                    x: -5.,
-                    y: 0.,
+                    position: Point { x: -5., y: 0. },
                     width: 10.,
                     height: 10.,
                     color: None

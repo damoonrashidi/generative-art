@@ -19,9 +19,9 @@ use svg::{group::Group, svg::SVG};
 
 fn main() {
     let mut rng = thread_rng();
-    let (background, palette) = Palettes::red_white_black();
+    let (background, palette) = Palettes::orange_autumn();
     let config = PietConfig::new();
-    let mut bounds = Rectangle::new(0., 0., config.size, config.size * 1.4);
+    let mut bounds = Rectangle::new(Point { x: 0., y: 0. }, config.size, config.size * 1.4);
     let root = bounds.scale(0.95);
 
     let mut svg = SVG::new("piet", bounds);
@@ -95,15 +95,16 @@ fn split_horizontally(
 ) -> (Rectangle, Rectangle) {
     (
         Rectangle::new(
-            rect.x,
-            rect.y,
-            split_point.x - padding - rect.x,
+            rect.position,
+            split_point.x - padding - rect.position.x,
             rect.height,
         ),
         Rectangle::new(
-            split_point.x + padding,
-            rect.y,
-            rect.x + rect.width - split_point.x - padding,
+            Point {
+                x: split_point.x + padding,
+                y: rect.position.y,
+            },
+            rect.position.x + rect.width - split_point.x - padding,
             rect.height,
         ),
     )
@@ -111,12 +112,18 @@ fn split_horizontally(
 
 fn split_vertically(rect: &Rectangle, padding: f64, split_point: &Point) -> (Rectangle, Rectangle) {
     (
-        Rectangle::new(rect.x, rect.y, rect.width, split_point.y - padding - rect.y),
         Rectangle::new(
-            rect.x,
-            split_point.y + padding,
+            rect.position,
             rect.width,
-            rect.y + rect.height - split_point.y - padding,
+            split_point.y - padding - rect.position.y,
+        ),
+        Rectangle::new(
+            Point {
+                x: rect.position.x,
+                y: split_point.y + padding,
+            },
+            rect.width,
+            rect.position.y + rect.height - split_point.y - padding,
         ),
     )
 }

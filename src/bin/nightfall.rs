@@ -28,8 +28,7 @@ fn main() {
     let config = NightfallConfig::new();
 
     let bounds = Rectangle {
-        x: 0.,
-        y: 0.,
+        position: Point { x: 0.0, y: 0.0 },
         width: config.size,
         height: config.size * 1.4,
         color: Some(Color::Hex("#111")),
@@ -52,7 +51,7 @@ fn main() {
     for _ in 0..config.points / 10 {
         let x = rng.gen_range(scaled_bounds.x_range());
         let y = gen_weighted(
-            scaled_bounds.y..(scaled_bounds.y + scaled_bounds.y * 0.05),
+            scaled_bounds.position.y..(scaled_bounds.position.y + scaled_bounds.position.y * 0.05),
             &mut rng,
         );
 
@@ -89,8 +88,8 @@ fn main() {
             let new_y = point.y + map(angle.sin() * force, 0.0..1.0, 1.0..sphere.radius);
 
             let _ = pointmap.insert(Point {
-                x: new_x.min(bounds.width).max(bounds.x),
-                y: new_y.min(bounds.height).max(bounds.y),
+                x: new_x.min(bounds.width).max(bounds.position.x),
+                y: new_y.min(bounds.height).max(bounds.position.y),
             });
         } else {
             let _ = pointmap.insert(point);
@@ -103,7 +102,7 @@ fn main() {
             Ok(neighbors) => {
                 let max_count = map(
                     point.y,
-                    scaled_bounds.y..bounds.height - scaled_bounds.y,
+                    scaled_bounds.position.y..bounds.height - scaled_bounds.position.y,
                     105.0..10.0,
                 ) as usize;
 

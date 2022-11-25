@@ -29,7 +29,7 @@ use svg::svg::SVG;
 
 fn main() {
     let config = ForcesConfig::new();
-    let mut bounds = Rectangle::new(0.0, 0.0, config.size, config.size * 1.4);
+    let mut bounds = Rectangle::new(Point { x: 0.0, y: 0.0 }, config.size, config.size * 1.4);
     let (background, palette) = match config.palette {
         ForcesPalette::PeachesAndCream => Palettes::peaches_and_cream(),
         ForcesPalette::OrangeAutumn => Palettes::orange_autumn(),

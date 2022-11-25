@@ -1,8 +1,6 @@
-#![warn(rust_2018_idioms)]
+#![warn(rust_2018_idioms, rust_2021_compatibility)]
 #![deny(
     dead_code,
-    // NOTE: This is very helpful to include
-    //missing_docs,
     unused_variables,
     unused_imports,
     unused_import_braces,
@@ -20,10 +18,9 @@ use svg::svg::SVG;
 fn main() {
     let (background, palette) = Palettes::orange_autumn();
     let bounds = Rectangle {
-        x: 0.,
-        y: 0.,
-        width: 2500.,
-        height: 2500. * 1.4,
+        position: Point { x: 0., y: 0. },
+        width: 1000.,
+        height: 1000. * 1.4,
         color: Some(background),
     };
     let inner_bounds = bounds.scale(0.9);
