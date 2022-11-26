@@ -5,25 +5,45 @@ use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
 #[derive(Debug, Default)]
 pub struct Path {
+    /// List of points that make up the path.
     pub points: Vec<Point>,
+
+    /// Stroke width, stroke color and fill color.
     pub style: PathStyle,
 }
 
 #[derive(Debug, Default)]
 pub struct PathStyle {
+    /// The width of the stroke around this path
+    ///
+    /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
     pub stroke_width: Option<f64>,
+
+    /// The color of the stroke around this path
+    ///
+    /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
     pub stroke: Option<Color>,
+
+    /// The fill color of this path
+    ///
+    /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
     pub color: Option<Color>,
 }
 
 impl Path {
+    /// Create new [`Path`] with the given [`Point`]s and [`PathStyle`]
     pub fn new(points: Vec<Point>, style: PathStyle) -> Path {
         Path { points, style }
     }
 
+    /// Adds another [`Point`] to the end of this path. This is good if
+    /// You want to make a line longer.
     pub fn add_point(&mut self, point: Point) {
         self.points.push(point);
     }
+
+    /// Take a shape and rough it up a bit but adding a bunch of points between each
+    /// , already existing, point and move those injected points around a bit.
 
     pub fn wobble(&mut self) {
         let mut rng = thread_rng();
@@ -49,6 +69,8 @@ impl Path {
         self.points = new_list
     }
 
+    /// The total distance between each point in this shape, i.e, the true
+    /// length of the shape.
     pub fn length(&self) -> f64 {
         if self.points.is_empty() {
             return 0.0;
@@ -61,7 +83,8 @@ impl Path {
         total
     }
 
-    pub fn intersects(a: (&Point, &Point), b: (&Point, &Point)) -> bool {
+    /// Check if two lines intersect at any point.
+    fn intersects(a: (&Point, &Point), b: (&Point, &Point)) -> bool {
         let dx0 = a.1.x - a.0.x;
         let dx1 = b.1.x - b.0.x;
         let dy0 = a.1.y - a.0.y;
@@ -168,32 +191,32 @@ impl Shape for Path {
         ))
     }
 
-    fn contains(&self, point: &Point) -> bool {
-        /*
-         * How this works: it starts by getting the bounding box for the polygon.
-         * After which it creates four search rays from the point out in each direction
-         * to the bounding box.
-         *
-         * It then takes two pairs of points (in other words a line) and checks how many
-         * times each search ray intersects with each line,
-         * if the intersection count is even, then the point is inside the polygon,
-         * if the intersection count is uneven, then the point is outside the polygon.
-         * **Note:** this is for each search ray, so if any ray has uneven hits
-         * the line is outside
-         *
-         * Illustrated below with an exaggerated bounding box for legabillity.
-         *
-         * -----------------------------
-         * |           |                |
-         * |       ____|______          |
-         * |      /    |      |         |
-         * |-----|-----*------/---------|
-         * |     |__   |     /          |
-         * |        |__|____/           |
-         * |           |                |
-         * -----------------------------
-         */
+    /**
+    How this works: it starts by getting the bounding box for the polygon.
+    After which it creates four search rays from the point out in each direction
+    to the bounding box.
 
+    It then takes two pairs of points (in other words a line) and checks how many
+    times each search ray intersects with each line,
+    if the intersection count is even, then the point is inside the polygon,
+    if the intersection count is uneven, then the point is outside the polygon.
+    **Note:** this is for each search ray, so if any ray has uneven hits
+    the line is outside
+
+    Illustrated below with an exaggerated bounding box for legabillity.
+    ```
+    -----------------------------
+    |           |                |
+    |       ____|______          |
+    |      /    |      |         |
+    |-----|-----*------/---------|
+    |     |__   |     /          |
+    |        |__|____/           |
+    |           |                |
+    -----------------------------
+    ```
+    */
+    fn contains(&self, point: &Point) -> bool {
         let bounds = if let Some(bounding) = self.bounding_box() {
             bounding
         } else {

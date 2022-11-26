@@ -10,6 +10,21 @@ pub struct PointMap<'a, T> {
 }
 
 impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
+    /**
+    Create a new map for a given bounds with a list of cells to aid in operations
+    like finding the nearest neighbors or doing collision detections.
+
+    Example:
+    ```
+    let bounds = Rectangle::new(Point{x: 0.0, y: 0.}, 500.0, 500.0);
+    let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 20);
+    let first = Circle::new(Point{x: 200., y: 200.0}, 10.);
+    let second = Circle::new(Point{x: 205., y: 205.0}, 10.);
+    map.insert(first);
+    map.insert(second);
+    map.get_neighbors(first); // => vec[first];
+    ```
+    */
     pub fn new(bounds: &'a Rectangle, resolution: usize) -> PointMap<'a, T> {
         PointMap {
             bounds,
@@ -18,6 +33,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
         }
     }
 
+    /// Insert a new shape into the grid
     pub fn insert(&mut self, shape: T) -> Result<usize, T> {
         let center = shape.center();
         let i = self.get_index(&center);
@@ -31,6 +47,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
         }
     }
 
+    /// Remove a shape from the grid
     pub fn remove(&mut self, shape: T) {
         let center = shape.center();
         let i = self.get_index(&center);
@@ -44,6 +61,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
         }
     }
 
+    /// Get all items from the grid
     pub fn get_items(&self) -> Vec<&T> {
         self.cells.iter().fold(vec![], |mut points, cell| {
             cell.iter().for_each(|item| {
@@ -54,35 +72,41 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
     }
 
     /**
-     * The general idea here is to do some simple math to be able
-     * to overlay the bounds with cell after cell until we are
-     * out of bounds, when the bounds have been hit, we loop back
-     * to a new row using modulo and restart the overlaying.
-     *
-     *  -------------------------
-     *  | 0 | 1 | 2 | 3 | 4 | 5 |
-     *  | 6 | 7 | 8 | 9 | 10| . |
-     *  | . |   |   |   |   |   |
-     *  -------------------------
-     *
-     * This allows us to use <Vec<Vec<T>>> instead of Vec<Vec<Vec<T>>>
-     * meaning we don't have to think of the bounds as a grid,
-     * but rather a list of cells.
-     *
-     * We also get all the surrounding cells to avoid collissions at nodes
-     * close to the one where we pop over to a neigboring grid cell.
-     *
-     * this makes the search space larger, but yields a more accurate
-     * result, so no shapes overlap at the edges of cells.
-     *
-     *  ----------------------
-     *  |  |  |  |  |  |  |  |
-     *  |xx|xx|xx|  |  |  |  |
-     *  |xx|oo|xx|  |  |  |  |
-     *  |xx|xx|xx|  |  |  |  |
-     *  ----------------------
-     */
+    Get all neighboring items that are close to the given shape. An optional distance
+    parameter can be supplied to limit the results to all items to be at most the given
+    distance away.
+    */
     pub fn get_neighbors(&self, shape: &T, distance: Option<f64>) -> Result<Vec<T>, &str> {
+        /*
+         * The general idea here is to do some simple math to be able
+         * to overlay the bounds with cell after cell until we are
+         * out of bounds, when the bounds have been hit, we loop back
+         * to a new row using modulo and restart the overlaying.
+         *
+         *  -------------------------
+         *  | 0 | 1 | 2 | 3 | 4 | 5 |
+         *  | 6 | 7 | 8 | 9 | 10| . |
+         *  | . |   |   |   |   |   |
+         *  -------------------------
+         *
+         * This allows us to use <Vec<Vec<T>>> instead of Vec<Vec<Vec<T>>>
+         * meaning we don't have to think of the bounds as a grid,
+         * but rather a list of cells.
+         *
+         * We also get all the surrounding cells to avoid collisions at nodes
+         * close to the one where we pop over to a neighboring grid cell.
+         *
+         * this makes the search space larger, but yields a more accurate
+         * result, so no shapes overlap at the edges of cells.
+         *
+         *  ----------------------
+         *  |  |  |  |  |  |  |  |
+         *  |xx|xx|xx|  |  |  |  |
+         *  |xx|oo|xx|  |  |  |  |
+         *  |xx|xx|xx|  |  |  |  |
+         *  ----------------------
+         */
+
         let center = shape.center();
         if !self.bounds.contains(&center) {
             return Err("out of bounds call for this pointmap");
@@ -111,6 +135,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
         Ok(items)
     }
 
+    /// Find out what cell a given point is located in.
     fn get_index(&self, point: &Point) -> usize {
         let resolution = self.grid_resolution as f64;
 
@@ -120,6 +145,10 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
         (y * resolution + x - 1.0) as usize
     }
 
+    /// Get all the surrounding cells for a given cell index. This is useful when considering
+    /// that shapes can spill over the edges of a cell, i.e, if a large circle is close the edge
+    /// of a cell, the origo might be inside but other points of the circle might actually be
+    /// in neighboring cells.
     fn get_neighboring_cells(&self, index: usize) -> Vec<usize> {
         let i = index as i32;
         let step = (self.cells.len() as f64).sqrt() as i32;

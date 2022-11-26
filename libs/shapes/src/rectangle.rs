@@ -18,6 +18,8 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
+    /// Create a new Rectangle where the top-left corner will be located at
+    /// the given position.
     pub fn new(position: Point, width: f64, height: f64) -> Rectangle {
         Rectangle {
             position,
@@ -27,10 +29,14 @@ impl Rectangle {
         }
     }
 
+    /// Set the color of the rectangle.
     pub fn set_color(&mut self, color: Color) {
         self.color = Some(color);
     }
 
+    /// Scale a rectangle by a factor of the scale parameter.
+    /// The rectangle will scale from the origo, meaning
+    /// new rectangle that will be returned will be moved.
     pub fn scale(&self, scale: f64) -> Rectangle {
         let width = self.width * scale;
         let height = self.height * scale;
@@ -45,18 +51,24 @@ impl Rectangle {
         }
     }
 
+    /// Surface area of the rectangle.
     pub fn area(&self) -> f64 {
         self.width * self.height
     }
 
+    /// Returns a range that starts at the x position of the rectangle
+    /// and ends on the right side of the rectangle.
     pub fn x_range(&self) -> Range<f64> {
         self.position.x..(self.position.x + self.width)
     }
 
+    /// Returns a range that starts at teh y position of the rectangle
+    /// and ends at the bottom of the rectangle.
     pub fn y_range(&self) -> Range<f64> {
         self.position.y..(self.position.y + self.height)
     }
 
+    /// Converts this rectangle to a [`Path`]. Useful for path wobbling.
     pub fn to_path(&self, style: PathStyle) -> Path {
         let points = vec![
             (self.position.x, self.position.y),

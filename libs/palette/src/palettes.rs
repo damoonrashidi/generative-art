@@ -7,6 +7,7 @@ use crate::{
 pub struct Palettes;
 
 impl Palettes {
+    /// Vibrant Orange, red, off-white against a dark background
     pub fn orange_autumn() -> (Color, Box<dyn Palette>) {
         let background = Color::Hex("#181D31");
         let colors = WeightedPalette::new(vec![
@@ -20,6 +21,7 @@ impl Palettes {
         (background, Box::new(colors))
     }
 
+    /// Pastelly pinks, orange, red
     pub fn peaches_and_cream() -> (Color, Box<dyn Palette>) {
         let background = Color::Hex("#EAA984");
         let colors = SimplePalette::new(vec![
@@ -32,6 +34,7 @@ impl Palettes {
         (background, Box::new(colors))
     }
 
+    /// Blue, white, yellow
     pub fn spring_break() -> (Color, Box<dyn Palette>) {
         let background = Color::Hex("#F9F9F9");
         let colors = SimplePalette::new(vec![
@@ -44,6 +47,7 @@ impl Palettes {
         (background, Box::new(colors))
     }
 
+    /// black and white against red
     pub fn red_white_black() -> (Color, Box<dyn Palette>) {
         let background = Color::Hex("#EC0000");
         let colors = WeightedPalette::new(vec![

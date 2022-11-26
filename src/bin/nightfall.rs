@@ -10,6 +10,7 @@
     missing_debug_implementations,
     unreachable_pub
 )]
+
 use generative_art::nightfall_config::{ForceMethod, NightfallConfig};
 use palette::color::Color;
 use rand::{thread_rng, Rng};
@@ -41,7 +42,7 @@ fn main() {
 
     let mut rng = thread_rng();
 
-    let mut g: Group = Group::new();
+    let mut g = Group::new();
     g.set_style(GroupStyle {
         stroke: Some(Color::HSLa((30, 40., 95., 0.7))),
         stroke_width: Some(0.5),

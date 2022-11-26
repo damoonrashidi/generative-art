@@ -9,6 +9,7 @@ pub struct Point {
 }
 
 impl Point {
+    /// Calculates the distance between this point and other
     pub fn distance(&self, other: &Point) -> f64 {
         let d_x = (self.x - other.x).abs();
         let d_y = (self.y - other.y).abs();
@@ -16,6 +17,7 @@ impl Point {
         (d_x.powi(2) + d_y.powi(2)).sqrt()
     }
 
+    /// Creates a new point at the given point but with the x position offset by x, and same for y.
     pub fn offset(&self, x: f64, y: f64) -> Point {
         Point {
             x: self.x + x,
@@ -23,15 +25,19 @@ impl Point {
         }
     }
 
+    /// offsets the current point, in place.
     pub fn offset_mut(&mut self, x: f64, y: f64) {
         self.x += x;
         self.y += y;
     }
 
+    /// The angle between two given points.
     pub fn angle_to(&self, other: &Point) -> f64 {
         (other.y - self.y).atan2(other.x - self.x)
     }
 
+    /// Create a new point on the line between the two given points with an offset between [0..1],
+    /// where 0 is at the first point and 1 is at the last point and 0.5 is right inbetween.
     pub fn between(&self, other: &Point, percent: f64) -> Point {
         Point {
             x: self.x + (other.x - self.x) * percent,
