@@ -1,13 +1,34 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 use palette::color::Color;
 use shapes::shape::Shape;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct GroupStyle {
     pub fill: Option<Color>,
     pub stroke: Option<Color>,
     pub stroke_width: Option<f64>,
+}
+
+impl Display for GroupStyle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let stroke_width: String = match &self.stroke_width {
+            Some(width) => format!(" stroke-width=\"{width}\""),
+            None => String::from(""),
+        };
+
+        let stroke: String = match &self.stroke {
+            Some(color) => format!(" stroke=\"{color}\""),
+            None => String::from(""),
+        };
+
+        let fill: String = match &self.fill {
+            Some(color) => format!(" fill=\"{color}\""),
+            None => String::from(" fill=\"none\""),
+        };
+
+        write!(f, "{fill}{stroke}{stroke_width}")
+    }
 }
 
 /**
@@ -34,13 +55,12 @@ g.add_shape(rect2);
 */
 #[derive(Default)]
 pub struct Group {
-    pub shapes: Vec<Box<dyn Shape>>,
-    style: GroupStyle,
+    svg: String,
 }
 
 impl Debug for Group {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Group<{}>", self.shapes.len())
+        write!(f, "Group")
     }
 }
 
@@ -67,50 +87,23 @@ impl Group {
 
     ```
     */
-    pub fn new() -> Group {
-        Group {
-            shapes: vec![],
-            style: GroupStyle::default(),
-        }
-    }
+    pub fn new(style: Option<GroupStyle>) -> Group {
+        let svg = match style {
+            None => String::from("<g>"),
+            Some(style) => format!("<g {style}>"),
+        };
 
-    /// Set the style for the entire group, these can be overriden
-    /// on the shape level as well by just applying shape styles.
-    pub fn set_style(&mut self, style: GroupStyle) {
-        self.style.fill = style.fill;
-        self.style.stroke = style.stroke;
-        self.style.stroke_width = style.stroke_width;
+        Group { svg }
     }
 
     /// Add a new shape to the group
     pub fn add_shape(&mut self, shape: Box<dyn Shape>) {
-        self.shapes.push(shape);
+        self.svg = format!("{}{}", self.svg, shape.as_svg());
     }
 
+    /// Get the entire SVG string of the group
     pub fn as_svg(&self) -> String {
-        let stroke_width: String = match &self.style.stroke_width {
-            Some(width) => format!(" stroke-width=\"{}\"", width),
-            None => String::from(""),
-        };
-
-        let stroke: String = match &self.style.stroke {
-            Some(color) => format!(" stroke=\"{}\"", color),
-            None => String::from(""),
-        };
-
-        let fill: String = match &self.style.fill {
-            Some(color) => format!(" fill=\"{}\"", color),
-            None => String::from(" fill=\"none\""),
-        };
-
-        let g = self
-            .shapes
-            .iter()
-            .fold(format!("<g {fill}{stroke}{stroke_width}>"), |r, shape| {
-                format!("{}{}", r, shape.as_svg().trim())
-            });
-
-        format!("{}</g>", g)
+        format!("{}</g>", self.svg)
     }
 }
 
@@ -123,13 +116,11 @@ mod test {
     #[test]
     fn render() {
         let rect = Rectangle::new(0.0, 0.0, 10.0, 10.0);
-        let mut g = Group::new();
-
-        g.set_style(super::GroupStyle {
+        let mut g = Group::new(Some(super::GroupStyle {
             fill: Some(Color::Hex("#111")),
             stroke: None,
             stroke_width: None,
-        });
+        }));
 
         g.add_shape(Box::new(rect));
 

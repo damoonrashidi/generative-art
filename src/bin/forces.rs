@@ -1,13 +1,3 @@
-#![warn(rust_2018_idioms)]
-#![deny(
-    dead_code,
-    unused_variables,
-    unused_imports,
-    unused_import_braces,
-    rustdoc::broken_intra_doc_links,
-    missing_debug_implementations,
-    unreachable_pub
-)]
 use generative_art::forces_config::{ForcesConfig, ForcesPalette};
 
 use noise::{NoiseFn, OpenSimplex, Seedable};
@@ -84,7 +74,7 @@ fn main() {
         let mut line = Path {
             points: vec![],
             style: PathStyle {
-                stroke_width: Some(r),
+                stroke_weight: Some(r),
                 ..Default::default()
             },
         };
@@ -120,7 +110,7 @@ fn main() {
                     let path = Path::new(
                         points,
                         PathStyle {
-                            stroke_width: Some(r),
+                            stroke_weight: Some(r),
                             stroke: palette.get_random_color(),
                             color: None,
                         },
@@ -129,7 +119,7 @@ fn main() {
                 }
             } else {
                 line.style = PathStyle {
-                    stroke_width: Some(r),
+                    stroke_weight: Some(r),
                     stroke: line_color,
                     color: None,
                 };

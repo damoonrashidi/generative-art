@@ -17,7 +17,7 @@ pub struct PathStyle {
     /// The width of the stroke around this path
     ///
     /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    pub stroke_width: Option<f64>,
+    pub stroke_weight: Option<f64>,
 
     /// The color of the stroke around this path
     ///
@@ -42,9 +42,8 @@ impl Path {
         self.points.push(point);
     }
 
-    /// Take a shape and rough it up a bit but adding a bunch of points between each
-    /// , already existing, point and move those injected points around a bit.
-
+    /// Take a shape and rough it up a bit but adding a bunch of points between each,
+    /// already existing, point and move those injected points around a bit.
     pub fn wobble(&mut self) {
         let mut rng = thread_rng();
         let mut new_list: Vec<Point> = vec![];
@@ -103,17 +102,17 @@ impl Shape for Path {
             return String::from("");
         }
 
-        let stroke: String = match &self.style.stroke {
-            Some(color) => format!("stroke=\"{}\" ", color),
+        let stroke: String = match self.style.stroke {
+            Some(color) => format!("stroke=\"{color}\" "),
             None => String::from(""),
         };
 
-        let fill: String = match &self.style.color {
-            Some(color) => format!("fill=\"{}\" ", color),
+        let fill: String = match self.style.color {
+            Some(color) => format!("fill=\"{color}\" "),
             None => String::from("fill=\"none\" "),
         };
 
-        let stroke_weight: String = match &self.style.stroke_width {
+        let stroke_weight: String = match self.style.stroke_weight {
             Some(stroke) => format!("stroke-width=\"{:.2}\" ", stroke),
             None => String::from(""),
         };
@@ -139,7 +138,7 @@ impl Shape for Path {
                 },
             );
 
-            str.push_str(" \"/>\n");
+            str.push_str("\"/>\n");
             return str;
         }
         String::from("")

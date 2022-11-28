@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use clap::Parser;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub enum ForceMethod {
     #[default]
     Distort,
@@ -20,7 +20,7 @@ impl Display for ForceMethod {
     }
 }
 
-#[derive(Parser, Default)]
+#[derive(Parser, Default, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct NightfallParams {
     #[arg(long, default_value_t = 1500.0)]
@@ -36,7 +36,7 @@ pub struct NightfallParams {
     force: String,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct NightfallConfig {
     pub size: f64,
     pub points: usize,

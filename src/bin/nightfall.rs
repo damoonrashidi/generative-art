@@ -1,28 +1,16 @@
-#![warn(rust_2018_idioms)]
-#![deny(
-    dead_code,
-    // NOTE: This is very helpful to include
-    //missing_docs,
-    unused_variables,
-    unused_imports,
-    unused_import_braces,
-    rustdoc::broken_intra_doc_links,
-    missing_debug_implementations,
-    unreachable_pub
-)]
-
 use generative_art::nightfall_config::{ForceMethod, NightfallConfig};
 use palette::color::Color;
 use rand::{thread_rng, Rng};
 
 use shapes::{
-    circle::Circle, path::Path, point::Point, pointmap::PointMap, rectangle::Rectangle,
+    circle::Circle,
+    path::{Path, PathStyle},
+    point::Point,
+    pointmap::PointMap,
+    rectangle::Rectangle,
     shape::Shape,
 };
-use svg::{
-    group::{Group, GroupStyle},
-    svg::SVG,
-};
+use svg::svg::SVG;
 use transforms::{gen_weighted::gen_weighted, map::map};
 
 fn main() {
@@ -37,17 +25,12 @@ fn main() {
     let scaled_bounds = bounds.scale(0.9);
 
     let mut svg = SVG::new("Nightfall", bounds);
+    svg.add_shape(Box::new(bounds));
+
     let mut pointmap: PointMap<'_, Point> =
         PointMap::new(&bounds, (config.distance / config.size * 1000.0) as usize);
 
     let mut rng = thread_rng();
-
-    let mut g = Group::new();
-    g.set_style(GroupStyle {
-        stroke: Some(Color::HSLa((30, 40., 95., 0.7))),
-        stroke_width: Some(0.5),
-        ..Default::default()
-    });
 
     for _ in 0..config.points / 10 {
         let x = rng.gen_range(scaled_bounds.x_range());
@@ -97,26 +80,33 @@ fn main() {
         }
     }
 
-    pointmap.get_items().into_iter().for_each(|point| {
-        match pointmap.get_neighbors(point, Some(config.distance)) {
-            Err(_) => {}
-            Ok(neighbors) => {
-                let max_count = map(
-                    point.y,
-                    scaled_bounds.position.y..bounds.height - scaled_bounds.position.y,
-                    105.0..10.0,
-                ) as usize;
+    let points = pointmap.get_items();
 
-                neighbors.iter().take(max_count).for_each(|neighbor| {
-                    let path = Path::new(vec![*point, *neighbor], Default::default());
+    for point in points {
+        let max_count = map(
+            point.y,
+            scaled_bounds.position.y..bounds.height - scaled_bounds.position.y,
+            105.0..10.0,
+        ) as usize;
 
-                    g.add_shape(Box::new(path));
-                })
-            }
+        if let Ok(neighbors) = pointmap.get_neighbors(point, Some(50.)) {
+            neighbors
+                .iter()
+                .filter(|n| n.distance(point) > 10.)
+                .take(max_count)
+                .for_each(|n| {
+                    let path = Path::new(
+                        vec![*point, *n],
+                        PathStyle {
+                            stroke_weight: Some(0.5),
+                            stroke: Some(Color::Hex("#eee")),
+                            color: None,
+                        },
+                    );
+                    svg.add_shape(Box::new(path));
+                });
         }
-    });
+    }
 
-    svg.add_shape(Box::new(bounds));
-    svg.add_group(g);
     svg.save(Some(config.into()));
 }

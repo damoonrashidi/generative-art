@@ -1,15 +1,3 @@
-#![warn(rust_2018_idioms)]
-#![deny(
-    dead_code,
-    // NOTE: This is very helpful to include
-    //missing_docs,
-    unused_variables,
-    unused_imports,
-    unused_import_braces,
-    rustdoc::broken_intra_doc_links,
-    missing_debug_implementations,
-    unreachable_pub
-)]
 use generative_art::piet_config::PietConfig;
 use palette::palettes::Palettes;
 
@@ -25,7 +13,7 @@ fn main() {
     let root = bounds.scale(0.95);
 
     let mut svg = SVG::new("piet", bounds);
-    let mut group = Group::new();
+    let mut group = Group::new(None);
     let mut rects = vec![root];
 
     for _ in 0..config.rounds {
@@ -58,7 +46,7 @@ fn main() {
         .map(|rect| {
             let mut path = rect.to_path(PathStyle {
                 color: rect.color,
-                stroke_width: None,
+                stroke_weight: None,
                 stroke: None,
             });
             path.wobble();

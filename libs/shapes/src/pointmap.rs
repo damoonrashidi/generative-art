@@ -63,12 +63,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
 
     /// Get all items from the grid
     pub fn get_items(&self) -> Vec<&T> {
-        self.cells.iter().fold(vec![], |mut points, cell| {
-            cell.iter().for_each(|item| {
-                points.push(item);
-            });
-            points
-        })
+        self.cells.iter().flatten().collect::<Vec<&T>>()
     }
 
     /**
