@@ -6,7 +6,8 @@
     unused_import_braces,
     rustdoc::broken_intra_doc_links,
     missing_debug_implementations,
-    unreachable_pub
+    unreachable_pub,
+    clippy::all
 )]
 
 pub mod forces_config;

@@ -9,6 +9,9 @@ use rand::Rng;
 
 use crate::{path::Path, point::Point, rectangle::Rectangle, shape::Shape};
 
+/**
+* A Circle like shape, but slightly distorted to give a more natural look
+*/
 #[derive(Debug, Clone)]
 pub struct Blob {
     /// Center point of the shape.

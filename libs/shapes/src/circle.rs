@@ -4,14 +4,25 @@ use palette::color::Color;
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
+/// A Circle
 #[derive(Clone, Copy, Debug)]
 pub struct Circle {
+    /// Center point, or origo, for the Circle
     pub center: Point,
+
+    /// Radius
     pub radius: f64,
+
+    /// Fill color for a circle
     color: Option<Color>,
 }
 
 impl Circle {
+    /// Create a new Circle at given [`point`] with given [`radius`]
+    ///
+    /// ```
+    /// let circle = Circle::new(Point{x: 0.0, y: 0.0}, 10.0);
+    /// ```
     pub fn new(center: Point, radius: f64) -> Circle {
         Circle {
             center,
@@ -20,24 +31,37 @@ impl Circle {
         }
     }
 
+    /// Calculate the distance between this circle and another circle.
+    /// The distance will be calculated based on the edges of the circles,
+    /// not the center.
+    ///
+    /// ```
+    /// let circle = Circle::new(Point{x: 0.0, y: 0.0}, 10.0);
+    /// let other = Circle::new(Point{x: 20.0, y: 0.0}, 10.0);
+    /// let distance = circle.distance(&other); // -> 10.0
+    /// ```
     pub fn distance(&self, other: &Circle) -> f64 {
         let d_x = self.center.x - other.center.x;
         let d_y = self.center.y - other.center.y;
         (d_x.powi(2) + d_y.powi(2)).sqrt() - self.radius - other.radius
     }
 
+    /// True if a given intersects another circle, otherwise false.
     pub fn intersects(&self, other: &Circle) -> bool {
         self.distance(other) < self.radius + other.radius
     }
 
+    /// True if a given circle intersects any other circle in the, otherwise false
     pub fn instersects_any(&self, others: Vec<Circle>) -> bool {
         others.iter().any(|circle| self.intersects(circle))
     }
 
+    /// Set the fill color of the circle
     pub fn set_color(&mut self, color: Color) {
         self.color = Some(color);
     }
 
+    /// Scale a circle by a factor of [`scale`]. The radius remains unchanged.
     pub fn scale(&self, scale: f64) -> Circle {
         Circle {
             radius: self.radius * scale,

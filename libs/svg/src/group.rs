@@ -3,10 +3,19 @@ use std::fmt::{Debug, Display};
 use palette::color::Color;
 use shapes::shape::Shape;
 
+/// A group style defined the fill, stroke width and stroke color
+/// for all shapes contained in the group, unless the styles are
+/// defined on the shape level, in which case they override the
+/// group styles.
 #[derive(Debug, Default, Copy, Clone)]
 pub struct GroupStyle {
+    /// Fill color
     pub fill: Option<Color>,
+
+    /// Stroke outline color
     pub stroke: Option<Color>,
+
+    /// Stroke outline width
     pub stroke_width: Option<f64>,
 }
 
