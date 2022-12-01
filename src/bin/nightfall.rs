@@ -59,7 +59,7 @@ fn main() {
         let point = Point { x, y };
 
         if sphere.contains(&point) {
-            let distance = point.distance(&center);
+            let distance = point.distance_to(&center);
             let angle = point.angle_to(&center);
 
             let force = match config.force {
@@ -92,7 +92,7 @@ fn main() {
         if let Ok(neighbors) = pointmap.get_neighbors(point, Some(50.)) {
             neighbors
                 .iter()
-                .filter(|n| n.distance(point) > 10.)
+                .filter(|n| n.distance_to(point) > 10.)
                 .take(max_count)
                 .for_each(|n| {
                     let path = Path::new(

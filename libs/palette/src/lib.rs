@@ -1,7 +1,6 @@
-/**
-Palettes, colors and other stuff
-*/
-#[deny(
+//! Palettes, colors and other stuff
+#![warn(rust_2018_idioms)]
+#![deny(
     dead_code,
     missing_docs,
     unused_variables,

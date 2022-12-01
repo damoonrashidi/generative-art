@@ -8,12 +8,29 @@ use crate::{
     point::Point,
 };
 
+/**
+A Rectangle
+
+Example
+```
+let mut rect = Rectangle::new(Point{x: 0.0, y: 0.0}, 100.0, 100.0);
+rect.set_color(Color::Hex("#f00"));
+svg.add_shape(Box::new(rect));
+rect.save();
+```
+*/
 #[derive(Debug, Clone, Copy)]
 pub struct Rectangle {
+    /// Upper left corner of the rectangle
     pub position: Point,
+
+    /// Width of the rectangle
     pub width: f64,
+
+    /// Height of the rectangle
     pub height: f64,
 
+    /// Fill color of the rectangle.
     pub color: Option<Color>,
 }
 
@@ -25,7 +42,7 @@ impl Rectangle {
             position,
             width,
             height,
-            color: Rectangle::default().color,
+            ..Default::default()
         }
     }
 

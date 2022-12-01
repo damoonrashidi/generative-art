@@ -1,8 +1,6 @@
-/**
-All shape related things.
-*/
-
-#[deny(
+//! All shape related things.
+#![warn(rust_2018_idioms)]
+#![deny(
     dead_code,
     missing_docs,
     unused_variables,

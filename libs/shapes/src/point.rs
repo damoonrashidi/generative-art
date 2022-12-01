@@ -2,15 +2,35 @@ use std::fmt::Display;
 
 use crate::{rectangle::Rectangle, shape::Shape};
 
+/**
+A single point in the canvas.
+
+Example
+```
+let point = Point{x: 0.0, y: 10.0};
+```
+*/
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Point {
+    /// x position for the point
     pub x: f64,
+    /// y position for the point
     pub y: f64,
 }
 
 impl Point {
-    /// Calculates the distance between this point and other
-    pub fn distance(&self, other: &Point) -> f64 {
+    /**
+    Calculates the distance between this point and other
+
+    Example
+    ```
+    let a = Point{x: 0.0, y: 0.0};
+    let b = Point{x: 20.0, y: 0.0};
+
+    let distance = a.distance(&b); // 20.0
+    ```
+    */
+    pub fn distance_to(&self, other: &Point) -> f64 {
         let d_x = (self.x - other.x).abs();
         let d_y = (self.y - other.y).abs();
 
@@ -86,7 +106,7 @@ mod tests {
     fn distance() {
         let a = Point { x: -10.0, y: 0.0 };
         let b = Point { x: 10.0, y: 10.0 };
-        let distance = a.distance(&b);
+        let distance = a.distance_to(&b);
         assert_eq!(distance.round(), 22.0);
     }
     #[test]

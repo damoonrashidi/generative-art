@@ -1,5 +1,6 @@
 use crate::{point::Point, rectangle::Rectangle};
 
+/// Generic shape definition, can be a Circle, Rectangle, Path, etc
 pub trait Shape {
     /// SVG representation of this shape
     fn as_svg(&self) -> String;

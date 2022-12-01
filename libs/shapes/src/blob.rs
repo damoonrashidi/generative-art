@@ -65,7 +65,7 @@ impl Blob {
 
     /// Calculates the distance between this blob and another given blob
     pub fn distance(&self, other: &Blob) -> f64 {
-        self.center().distance(&other.center()) - self.radius - other.radius
+        self.center().distance_to(&other.center()) - self.radius - other.radius
     }
 }
 

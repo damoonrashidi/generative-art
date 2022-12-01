@@ -104,7 +104,7 @@ impl Shape for Circle {
     }
 
     fn contains(&self, point: &Point) -> bool {
-        self.center().distance(point) < self.radius
+        self.center().distance_to(point) < self.radius
     }
 }
 

@@ -3,6 +3,7 @@ use rand::{thread_rng, Rng};
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
+/// An SVG path
 #[derive(Debug, Default)]
 pub struct Path {
     /// List of points that make up the path.
@@ -12,6 +13,7 @@ pub struct Path {
     pub style: PathStyle,
 }
 
+/// A style for a given [`Path`], it can specify fill, stroke color and stroke width
 #[derive(Debug, Default)]
 pub struct PathStyle {
     /// The width of the stroke around this path
@@ -77,7 +79,7 @@ impl Path {
 
         let mut total = 0.0;
         for i in 1..self.points.len() {
-            total += self.points[i - 1].distance(&self.points[i])
+            total += self.points[i - 1].distance_to(&self.points[i])
         }
         total
     }

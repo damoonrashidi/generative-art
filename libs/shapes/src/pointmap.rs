@@ -2,8 +2,13 @@ use std::vec;
 
 use crate::{point::Point, rectangle::Rectangle, shape::Shape};
 
+/**
+A PointMap is a grid subdivision of a Rectangle where each cell holds
+zero or more shapes. It speeds up the search for close proximity shapes (neighbors) by
+limiting the search to only look in the same cell, or same cell as well as adjacent cells.
+*/
 #[derive(Debug)]
-pub struct PointMap<'a, T> {
+pub struct PointMap<'a, T: Shape> {
     bounds: &'a Rectangle,
     cells: Vec<Vec<T>>,
     grid_resolution: usize,
@@ -117,7 +122,7 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
                         .iter()
                         .filter(|item| {
                             if let Some(distance) = distance {
-                                return shape.center().distance(&item.center()) < distance;
+                                return shape.center().distance_to(&item.center()) < distance;
                             }
                             true
                         })

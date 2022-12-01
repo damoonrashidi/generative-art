@@ -1,4 +1,6 @@
-#[deny(
+//! SVG stuff
+#![warn(rust_2018_idioms)]
+#![deny(
     dead_code,
     unused_variables,
     missing_docs,
