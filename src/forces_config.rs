@@ -48,7 +48,7 @@ pub struct ForcesParams {
     pub smoothness: f64,
 
     /// Seed for the RNG
-    #[arg(long, default_value_t = 1)]
+    #[arg(long)]
     pub seed: u32,
 
     /// The probability that a line has more than one color

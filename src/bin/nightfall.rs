@@ -1,5 +1,5 @@
 use generative_art::nightfall_config::{ForceMethod, NightfallConfig};
-use palette::color::Color;
+use palette::{color::Color, palettes::Palettes, Palette};
 use rand::{thread_rng, Rng};
 
 use shapes::{

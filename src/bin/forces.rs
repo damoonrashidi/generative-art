@@ -1,6 +1,6 @@
 use generative_art::forces_config::{ForcesConfig, ForcesPalette};
 
-use noise::{NoiseFn, OpenSimplex, Seedable};
+use noise::{NoiseFn, Seedable, SuperSimplex};
 use palette::{color::Color, palettes::Palettes};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
@@ -45,8 +45,7 @@ fn main() {
     }
 
     let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 20);
-    let noise = OpenSimplex::new();
-    Seedable::set_seed(noise, config.seed);
+    let noise = SuperSimplex::new().set_seed(config.seed);
 
     for i in 0..config.line_count {
         let mut x: f64 = rng.gen_range(inner_bounds.x_range());
