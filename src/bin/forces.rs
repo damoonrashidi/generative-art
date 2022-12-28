@@ -87,7 +87,7 @@ fn main() {
             if let Ok(neighbors) = point_map.get_neighbors(&circle, None) {
                 if neighbors
                     .iter()
-                    .any(|neighbor| neighbor.distance(&circle) < 0.)
+                    .any(|neighbor| neighbor.distance(&circle) < r / 2.)
                 {
                     break;
                 }

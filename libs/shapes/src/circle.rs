@@ -43,12 +43,12 @@ impl Circle {
     pub fn distance(&self, other: &Circle) -> f64 {
         let d_x = self.center.x - other.center.x;
         let d_y = self.center.y - other.center.y;
-        (d_x.powi(2) + d_y.powi(2)).sqrt() - self.radius - other.radius
+        (d_x.powi(2) + d_y.powi(2)).sqrt() - self.radius / 2. - other.radius / 2.
     }
 
     /// True if a given intersects another circle, otherwise false.
     pub fn intersects(&self, other: &Circle) -> bool {
-        self.distance(other) < self.radius + other.radius
+        self.distance(other) < self.radius / 2. + other.radius / 2.
     }
 
     /// True if a given circle intersects any other circle in the, otherwise false
