@@ -43,50 +43,54 @@ fn main() {
         let _ = pointmap.insert(point);
     }
 
-    let sphere = Circle::new(
-        Point {
-            x: rng.gen_range(scaled_bounds.x_range()),
-            y: rng.gen_range(scaled_bounds.y_range()),
-        },
-        config.size / rng.gen_range(4..8) as f64,
-    );
-    let center = sphere.center();
+    let spheres = [0; 3]
+        .iter()
+        .map(|_| {
+            Circle::new(
+                Point {
+                    x: rng.gen_range(scaled_bounds.x_range()),
+                    y: rng.gen_range(scaled_bounds.y_range()),
+                },
+                config.size / rng.gen_range(4..8) as f64,
+            )
+        })
+        .collect::<Vec<Circle>>();
 
     for _ in 0..config.points {
         let x = rng.gen_range(scaled_bounds.x_range());
         let y = gen_weighted(scaled_bounds.y_range(), &mut rng);
 
-        let point = Point { x, y };
+        let mut point = Point { x, y };
 
-        if sphere.contains(&point) {
-            let distance = point.distance_to(&center);
-            let angle = point.angle_to(&center);
+        spheres.iter().for_each(|sphere| {
+            if sphere.contains(&point) {
+                let center = sphere.center();
+                let distance = point.distance_to(&center);
+                let angle = point.angle_to(&center);
 
-            let force = match config.force {
-                ForceMethod::Distort => -distance / sphere.radius,
-                ForceMethod::Push => -(sphere.radius - distance) / sphere.radius,
-                ForceMethod::Pull => sphere.radius / distance,
-            };
+                let force = match config.force {
+                    ForceMethod::Distort => -distance / sphere.radius,
+                    ForceMethod::Push => -(sphere.radius - distance) / sphere.radius,
+                    ForceMethod::Pull => sphere.radius / distance,
+                };
 
-            let new_x = point.x + map(angle.cos() * force, 0.0..1.0, 1.0..sphere.radius);
-            let new_y = point.y + map(angle.sin() * force, 0.0..1.0, 1.0..sphere.radius);
+                let new_x = point.x + map(angle.cos() * force, 0.0..1.0, 1.0..sphere.radius);
+                let new_y = point.y + map(angle.sin() * force, 0.0..1.0, 1.0..sphere.radius);
 
-            let _ = pointmap.insert(Point {
-                x: new_x.min(bounds.width).max(bounds.position.x),
-                y: new_y.min(bounds.height).max(bounds.position.y),
-            });
-        } else {
-            let _ = pointmap.insert(point);
-        }
+                point = Point { x: new_x, y: new_y };
+            }
+        });
+        let _ = pointmap.insert(point);
     }
 
-    let points = pointmap.get_items();
+    let clone = pointmap.clone();
+    let points = clone.get_items();
 
     for point in points {
         let max_count = map(
             point.y,
             scaled_bounds.position.y..bounds.height - scaled_bounds.position.y,
-            105.0..10.0,
+            70.0..5.0,
         ) as usize;
 
         if let Ok(neighbors) = pointmap.get_neighbors(point, Some(50.)) {
@@ -98,7 +102,7 @@ fn main() {
                     let path = Path::new(
                         vec![*point, *n],
                         PathStyle {
-                            stroke_weight: Some(0.5),
+                            stroke_weight: Some(0.2),
                             stroke: Some(Color::Hex("#eee")),
                             color: None,
                         },
@@ -106,6 +110,8 @@ fn main() {
                     svg.add_shape(Box::new(path));
                 });
         }
+
+        pointmap.remove(*point);
     }
 
     svg.save(Some(config.into()));

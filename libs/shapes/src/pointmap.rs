@@ -7,7 +7,7 @@ A PointMap is a grid subdivision of a Rectangle where each cell holds
 zero or more shapes. It speeds up the search for close proximity shapes (neighbors) by
 limiting the search to only look in the same cell, or same cell as well as adjacent cells.
 */
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PointMap<'a, T: Shape> {
     bounds: &'a Rectangle,
     cells: Vec<Vec<T>>,
