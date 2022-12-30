@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::{color::Color, Palette};
+use super::{color::Color, Palette};
 /// A set of colors where a color can be chosen randomly
 #[derive(Debug)]
 pub struct SimplePalette {

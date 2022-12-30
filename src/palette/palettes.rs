@@ -1,4 +1,4 @@
-use crate::{
+use super::{
     color::Color, simple_palette::SimplePalette, weighted_palette::WeightedPalette, Palette,
 };
 

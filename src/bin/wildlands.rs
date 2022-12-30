@@ -1,9 +1,11 @@
+use generative_art::{
+    palette::{color::Color, palettes::Palettes},
+    shapes::{blob::Blob, point::Point, pointmap::PointMap, rectangle::Rectangle, shape::Shape},
+    svg::svg::SVG,
+};
 use noise::{NoiseFn, OpenSimplex, Seedable};
-use palette::{color::Color, palettes::Palettes};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
-use shapes::{blob::Blob, point::Point, pointmap::PointMap, rectangle::Rectangle, shape::Shape};
-use svg::svg::SVG;
 
 fn main() {
     let (background, palette) = Palettes::orange_autumn();

@@ -1,11 +1,11 @@
 use std::{fmt::Display, ops::Range};
 
-use palette::color::Color;
+use crate::palette::color::Color;
 
-use super::shape::Shape;
-use crate::{
+use super::{
     path::{Path, PathStyle},
     point::Point,
+    shape::Shape,
 };
 
 /**
@@ -164,7 +164,8 @@ impl Display for Rectangle {
 
 #[cfg(test)]
 mod test {
-    use crate::{point::Point, shape::Shape};
+
+    use crate::shapes::{point::Point, shape::Shape};
 
     use super::Rectangle;
 

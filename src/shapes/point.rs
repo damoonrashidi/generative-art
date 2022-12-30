@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::{rectangle::Rectangle, shape::Shape};
+use super::{rectangle::Rectangle, shape::Shape};
 
 /**
 A single point in the canvas.

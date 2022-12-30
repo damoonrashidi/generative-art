@@ -1,4 +1,4 @@
-use crate::{point::Point, rectangle::Rectangle};
+use super::{point::Point, rectangle::Rectangle};
 
 /// Generic shape definition, can be a Circle, Rectangle, Path, etc
 pub trait Shape {

@@ -1,19 +1,20 @@
-use generative_art::forces_config::{ForcesConfig, ForcesPalette};
-
+use generative_art::{
+    configs::forces_config::{ForcesConfig, ForcesPalette},
+    palette::{color::Color, palettes::Palettes},
+    shapes::{
+        blob::Blob,
+        circle::Circle,
+        path::{Path, PathStyle},
+        point::Point,
+        pointmap::PointMap,
+        rectangle::Rectangle,
+        shape::Shape,
+    },
+    svg::svg::SVG,
+};
 use noise::{NoiseFn, Seedable, SuperSimplex};
-use palette::{color::Color, palettes::Palettes};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
-use shapes::{
-    blob::Blob,
-    circle::Circle,
-    path::{Path, PathStyle},
-    point::Point,
-    pointmap::PointMap,
-    rectangle::Rectangle,
-    shape::Shape,
-};
-use svg::svg::SVG;
 
 fn main() {
     let config = ForcesConfig::new();

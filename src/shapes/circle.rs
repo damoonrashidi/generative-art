@@ -1,8 +1,8 @@
 use std::fmt::Display;
 
-use palette::color::Color;
+use crate::palette::color::Color;
 
-use crate::{point::Point, rectangle::Rectangle, shape::Shape};
+use super::{point::Point, rectangle::Rectangle, shape::Shape};
 
 /// A Circle
 #[derive(Clone, Copy, Debug)]

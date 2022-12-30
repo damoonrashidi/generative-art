@@ -9,12 +9,10 @@ rand = "0.8.5"
 rand_chacha = "0.3.1"
 threadpool = "1.8.1"
 clap = { version = "4.0.18", features = ["derive"] }
-svg = { path = "libs/svg" }
-shapes = { path = "libs/shapes" }
-transforms = { path = "libs/transforms" }
-palette = { path = "libs/palette" }
 eframe = "0.20.1"
 egui_extras = { version = "0.20.0", features = ["svg"] }
+chrono = "0.4.23"
+num-traits = "0.2.15"
 
 [[bin]]
 name = "grid"

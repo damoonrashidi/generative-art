@@ -1,9 +1,10 @@
-use generative_art::piet_config::PietConfig;
-use palette::palettes::Palettes;
-
+use generative_art::{
+    configs::piet_config::PietConfig,
+    palette::palettes::Palettes,
+    shapes::{path::PathStyle, point::Point, rectangle::Rectangle},
+    svg::{group::Group, svg::SVG},
+};
 use rand::{thread_rng, Rng};
-use shapes::{path::PathStyle, point::Point, rectangle::Rectangle};
-use svg::{group::Group, svg::SVG};
 
 fn main() {
     let mut rng = thread_rng();

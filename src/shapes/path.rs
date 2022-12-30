@@ -1,7 +1,8 @@
-use palette::color::Color;
 use rand::{thread_rng, Rng};
 
-use crate::{point::Point, rectangle::Rectangle, shape::Shape};
+use crate::palette::color::Color;
+
+use super::{point::Point, rectangle::Rectangle, shape::Shape};
 
 /// An SVG path
 #[derive(Debug, Default)]
@@ -284,9 +285,9 @@ impl Shape for Path {
 
 #[cfg(test)]
 mod test {
-    use crate::{point::Point, rectangle::Rectangle, shape::Shape};
+    use crate::shapes::{point::Point, rectangle::Rectangle};
 
-    use super::Path;
+    use super::{Path, Shape};
 
     #[test]
     fn get_bounding_box() {

@@ -10,7 +10,8 @@
     clippy::all
 )]
 
-pub mod forces_config;
-pub mod grid_config;
-pub mod nightfall_config;
-pub mod piet_config;
+pub mod configs;
+pub mod palette;
+pub mod shapes;
+pub mod svg;
+pub mod transforms;

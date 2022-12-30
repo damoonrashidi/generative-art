@@ -4,10 +4,11 @@ Not a binary large object
 */
 use std::f64::consts::PI;
 
-use palette::color::Color;
 use rand::Rng;
 
-use crate::{path::Path, point::Point, rectangle::Rectangle, shape::Shape};
+use crate::palette::color::Color;
+
+use super::{path::Path, point::Point, rectangle::Rectangle, shape::Shape};
 
 /**
 * A Circle like shape, but slightly distorted to give a more natural look

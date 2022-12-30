@@ -1,7 +1,6 @@
 use std::fmt::{Debug, Display};
 
-use palette::color::Color;
-use shapes::shape::Shape;
+use crate::{palette::color::Color, shapes::shape::Shape};
 
 /// A group style defined the fill, stroke width and stroke color
 /// for all shapes contained in the group, unless the styles are
@@ -118,13 +117,17 @@ impl Group {
 
 #[cfg(test)]
 mod test {
-    use crate::{palette::Color, rectangle::Rectangle};
+
+    use crate::{
+        palette::color::Color,
+        shapes::{point::Point, rectangle::Rectangle},
+    };
 
     use super::Group;
 
     #[test]
     fn render() {
-        let rect = Rectangle::new(0.0, 0.0, 10.0, 10.0);
+        let rect = Rectangle::new(Point { x: 0.0, y: 0.0 }, 10.0, 10.0);
         let mut g = Group::new(Some(super::GroupStyle {
             fill: Some(Color::Hex("#111")),
             stroke: None,

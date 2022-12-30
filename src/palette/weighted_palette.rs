@@ -1,4 +1,4 @@
-use crate::{color::Color, Palette};
+use super::{color::Color, Palette};
 use rand::{distributions::WeightedIndex, prelude::Distribution};
 
 /// A set of colors where one can be chosen randomly but biased by a given weight

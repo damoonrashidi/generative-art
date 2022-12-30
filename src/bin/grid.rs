@@ -1,13 +1,12 @@
-use generative_art::grid_config::GridConfig;
-use palette::color::Color;
-use shapes::{circle::Circle, point::Point};
-
+use generative_art::{
+    configs::grid_config::GridConfig,
+    palette::color::Color,
+    shapes::{circle::Circle, point::Point, rectangle::Rectangle},
+    svg::svg::SVG,
+};
+use rand::{thread_rng, Rng};
 use std::sync::mpsc::channel;
 use threadpool::ThreadPool;
-
-use rand::{thread_rng, Rng};
-use shapes::rectangle::Rectangle;
-use svg::svg::SVG;
 
 fn main() {
     let config = GridConfig::new();

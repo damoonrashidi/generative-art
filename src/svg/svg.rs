@@ -1,9 +1,10 @@
 use std::{fs::File, io::Write};
 
 use chrono::{Datelike, Utc};
-use shapes::{rectangle::Rectangle, shape::Shape};
 
-use crate::group::Group;
+use crate::shapes::{rectangle::Rectangle, shape::Shape};
+
+use super::group::Group;
 
 /// The SVG struct contains all the SVG information for a generated artwork.
 /// It is the common interface for all shapes when they are finally rendered.

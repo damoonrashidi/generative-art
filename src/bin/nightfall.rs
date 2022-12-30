@@ -1,20 +1,21 @@
-use generative_art::nightfall_config::{ForceMethod, NightfallConfig};
-use palette::color::Color;
+use generative_art::{
+    configs::nightfall_config::ForceMethod,
+    palette::color::Color,
+    shapes::{
+        circle::Circle,
+        path::{Path, PathStyle},
+        point::Point,
+        pointmap::PointMap,
+        rectangle::Rectangle,
+        shape::Shape,
+    },
+    svg::svg::SVG,
+    transforms::{gen_weighted::gen_weighted, map},
+};
 use rand::{thread_rng, Rng};
 
-use shapes::{
-    circle::Circle,
-    path::{Path, PathStyle},
-    point::Point,
-    pointmap::PointMap,
-    rectangle::Rectangle,
-    shape::Shape,
-};
-use svg::svg::SVG;
-use transforms::{gen_weighted::gen_weighted, map::map};
-
 fn main() {
-    let config = NightfallConfig::new();
+    let config = generative_art::configs::nightfall_config::NightfallConfig::new();
 
     let bounds = Rectangle {
         position: Point { x: 0.0, y: 0.0 },
@@ -74,8 +75,8 @@ fn main() {
                     ForceMethod::Pull => sphere.radius / distance,
                 };
 
-                let new_x = point.x + map(angle.cos() * force, 0.0..1.0, 1.0..sphere.radius);
-                let new_y = point.y + map(angle.sin() * force, 0.0..1.0, 1.0..sphere.radius);
+                let new_x = point.x + map::map(angle.cos() * force, 0.0..1.0, 1.0..sphere.radius);
+                let new_y = point.y + map::map(angle.sin() * force, 0.0..1.0, 1.0..sphere.radius);
 
                 point = Point { x: new_x, y: new_y };
             }
@@ -87,7 +88,7 @@ fn main() {
     let points = clone.get_items();
 
     for point in points {
-        let max_count = map(
+        let max_count = map::map(
             point.y,
             scaled_bounds.position.y..bounds.height - scaled_bounds.position.y,
             70.0..5.0,
