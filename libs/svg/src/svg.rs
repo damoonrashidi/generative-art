@@ -93,4 +93,9 @@ impl<'a> SVG<'static> {
         f.write_all(self.document.as_bytes())
             .expect("Could not write to file");
     }
+
+    /// Generate the svg in memory
+    pub fn generate(&self) -> String {
+        format!("{}</svg>", self.document)
+    }
 }

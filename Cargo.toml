@@ -13,6 +13,8 @@ svg = { path = "libs/svg" }
 shapes = { path = "libs/shapes" }
 transforms = { path = "libs/transforms" }
 palette = { path = "libs/palette" }
+eframe = "0.20.1"
+egui_extras = { version = "0.20.0", features = ["svg"] }
 
 [[bin]]
 name = "grid"
