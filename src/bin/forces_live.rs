@@ -1,4 +1,4 @@
-use std::fmt::Error;
+use std::{fmt::Error, fs::File, io::Write};
 
 use generative_art::{
     configs::forces_config::ForcesParams,
@@ -13,6 +13,7 @@ use generative_art::{
         shape::Shape,
     },
     svg::svg::SVG,
+    transforms::gen_weighted::WeightedChoice,
 };
 
 use noise::{NoiseFn, Seedable, SuperSimplex};
@@ -37,15 +38,14 @@ fn main() -> Result<(), Error> {
 struct ForcesApp {
     config: ForcesParams,
     svg: egui_extras::RetainedImage,
+    svg_str: String,
 }
 
 impl ForcesApp {
     pub fn set_new_image(&mut self) {
-        self.svg = egui_extras::RetainedImage::from_svg_str(
-            "Forces",
-            self.generate_svg(&self.config).as_str(),
-        )
-        .unwrap();
+        let svg_str = self.generate_svg(&self.config);
+        self.svg_str = svg_str.clone();
+        self.svg = egui_extras::RetainedImage::from_svg_str("Forces", svg_str.as_str()).unwrap();
     }
 
     fn generate_svg(&self, config: &ForcesParams) -> String {
@@ -87,16 +87,21 @@ impl ForcesApp {
                 _ => palette.get_random_color(),
             };
 
-            let mut r = 65.0;
-            let mut step_size = 50.0;
+            let radii = WeightedChoice {
+                choices: [(40.0, 10), (100.0, 4), (150.0, 2)],
+            };
 
-            if rng.gen_bool(0.7) && i < 5 {
-                r = 200.;
-                step_size = 250.;
-            } else if rng.gen_bool(0.1) {
-                r = 40.;
-                step_size = 30.;
-            }
+            let r = if i < 1 {
+                350.0
+            } else {
+                radii.get_random_choice().unwrap()
+            };
+
+            let step_size = if (0.0..=150.).contains(&r) {
+                20.0
+            } else {
+                180.0
+            };
 
             let mut line = Path {
                 points: vec![],
@@ -107,7 +112,13 @@ impl ForcesApp {
             };
 
             while inner_bounds.contains(&Point { x, y }) && line.length() < config.max_line_length {
-                let n = noise.get([x / config.smoothness, y / config.smoothness]);
+                let smoothness = if (400.0..600.0).contains(&r) {
+                    config.smoothness * 3.0
+                } else {
+                    config.smoothness
+                };
+
+                let n = noise.get([x / smoothness, y / smoothness]);
                 x += (config.chaos * n).cos() * step_size;
                 y += (config.chaos * n).sin() * step_size;
                 let circle = Circle::new(Point { x, y }, r);
@@ -164,7 +175,7 @@ impl ForcesApp {
         let mut lines = vec![];
         let mut last_split = 1;
         for i in 1..line.len() - 1 {
-            if rng.gen_bool(0.5) {
+            if rng.gen_bool(0.2) {
                 if use_gap {
                     lines.push(line[last_split..i].into());
                 } else {
@@ -186,11 +197,12 @@ impl Default for ForcesApp {
                 r#"<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"></svg>"#,
             )
             .unwrap(),
+            svg_str: "".into(),
             config: ForcesParams {
                 line_count: 500,
                 size: 2500.,
-                chaos: 1.5,
-                smoothness: 1500.0,
+                chaos: 0.5,
+                smoothness: 800.0,
                 min_line_length: 50.0,
                 max_line_length: 1500.0,
                 palette: "forces_palette".to_string(),
@@ -214,7 +226,7 @@ impl eframe::App for ForcesApp {
 
             if ui
                 .add(
-                    eframe::egui::Slider::new(&mut self.config.line_count, 50..=20000)
+                    eframe::egui::Slider::new(&mut self.config.line_count, 50..=3000)
                         .text("Line Count"),
                 )
                 .changed()
@@ -241,7 +253,7 @@ impl eframe::App for ForcesApp {
                     .add(
                         eframe::egui::Slider::new(
                             &mut self.config.max_line_length,
-                            self.config.min_line_length..=self.config.min_line_length + 1000.,
+                            self.config.min_line_length..=self.config.size * 1.4,
                         )
                         .text("Max line length"),
                     )
@@ -254,7 +266,9 @@ impl eframe::App for ForcesApp {
             // Line behaviour
             ui.horizontal(|ui| {
                 if ui
-                    .add(eframe::egui::Slider::new(&mut self.config.chaos, 0.5..=8.0).text("Chaos"))
+                    .add(
+                        eframe::egui::Slider::new(&mut self.config.chaos, 0.5..=16.0).text("Chaos"),
+                    )
                     .changed()
                 {
                     self.set_new_image();
@@ -293,6 +307,14 @@ impl eframe::App for ForcesApp {
                     self.set_new_image()
                 }
             });
+
+            if ui.button("Export").clicked() {
+                let mut f = File::create("./output/forces/forces-live.svg")
+                    .expect("could not open file for writing");
+
+                f.write_all(self.svg_str.as_bytes())
+                    .expect("Could not write to file");
+            }
 
             self.svg.show_size(ui, ui.available_size());
         });

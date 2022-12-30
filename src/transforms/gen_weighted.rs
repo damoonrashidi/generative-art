@@ -30,7 +30,7 @@ pub fn gen_weighted(range: Range<f64>, rng: &mut ThreadRng) -> f64 {
 /// A set of colors where one can be chosen randomly but biased by a given weight
 #[derive(Debug)]
 pub struct WeightedChoice<T, const N: usize> {
-    choices: [T; N],
+    pub choices: [T; N],
 }
 
 /// Pair of Item + Weigth
