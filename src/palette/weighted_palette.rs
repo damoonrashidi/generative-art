@@ -14,10 +14,13 @@ impl WeightedPalette {
      Example
 
      ```
+
+     use generative_art::{palette::{Palette, color::Color, weighted_palette::WeightedPalette}};
+
      let palette = WeightedPalette::new(vec![
-     (Color::Hex("#f00"), 1),
-     (Color::Hex("#0f0"), 5),
-     (Color::Hex("#00f"), 1)
+        (Color::Hex("#f00"), 1),
+        (Color::Hex("#0f0"), 5),
+        (Color::Hex("#00f"), 1)
      ]);
 
      if let Some(random_color) = palette.get_random_color() {

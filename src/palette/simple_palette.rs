@@ -14,6 +14,7 @@ impl SimplePalette {
      Example
 
      ```
+     use generative_art::palette::{Palette, color::Color, simple_palette::SimplePalette};
      let palette = SimplePalette::new(vec![
      Color::Hex("#f00"),
      Color::Hex("#0f0"),
@@ -21,7 +22,7 @@ impl SimplePalette {
      ]);
 
      if let Some(random_color) = palette.get_random_color() {
-     // do something with random_color
+        // do something with random_color
      }
      ```
 

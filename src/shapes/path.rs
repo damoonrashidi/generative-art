@@ -95,7 +95,7 @@ impl Path {
         let p1 = dy1 * (b.1.x - a.1.x) - dx1 * (b.1.y - a.1.y);
         let p2 = dy0 * (a.1.x - b.0.x) - dx0 * (a.1.y - b.0.y);
         let p3 = dy0 * (a.1.x - b.1.x) - dx0 * (a.1.y - b.1.y);
-        return (p0 * p1 <= 0.0) & (p2 * p3 <= 0.0);
+        (p0 * p1 <= 0.0) & (p2 * p3 <= 0.0)
     }
 }
 
@@ -160,11 +160,7 @@ impl Shape for Path {
             return None;
         }
 
-        let p = if let Some(p) = self.points.get(0) {
-            p
-        } else {
-            return None;
-        };
+        let p = self.points.get(0)?;
 
         let min_x = p.x;
         let min_y = p.y;
@@ -207,6 +203,7 @@ impl Shape for Path {
 
     Illustrated below with an exaggerated bounding box for legabillity.
     ```
+    /*
     -----------------------------
     |           |                |
     |       ____|______          |
@@ -216,6 +213,7 @@ impl Shape for Path {
     |        |__|____/           |
     |           |                |
     -----------------------------
+    */
     ```
     */
     fn contains(&self, point: &Point) -> bool {
@@ -279,15 +277,15 @@ impl Shape for Path {
                 return false;
             }
         }
-        return true;
+        true
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::shapes::{point::Point, rectangle::Rectangle};
+    use crate::shapes::{point::Point, rectangle::Rectangle, shape::Shape};
 
-    use super::{Path, Shape};
+    use super::Path;
 
     #[test]
     fn get_bounding_box() {

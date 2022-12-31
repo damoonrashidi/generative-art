@@ -9,6 +9,7 @@ pub enum Color {
     Example:
 
     ```
+    use generative_art::palette::color::Color::HSLa;
     let bright_red = HSLa((0, 50.0, 65.0, 1.0));
     ```
     */
@@ -20,6 +21,7 @@ pub enum Color {
     Example:
 
     ```
+    use generative_art::palette::color::Color::Hex;
     let bright_red = Hex("#f00");
     ```
     */

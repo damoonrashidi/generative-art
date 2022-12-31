@@ -9,7 +9,7 @@ use super::group::Group;
 /// The SVG struct contains all the SVG information for a generated artwork.
 /// It is the common interface for all shapes when they are finally rendered.
 #[derive(Debug)]
-pub struct SVG<'a> {
+pub struct Document<'a> {
     /// Name of the generated art piece, will be used to control both
     /// output folder and file name.
     pub name: &'a str,
@@ -21,27 +21,33 @@ pub struct SVG<'a> {
     document: String,
 }
 
-impl<'a> SVG<'static> {
+impl<'a> Document<'static> {
     /**
     Create a new SVG document, this will be in-memory until it is saved.
 
     Example
 
     ```
+
+    use generative_art::{
+        shapes::{point::Point, rectangle::Rectangle, circle::Circle},
+        svg::document::Document,
+    };
+
     // Create the document
     let bounds = Rectangle::new(Point{x:0.0, y:0.0}, 1000.0, 1000.0);
-    let svg = SVG::new("my-art", bounds);
+    let mut svg = Document::new("my-art", bounds);
 
     // Draw some art
-    svg.add_shape(Circle::new(Point{x:500.0, y: 500.0}), 200.0);
+    svg.add_shape(Box::new(Circle::new(Point{x:500.0, y: 500.0}, 200.0)));
 
     // Save the document to disk
     svg.save();
     ```
     */
 
-    pub fn new(name: &'static str, bounds: Rectangle) -> SVG<'a> {
-        SVG {
+    pub fn new(name: &'static str, bounds: Rectangle) -> Document<'a> {
+        Document {
             name,
             bounds,
             document: format!(

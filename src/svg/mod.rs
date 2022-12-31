@@ -2,4 +2,4 @@
 pub mod group;
 
 /// SVG implementation
-pub mod svg;
+pub mod document;

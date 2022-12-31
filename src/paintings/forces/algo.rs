@@ -12,21 +12,21 @@ use crate::{
         rectangle::Rectangle,
         shape::Shape,
     },
-    svg::svg::SVG,
+    svg::document::Document,
     transforms::gen_weighted::WeightedChoice,
 };
 use noise::{NoiseFn, Seedable, SuperSimplex};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 
-pub fn generate_forces(config: Rc<&ForcesConfig>) -> SVG<'static> {
+pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
     let mut bounds = Rectangle::new(Point { x: 0.0, y: 0.0 }, config.size, config.size * 1.4);
     let (background, palette) = Palettes::orange_autumn();
 
     bounds.set_color(background);
     let inner_bounds = bounds.scale(0.9);
 
-    let mut svg = SVG::new("Forces", bounds);
+    let mut svg = Document::new("Forces", bounds);
     svg.add_shape(Box::new(bounds));
     let mut rng = ChaCha20Rng::from_entropy();
 

@@ -21,13 +21,15 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
 
     Example:
     ```
+    use generative_art::shapes::{pointmap::PointMap, point::Point, circle::Circle, rectangle::Rectangle};
+
     let bounds = Rectangle::new(Point{x: 0.0, y: 0.}, 500.0, 500.0);
     let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 20);
     let first = Circle::new(Point{x: 200., y: 200.0}, 10.);
     let second = Circle::new(Point{x: 205., y: 205.0}, 10.);
-    map.insert(first);
-    map.insert(second);
-    map.get_neighbors(first); // => vec[first];
+    point_map.insert(first);
+    point_map.insert(second);
+    point_map.get_neighbors(&first, Some(100.)); // => vec[first];
     ```
     */
     pub fn new(bounds: &'a Rectangle, resolution: usize) -> PointMap<'a, T> {

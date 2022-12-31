@@ -7,6 +7,7 @@ A single point in the canvas.
 
 Example
 ```
+use generative_art::shapes::point::Point;
 let point = Point{x: 0.0, y: 10.0};
 ```
 */
@@ -24,10 +25,12 @@ impl Point {
 
     Example
     ```
+    use generative_art::shapes::point::Point;
+
     let a = Point{x: 0.0, y: 0.0};
     let b = Point{x: 20.0, y: 0.0};
 
-    let distance = a.distance(&b); // 20.0
+    let distance = a.distance_to(&b); // 20.0
     ```
     */
     pub fn distance_to(&self, other: &Point) -> f64 {

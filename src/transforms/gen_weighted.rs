@@ -7,17 +7,13 @@ Genarate a value inside a range, weighted towards the beginning of the range
 
 Basic example
 ```
-let random_value = gen_weighted(0.0..1.0) // -> will most often be closer to 0.0 than 1.0
-```
+use generative_art::transforms::gen_weighted::gen_weighted;
+use rand::{thread_rng, Rng};
 
-Another example
-```
-let bounds = Rectangle(Point{x: 0.0, y: 0.0}, 1000.0, 1000.0);
 
-let point_in_rectangle = Point {
-  x: 500.0,
-  y: gen_weighted(bounds.y_range());
-}
+let mut rng = thread_rng();
+let random_value = gen_weighted(0.0..1.0, &mut rng);
+// will most often be closer to 0.0 than 1.0
 ```
 */
 pub fn gen_weighted(range: Range<f64>, rng: &mut ThreadRng) -> f64 {

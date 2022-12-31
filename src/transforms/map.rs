@@ -8,7 +8,8 @@ Map a value from one range to a corresponding value in another range
 Example
 
 ```
-let value = map(10.0, 0.0..20.0, 0.0..40.0) // value = 20.0;
+use generative_art::transforms::map::map;
+let value = map(10.0, 0.0..20.0, 0.0..40.0); // value = 20.0;
 ```
 */
 pub fn map<

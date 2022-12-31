@@ -21,6 +21,7 @@ impl Circle {
     /// Create a new Circle at given [`point`] with given [`radius`]
     ///
     /// ```
+    /// use generative_art::shapes::{circle::Circle, point::Point};
     /// let circle = Circle::new(Point{x: 0.0, y: 0.0}, 10.0);
     /// ```
     pub fn new(center: Point, radius: f64) -> Circle {
@@ -36,6 +37,7 @@ impl Circle {
     /// not the center.
     ///
     /// ```
+    /// use generative_art::shapes::{circle::Circle, point::Point};
     /// let circle = Circle::new(Point{x: 0.0, y: 0.0}, 10.0);
     /// let other = Circle::new(Point{x: 20.0, y: 0.0}, 10.0);
     /// let distance = circle.distance(&other); // -> 10.0

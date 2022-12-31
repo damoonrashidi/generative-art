@@ -13,10 +13,16 @@ A Rectangle
 
 Example
 ```
+
+use generative_art::{shapes::{rectangle::Rectangle, point::Point}, svg::document::Document, palette::color::Color};
+
 let mut rect = Rectangle::new(Point{x: 0.0, y: 0.0}, 100.0, 100.0);
 rect.set_color(Color::Hex("#f00"));
+
+let mut svg = Document::new("my_doc", rect);
+
 svg.add_shape(Box::new(rect));
-rect.save();
+svg.save();
 ```
 */
 #[derive(Debug, Clone, Copy)]
@@ -195,7 +201,10 @@ mod test {
         let scaled = rect.scale(1.1);
         assert_eq!(
             Rectangle {
-                position: scaled.position,
+                position: Point {
+                    x: scaled.position.x.round(),
+                    y: scaled.position.y.round()
+                },
                 width: scaled.width.round(),
                 height: scaled.height.round(),
                 ..scaled

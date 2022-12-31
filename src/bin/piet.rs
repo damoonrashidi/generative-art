@@ -2,7 +2,7 @@ use generative_art::{
     configs::piet_config::PietConfig,
     palette::palettes::Palettes,
     shapes::{path::PathStyle, point::Point, rectangle::Rectangle},
-    svg::{group::Group, svg::SVG},
+    svg::{document::Document, group::Group},
 };
 use rand::{thread_rng, Rng};
 
@@ -13,7 +13,7 @@ fn main() {
     let mut bounds = Rectangle::new(Point { x: 0., y: 0. }, config.size, config.size * 1.4);
     let root = bounds.scale(0.95);
 
-    let mut svg = SVG::new("piet", bounds);
+    let mut svg = Document::new("piet", bounds);
     let mut group = Group::new(None);
     let mut rects = vec![root];
 

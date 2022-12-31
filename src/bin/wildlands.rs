@@ -1,7 +1,7 @@
 use generative_art::{
     palette::{color::Color, palettes::Palettes},
     shapes::{blob::Blob, point::Point, pointmap::PointMap, rectangle::Rectangle, shape::Shape},
-    svg::svg::SVG,
+    svg::document::Document,
 };
 use noise::{NoiseFn, OpenSimplex, Seedable};
 use rand::{Rng, SeedableRng};
@@ -17,7 +17,7 @@ fn main() {
     };
     let inner_bounds = bounds.scale(0.9);
     let long_bounds = bounds.scale(0.94);
-    let mut document = SVG::new("Wildlands", bounds);
+    let mut document = Document::new("Wildlands", bounds);
     document.add_shape(Box::new(bounds));
 
     let r: f64 = 3.5;

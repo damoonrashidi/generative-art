@@ -1,7 +1,7 @@
 use crate::{
     palette::color::Color,
     shapes::{circle::Circle, point::Point, rectangle::Rectangle},
-    svg::svg::SVG,
+    svg::document::Document,
 };
 use rand::{thread_rng, Rng};
 use std::sync::mpsc::channel;
@@ -10,7 +10,7 @@ use threadpool::ThreadPool;
 
 use super::config::GridConfig;
 
-pub fn generate_grid(config: Arc<GridConfig>) -> SVG<'static> {
+pub fn generate_grid(config: Arc<GridConfig>) -> Document<'static> {
     let bounds = Rectangle {
         position: Point { x: 0.0, y: 0.0 },
         width: config.size,
@@ -20,7 +20,7 @@ pub fn generate_grid(config: Arc<GridConfig>) -> SVG<'static> {
 
     let inner_bounds = bounds.scale(0.9);
     let mut rects: Vec<Rectangle> = vec![];
-    let mut document = SVG::new("Grid", bounds);
+    let mut document = Document::new("Grid", bounds);
     let mut rng = rand::thread_rng();
 
     let mut x: f64 = inner_bounds.position.x;

@@ -86,12 +86,24 @@ impl Default for ForcesApp {
 impl eframe::App for ForcesApp {
     fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
-            if ui
-                .add(eframe::egui::Slider::new(&mut self.config.seed, 0..=10000).text("Seed"))
-                .changed()
-            {
-                self.set_new_image();
-            }
+            ui.horizontal(|ui| {
+                if ui
+                    .add(eframe::egui::Slider::new(&mut self.config.seed, 0..=10000).text("Seed"))
+                    .changed()
+                {
+                    self.set_new_image();
+                }
+
+                if ui
+                    .add(
+                        eframe::egui::Slider::new(&mut self.config.size, 1000.0..=6000.0)
+                            .text("Size"),
+                    )
+                    .changed()
+                {
+                    self.set_new_image();
+                }
+            });
 
             if ui
                 .add(

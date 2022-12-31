@@ -48,17 +48,19 @@ if the styles are hoisted to the group instead of applied at the shape level.
 Example:
 
 ```
-let mut g = Group::new();
-g.set_style(GroupStyle {
-    fill: Color::Hex("#111"),
-    ..Default.default()
-});
+use generative_art::{
+    shapes::{rectangle::Rectangle, point::Point},
+    palette::color::Color,
+    svg::group::{Group, GroupStyle}
+};
+
+let mut g = Group::new(None);
 
 let rect1 = Rectangle::new(Point{x: 0.0, y:0.0}, 100.0, 100.0);
 let rect2 = Rectangle::new(Point{x: 0.0, y:0.0}, 100.0, 100.0);
 
-g.add_shape(rect1);
-g.add_shape(rect2);
+g.add_shape(Box::new(rect1));
+g.add_shape(Box::new(rect2));
 ```
 */
 #[derive(Default)]
@@ -78,17 +80,21 @@ impl Group {
     unless explicitly overriden in the shape itself.
 
     ```
+    use generative_art::{
+        shapes::{rectangle::Rectangle, point::Point},
+        palette::color::Color,
+        svg::{
+            group::{Group, GroupStyle},
+            document::Document,
+        }
+    };
+
     let bounds = Rectangle::new(Point{x: 0., y: 0.}, 500., 500.);
-    let mut document = SVG::new("art", &bounds);
-    let mut g = Group::new();
+    let mut document = Document::new("art", bounds);
+    let mut g = Group::new(None);
 
-    g.set_style(GroupStyle{
-      fill: Color::Hex("#111");
-      ..Default::default()
-    });
-
-    let square = Rectangle::new(Point{x: 100., y: 100., }, 100., 100);
-    g.add_shape(square);
+    let square = Rectangle::new(Point{x: 100., y: 100., }, 100., 100.);
+    g.add_shape(Box::new(square));
 
     document.add_group(g);
     document.save();
@@ -98,7 +104,7 @@ impl Group {
     pub fn new(style: Option<GroupStyle>) -> Group {
         let svg = match style {
             None => String::from("<g>"),
-            Some(style) => format!("<g {style}>"),
+            Some(style) => format!("<g{style}>"),
         };
 
         Group { svg }
