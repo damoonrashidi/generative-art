@@ -115,5 +115,5 @@ fn main() {
         pointmap.remove(*point);
     }
 
-    svg.save(Some(config.into()));
+    svg.save();
 }

@@ -64,12 +64,8 @@ impl<'a> SVG<'static> {
 
     /// Save the SVG document to disk. Optionally a configuration string can be passed, which will be appended
     /// as an SVG comment in the file, to be able to recreate a given painting.
-    pub fn save(&mut self, config: Option<String>) {
+    pub fn save(&mut self) {
         self.document.push_str("</svg>");
-
-        if let Some(comment) = config {
-            self.document = format!("{}\n{}", self.document, comment);
-        }
 
         let now = Utc::now();
         let time = format!(

@@ -58,7 +58,7 @@ fn main() {
         });
 
     svg.add_group(group);
-    svg.save(Some(config.into()));
+    svg.save();
 }
 
 fn subdivide(rect: &Rectangle) -> (Rectangle, Rectangle) {

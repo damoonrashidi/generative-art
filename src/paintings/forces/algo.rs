@@ -1,30 +1,28 @@
+use std::rc::Rc;
 
-use generative_art::forces_config::{ForcesConfig, ForcesPalette};
-
+use crate::{
+    paintings::forces::config::ForcesConfig,
+    palette::{color::Color, palettes::Palettes},
+    shapes::{
+        blob::Blob,
+        circle::Circle,
+        path::{Path, PathStyle},
+        point::Point,
+        pointmap::PointMap,
+        rectangle::Rectangle,
+        shape::Shape,
+    },
+    svg::svg::SVG,
+    transforms::gen_weighted::WeightedChoice,
+};
 use noise::{NoiseFn, Seedable, SuperSimplex};
-use palette::{color::Color, palettes::Palettes};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
-use shapes::{
-    blob::Blob,
-    circle::Circle,
-    path::{Path, PathStyle},
-    point::Point,
-    pointmap::PointMap,
-    rectangle::Rectangle,
-    shape::Shape,
-};
-use svg::svg::SVG;
 
-fn main() {
-    let config = ForcesConfig::new();
+pub fn generate_forces(config: Rc<&ForcesConfig>) -> SVG<'static> {
     let mut bounds = Rectangle::new(Point { x: 0.0, y: 0.0 }, config.size, config.size * 1.4);
-    let (background, palette) = match config.palette {
-        ForcesPalette::PeachesAndCream => Palettes::peaches_and_cream(),
-        ForcesPalette::OrangeAutumn => Palettes::orange_autumn(),
-        ForcesPalette::SpringBreak => Palettes::spring_break(),
-        ForcesPalette::RedWhiteBlack => Palettes::red_white_black(),
-    };
+    let (background, palette) = Palettes::orange_autumn();
+
     bounds.set_color(background);
     let inner_bounds = bounds.scale(0.9);
 
@@ -60,16 +58,21 @@ fn main() {
             _ => palette.get_random_color(),
         };
 
-        let mut r = 65.0;
-        let mut step_size = 50.0;
+        let radii = WeightedChoice {
+            choices: [(40.0, 10), (100.0, 4), (150.0, 2)],
+        };
 
-        if rng.gen_bool(0.7) && i < 5 {
-            r = 200.;
-            step_size = 250.;
-        } else if rng.gen_bool(0.1) {
-            r = 40.;
-            step_size = 30.;
-        }
+        let r = if i < 1 {
+            350.0
+        } else {
+            radii.get_random_choice().unwrap()
+        };
+
+        let step_size = if (0.0..=150.).contains(&r) {
+            20.0
+        } else {
+            180.0
+        };
 
         let mut line = Path {
             points: vec![],
@@ -80,7 +83,13 @@ fn main() {
         };
 
         while inner_bounds.contains(&Point { x, y }) && line.length() < config.max_line_length {
-            let n = noise.get([x / config.smoothness, y / config.smoothness]);
+            let smoothness = if (400.0..600.0).contains(&r) {
+                config.smoothness * 3.0
+            } else {
+                config.smoothness
+            };
+
+            let n = noise.get([x / smoothness, y / smoothness]);
             x += (config.chaos * n).cos() * step_size;
             y += (config.chaos * n).sin() * step_size;
             let circle = Circle::new(Point { x, y }, r);
@@ -106,17 +115,19 @@ fn main() {
             }
 
             if config.split_line_chance > 0.0 && rng.gen_bool(config.split_line_chance) {
-                for points in split_line(line.points, config.split_with_gap) {
-                    let path = Path::new(
-                        points,
-                        PathStyle {
-                            stroke_weight: Some(r),
-                            stroke: palette.get_random_color(),
-                            color: None,
-                        },
-                    );
-                    svg.add_shape(Box::new(path));
-                }
+                split_line(line.points, config.split_with_gap)
+                    .into_iter()
+                    .for_each(|points| {
+                        let path = Path::new(
+                            points,
+                            PathStyle {
+                                stroke_weight: Some(r),
+                                stroke: palette.get_random_color(),
+                                color: None,
+                            },
+                        );
+                        svg.add_shape(Box::new(path));
+                    });
             } else {
                 line.style = PathStyle {
                     stroke_weight: Some(r),
@@ -128,7 +139,7 @@ fn main() {
         }
     }
 
-    svg.save(Some(config.to_string()));
+    svg
 }
 
 fn split_line(line: Vec<Point>, use_gap: bool) -> Vec<Vec<Point>> {

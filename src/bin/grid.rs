@@ -75,7 +75,7 @@ fn main() {
         }
     });
 
-    document.save(None);
+    document.save();
 }
 
 #[allow(unused)]

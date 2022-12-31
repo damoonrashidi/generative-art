@@ -60,7 +60,7 @@ pub struct ForcesParams {
     pub split_with_gap: bool,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct ForcesConfig {
     pub size: f64,
     pub line_count: usize,
@@ -86,7 +86,7 @@ impl ForcesConfig {
             "spring_break" => ForcesPalette::SpringBreak,
             "red_white_black" => ForcesPalette::RedWhiteBlack,
             _ => panic!(
-                "{} is not a valid palette, valid values are peaches_and_cream, orange_autumn",
+                "{} is not a valid palette, valid values are peaches_and_cream, orange_autumn, spring_break, red_white_black",
                 args.palette
             ),
         };
@@ -108,20 +108,17 @@ impl ForcesConfig {
 
 impl Display for ForcesConfig {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            r#"
-            <!--
-            size={}
-            line-count={}
-            minimum-line-length={} 
-            maximum-line-length={}
-            distort={}
-            zoom={}
-            seed={}
-            split-line-chance={}
-            split-with-gap={}
-            -->"#,
+        let (
+            size,
+            line_count,
+            min_line_length,
+            max_line_length,
+            chaos,
+            smoothness,
+            seed,
+            split_line_chance,
+            split_with_gap,
+        ) = (
             self.size,
             self.line_count,
             self.min_line_length,
@@ -130,7 +127,23 @@ impl Display for ForcesConfig {
             self.smoothness,
             self.seed,
             self.split_line_chance,
-            self.split_with_gap
+            self.split_with_gap,
+        );
+
+        write!(
+            f,
+            r#"
+            <!--
+            size={size}
+            line-count={line_count}
+            min-line-length={min_line_length} 
+            max-line-length={max_line_length}
+            chaos={chaos}
+            smoothness={smoothness}
+            seed={seed}
+            split-line-chance={split_line_chance}
+            split-with-gap={split_with_gap}
+            -->"#,
         )
     }
 }

@@ -85,5 +85,5 @@ fn main() {
         }
     }
 
-    document.save(None);
+    document.save();
 }
