@@ -29,7 +29,7 @@ impl Point {
     ```
     */
     pub fn distance_to(&self, other: &Point) -> f64 {
-        let d_x = (self.0 - other.1).abs();
+        let d_x = (self.0 - other.0).abs();
         let d_y = (self.1 - other.1).abs();
 
         (d_x.powi(2) + d_y.powi(2)).sqrt()
