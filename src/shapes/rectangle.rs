@@ -117,10 +117,15 @@ impl Rectangle {
         &self,
         split_point: &Point,
         split_direction: SplitDirection,
+        padding: Option<f64>,
     ) -> (Rectangle, Rectangle) {
         match split_direction {
-            SplitDirection::Horizontally => Rectangle::split_horizontally(&self, &split_point, 16.),
-            SplitDirection::Vertically => Rectangle::split_vertically(&self, &split_point, 16.),
+            SplitDirection::Horizontally => {
+                Rectangle::split_horizontally(self, &split_point, padding.unwrap_or(0.0))
+            }
+            SplitDirection::Vertically => {
+                Rectangle::split_vertically(&self, &split_point, padding.unwrap_or(0.0))
+            }
         }
     }
 

@@ -9,10 +9,8 @@ use crate::shapes::shape::Shape;
 
 use super::color::Color;
 
-pub type ColoredRegion = (Rectangle, Color);
-
 pub struct RegionalPalette<const N: usize> {
-    bounds: [ColoredRegion; N],
+    bounds: [Rectangle; N],
 }
 
 impl<const N: usize> Debug for RegionalPalette<N> {
@@ -24,16 +22,16 @@ impl<const N: usize> Debug for RegionalPalette<N> {
 }
 
 impl<'a, const N: usize> RegionalPalette<N> {
-    pub fn new(bounds: [ColoredRegion; N]) -> Self {
+    pub fn new(bounds: [Rectangle; N]) -> Self {
         RegionalPalette { bounds }
     }
 
-    pub fn from_region(bounds: Rectangle, palette: &dyn Palette) -> Self {
+    pub fn from_region(bounds: Rectangle, palette: &Box<dyn Palette>) -> Self {
         let mut rects = vec![bounds];
 
         let mut rng = thread_rng();
 
-        for _ in 0..5 {
+        for _ in 0..3 {
             for i in (0..rects.len()).rev() {
                 if let Some(rect) = rects.get(i) {
                     let split_direction = if rng.gen_bool(0.5) {
@@ -45,9 +43,12 @@ impl<'a, const N: usize> RegionalPalette<N> {
                     let split_point =
                         Point(rng.gen_range(rect.x_range()), rng.gen_range(rect.y_range()));
 
-                    let (a, b) = rect.subdivide(&split_point, split_direction);
+                    let (mut a, mut b) = rect.subdivide(&split_point, split_direction, None);
 
                     rects.remove(i);
+
+                    a.set_color(palette.get_random_color().unwrap());
+                    b.set_color(palette.get_random_color().unwrap());
 
                     rects.push(a);
                     rects.push(b);
@@ -58,20 +59,15 @@ impl<'a, const N: usize> RegionalPalette<N> {
         RegionalPalette::new(
             rects
                 .into_iter()
-                .map(|rect| (rect, palette.get_random_color().unwrap()))
-                .collect::<Vec<(Rectangle, Color)>>()
+                .collect::<Vec<Rectangle>>()
                 .try_into()
-                .unwrap(),
+                .unwrap_or_else(|_| [bounds; N]),
         )
     }
 
     pub fn get_color(&self, point: &Point) -> Option<Color> {
-        match self
-            .bounds
-            .into_iter()
-            .find(|bound| bound.0.contains(point))
-        {
-            Some((_rect, color)) => Some(color),
+        match self.bounds.into_iter().find(|bound| bound.contains(point)) {
+            Some(rect) => rect.color,
             None => None,
         }
     }

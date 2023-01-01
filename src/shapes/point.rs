@@ -101,6 +101,7 @@ mod tests {
         let distance = a.distance_to(&b);
         assert_eq!(distance.round(), 22.0);
     }
+
     #[test]
     fn non_equality() {
         let a = Point(10.0, 10.0);
