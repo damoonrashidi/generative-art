@@ -21,12 +21,12 @@ impl<const N: usize> Debug for RegionalPalette<N> {
     }
 }
 
-impl<'a, const N: usize> RegionalPalette<N> {
+impl<const N: usize> RegionalPalette<N> {
     pub fn new(bounds: [Rectangle; N]) -> Self {
         RegionalPalette { bounds }
     }
 
-    pub fn from_region(bounds: Rectangle, palette: &Box<dyn Palette>) -> Self {
+    pub fn from_region(bounds: Rectangle, palette: &dyn Palette) -> Self {
         let mut rects = vec![bounds];
 
         let mut rng = thread_rng();
@@ -56,17 +56,11 @@ impl<'a, const N: usize> RegionalPalette<N> {
             }
         }
 
-        RegionalPalette::new(
-            rects
-                .into_iter()
-                .collect::<Vec<Rectangle>>()
-                .try_into()
-                .unwrap(),
-        )
+        RegionalPalette::new(rects.into_iter().as_slice().try_into().unwrap())
     }
 
     pub fn get_color(&self, point: &Point) -> Option<Color> {
-        match self.bounds.into_iter().find(|bound| bound.contains(point)) {
+        match self.bounds.iter().find(|bound| bound.contains(point)) {
             Some(rect) => rect.color,
             None => None,
         }

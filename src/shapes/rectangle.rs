@@ -121,10 +121,10 @@ impl Rectangle {
     ) -> (Rectangle, Rectangle) {
         match split_direction {
             SplitDirection::Horizontally => {
-                Rectangle::split_horizontally(self, &split_point, padding.unwrap_or(0.0))
+                Rectangle::split_horizontally(self, split_point, padding.unwrap_or(0.0))
             }
             SplitDirection::Vertically => {
-                Rectangle::split_vertically(&self, &split_point, padding.unwrap_or(0.0))
+                Rectangle::split_vertically(self, split_point, padding.unwrap_or(0.0))
             }
         }
     }
