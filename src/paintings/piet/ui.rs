@@ -1,8 +1,6 @@
 use std::{fmt::Debug, rc::Rc};
 
-use crate::configs::piet_config::PietConfig;
-
-use super::algo::piet;
+use super::{algo::piet, config::PietConfig};
 
 pub struct PietUi {
     svg: egui_extras::RetainedImage,

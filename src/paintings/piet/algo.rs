@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
 use crate::{
-    configs::piet_config::PietConfig,
     palette::palettes::Palettes,
     shapes::{
         path::PathStyle,
@@ -11,6 +10,8 @@ use crate::{
     svg::{document::Document, group::Group},
 };
 use rand::{thread_rng, Rng};
+
+use super::config::PietConfig;
 
 pub fn piet(config: Rc<&PietConfig>) -> Document<'static> {
     let mut rng = thread_rng();

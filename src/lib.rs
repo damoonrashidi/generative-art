@@ -10,7 +10,6 @@
     clippy::all
 )]
 
-pub mod configs;
 pub mod paintings;
 pub mod palette;
 pub mod shapes;

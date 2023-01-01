@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use generative_art::{configs::piet_config::PietConfig, paintings::piet::algo::piet};
+use generative_art::paintings::piet::{algo::piet, config::PietConfig};
 
 fn main() {
     let config = PietConfig::new();

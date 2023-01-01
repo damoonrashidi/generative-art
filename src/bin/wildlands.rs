@@ -2,6 +2,7 @@ use generative_art::paintings::wildlands::{algo::wildlands, config::WildlandsCon
 
 fn main() {
     let config = WildlandsConfig {
+        seed: 0,
         size: 1500.0,
         line_count: 1500,
         chaos: 2.2,

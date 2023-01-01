@@ -3,7 +3,10 @@ use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 
 use crate::{
-    palette::{color::Color, palettes::Palettes, regional_palette::RegionalPalette},
+    palette::{
+        color::Color, palettes::Palettes, regional_palette::RegionalPalette,
+        weighted_palette::WeightedPalette,
+    },
     shapes::{blob::Blob, point::Point, pointmap::PointMap, rectangle::Rectangle, shape::Shape},
     svg::document::Document,
 };
@@ -18,26 +21,16 @@ pub fn wildlands(config: &WildlandsConfig) -> Document<'static> {
         color: Some(Palettes::orange_autumn().0),
     };
 
-    let palette = RegionalPalette::new([
-        Rectangle {
-            position: Point(0., 0.),
-            width: bounds.width,
-            height: bounds.height / 3.,
-            color: Some(Color::Hex("#f00")),
-        },
-        Rectangle {
-            position: Point(0., bounds.height / 3.),
-            width: bounds.width,
-            height: bounds.height / 3.,
-            color: Some(Color::Hex("#0f0")),
-        },
-        Rectangle {
-            position: Point(0., 2.0 * bounds.height / 3.),
-            width: bounds.width,
-            height: bounds.height / 3.,
-            color: Some(Color::Hex("#00f")),
-        },
-    ]);
+    let palette: RegionalPalette = RegionalPalette::from_region(
+        bounds,
+        Box::new(WeightedPalette::new([
+            (Color::Hex("#E1B31E"), 3),
+            (Color::Hex("#678983"), 1),
+            (Color::Hex("#FB5252"), 1),
+            (Color::Hex("#F0E9D2"), 2),
+            (Color::Hex("#E6DDC4"), 2),
+        ])),
+    );
 
     let inner_bounds = bounds.scale(0.9);
     let long_bounds = bounds.scale(0.94);
@@ -48,7 +41,7 @@ pub fn wildlands(config: &WildlandsConfig) -> Document<'static> {
     let step_size: f64 = r * 2.5;
     let mut rng = ChaCha20Rng::from_entropy();
     let mut point_map: PointMap<'_, Blob> = PointMap::new(&bounds, 20);
-    let noise = OpenSimplex::new().set_seed(rng.gen_range(0..2000));
+    let noise = OpenSimplex::new().set_seed(config.seed);
 
     for _ in 0..config.line_count {
         let is_long = rng.gen_bool(0.03);

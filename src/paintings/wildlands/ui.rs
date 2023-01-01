@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, fs::File, io::Write};
 
 use super::{algo::wildlands, config::WildlandsConfig};
 
@@ -23,11 +23,12 @@ impl Default for WildlandsUi {
             )
             .unwrap(),
             config: WildlandsConfig {
-                line_count: 1500,
-                size: 1400.0,
+                seed: 0,
+                line_count: 400,
+                size: 800.0,
                 chaos: 0.5,
-                smoothness: 900.0,
-                max_line_length: 500,
+                smoothness: 400.0,
+                max_line_length: 200,
             },
             svg_str: "".into(),
         }
@@ -51,7 +52,14 @@ impl eframe::App for WildlandsUi {
     fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
             if ui
-                .add(eframe::egui::Slider::new(&mut self.config.size, 1000.0..=3000.0).text("Size"))
+                .add(eframe::egui::Slider::new(&mut self.config.seed, 0..=10_000).text("Seed"))
+                .changed()
+            {
+                self.set_new_svg();
+            }
+
+            if ui
+                .add(eframe::egui::Slider::new(&mut self.config.size, 800.0..=3000.0).text("Size"))
                 .changed()
             {
                 self.set_new_svg();
@@ -59,7 +67,7 @@ impl eframe::App for WildlandsUi {
 
             if ui
                 .add(
-                    eframe::egui::Slider::new(&mut self.config.line_count, 800..=15_000)
+                    eframe::egui::Slider::new(&mut self.config.line_count, 800..=3_000)
                         .text("Line count"),
                 )
                 .changed()
@@ -81,7 +89,8 @@ impl eframe::App for WildlandsUi {
             if ui
                 .add(
                     eframe::egui::Slider::new(&mut self.config.smoothness, 100.0..=2000.0)
-                        .text("Smoothness"),
+                        .text("Smoothness")
+                        .step_by(100.0),
                 )
                 .changed()
             {
@@ -99,6 +108,14 @@ impl eframe::App for WildlandsUi {
                 .changed()
             {
                 self.set_new_svg();
+            }
+
+            if ui.button("Save").clicked() {
+                let mut f = File::create("./output/forces/forces-live.svg")
+                    .expect("could not open file for writing");
+
+                f.write_all(self.svg_str.as_bytes())
+                    .expect("Could not write to file");
             }
 
             self.svg.show_size(ui, ui.available_size());

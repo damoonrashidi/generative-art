@@ -1,5 +1,6 @@
 #[derive(Debug)]
 pub struct WildlandsConfig {
+    pub seed: u32,
     pub size: f64,
     pub line_count: usize,
     pub chaos: f64,

@@ -9,11 +9,11 @@ use crate::shapes::shape::Shape;
 
 use super::color::Color;
 
-pub struct RegionalPalette<const N: usize> {
-    bounds: [Rectangle; N],
+pub struct RegionalPalette {
+    bounds: Vec<Rectangle>,
 }
 
-impl<const N: usize> Debug for RegionalPalette<N> {
+impl Debug for RegionalPalette {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let output = String::from("");
 
@@ -21,17 +21,17 @@ impl<const N: usize> Debug for RegionalPalette<N> {
     }
 }
 
-impl<const N: usize> RegionalPalette<N> {
-    pub fn new(bounds: [Rectangle; N]) -> Self {
+impl RegionalPalette {
+    pub fn new(bounds: Vec<Rectangle>) -> Self {
         RegionalPalette { bounds }
     }
 
-    pub fn from_region(bounds: Rectangle, palette: &dyn Palette) -> Self {
+    pub fn from_region(bounds: Rectangle, palette: Box<dyn Palette>) -> Self {
         let mut rects = vec![bounds];
 
         let mut rng = thread_rng();
 
-        for _ in 0..3 {
+        for _ in 0..7 {
             for i in (0..rects.len()).rev() {
                 if let Some(rect) = rects.get(i) {
                     let split_direction = if rng.gen_bool(0.5) {
@@ -56,7 +56,7 @@ impl<const N: usize> RegionalPalette<N> {
             }
         }
 
-        RegionalPalette::new(rects.into_iter().as_slice().try_into().unwrap())
+        RegionalPalette { bounds: rects }
     }
 
     pub fn get_color(&self, point: &Point) -> Option<Color> {
