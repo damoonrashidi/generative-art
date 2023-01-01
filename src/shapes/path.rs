@@ -52,9 +52,8 @@ impl Path {
         let mut new_list: Vec<Point> = vec![];
         let center = self.center();
 
-        for (i, mut point) in self.points.clone().into_iter().enumerate() {
-            point.0 += rng.gen_range(-3.0..3.0);
-            point.1 += rng.gen_range(-3.0..3.0);
+        for (i, point) in self.points.clone().into_iter().enumerate() {
+            point.offset(rng.gen_range(-3.0..3.0), rng.gen_range(-3.0..3.0));
 
             new_list.push(point);
 

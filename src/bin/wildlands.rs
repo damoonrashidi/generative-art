@@ -1,16 +1,15 @@
-use generative_art::paintings::wildlands::ui::WildlandsUi;
+use generative_art::paintings::wildlands::{algo::wildlands, config::WildlandsConfig};
 
-fn main() -> Result<(), std::fmt::Error> {
-    let options = eframe::NativeOptions {
-        initial_window_size: Some(eframe::egui::vec2(1000.0, 1400.0)),
-        ..Default::default()
+fn main() {
+    let config = WildlandsConfig {
+        size: 1500.0,
+        line_count: 1500,
+        chaos: 2.2,
+        smoothness: 1000.0,
+        max_line_length: 500,
     };
 
-    eframe::run_native(
-        "Wildlands",
-        options,
-        Box::new(|_| Box::new(WildlandsUi::default())),
-    );
+    let mut svg = wildlands(&config);
 
-    Ok(())
+    svg.save();
 }

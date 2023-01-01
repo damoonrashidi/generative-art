@@ -63,11 +63,12 @@ pub fn piet(config: Rc<&PietConfig>) -> Document<'static> {
     rects
         .iter()
         .map(|rect| {
-            let path = rect.to_path(PathStyle {
+            let mut path = rect.to_path(PathStyle {
                 color: rect.color,
                 stroke_weight: None,
                 stroke: None,
             });
+            path.wobble();
             path
         })
         .for_each(|path| {

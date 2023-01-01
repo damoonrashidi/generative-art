@@ -43,7 +43,7 @@ impl<'a, const N: usize> RegionalPalette<N> {
                     let split_point =
                         Point(rng.gen_range(rect.x_range()), rng.gen_range(rect.y_range()));
 
-                    let (mut a, mut b) = rect.subdivide(&split_point, split_direction, None);
+                    let (mut a, mut b) = rect.subdivide(&split_point, split_direction, Some(0.0));
 
                     rects.remove(i);
 
@@ -61,7 +61,7 @@ impl<'a, const N: usize> RegionalPalette<N> {
                 .into_iter()
                 .collect::<Vec<Rectangle>>()
                 .try_into()
-                .unwrap_or_else(|_| [bounds; N]),
+                .unwrap(),
         )
     }
 
