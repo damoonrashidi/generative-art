@@ -23,10 +23,10 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
     ```
     use generative_art::shapes::{pointmap::PointMap, point::Point, circle::Circle, rectangle::Rectangle};
 
-    let bounds = Rectangle::new(Point{x: 0.0, y: 0.}, 500.0, 500.0);
+    let bounds = Rectangle::new(Point(0.0, 0.0), 500.0, 500.0);
     let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 20);
-    let first = Circle::new(Point{x: 200., y: 200.0}, 10.);
-    let second = Circle::new(Point{x: 205., y: 205.0}, 10.);
+    let first = Circle::new(Point(200., 200.0), 10.);
+    let second = Circle::new(Point(205., 205.0), 10.);
     point_map.insert(first);
     point_map.insert(second);
     point_map.get_neighbors(&first, Some(100.)); // => vec[first];
@@ -141,8 +141,8 @@ impl<'a, T: Shape + Clone + PartialEq> PointMap<'a, T> {
     fn get_index(&self, point: &Point) -> usize {
         let resolution = self.grid_resolution as f64;
 
-        let x = ((point.x / (self.bounds.position.x + self.bounds.width)) * resolution).floor();
-        let y = ((point.y / (self.bounds.position.y + self.bounds.height)) * resolution).floor();
+        let x = ((point.0 / (self.bounds.position.0 + self.bounds.width)) * resolution).floor();
+        let y = ((point.1 / (self.bounds.position.1 + self.bounds.height)) * resolution).floor();
 
         (y * resolution + x - 1.0) as usize
     }
@@ -182,29 +182,29 @@ mod test {
     #[test]
     fn get_index() {
         let bounds = Rectangle {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
         };
         let point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 10);
-        assert_eq!(point_map.get_index(&Point { x: 9.0, y: 0.0 }), 0);
-        assert_eq!(point_map.get_index(&Point { x: 11.0, y: 0.0 }), 0);
-        assert_eq!(point_map.get_index(&Point { x: 20.0, y: 0.0 }), 1);
-        assert_eq!(point_map.get_index(&Point { x: 34.0, y: 0.0 }), 2);
-        assert_eq!(point_map.get_index(&Point { x: 99.999, y: 0.0 }), 8);
+        assert_eq!(point_map.get_index(&Point(9.0, 0.0)), 0);
+        assert_eq!(point_map.get_index(&Point(11.0, 0.0)), 0);
+        assert_eq!(point_map.get_index(&Point(20.0, 0.0)), 1);
+        assert_eq!(point_map.get_index(&Point(34.0, 0.0)), 2);
+        assert_eq!(point_map.get_index(&Point(99.999, 0.0)), 8);
     }
 
     #[test]
     fn insert_point() {
         let bounds = Rectangle {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 10.0);
+        let circle = Circle::new(Point(11.0, 11.0), 10.0);
         if let Ok(result) = point_map.insert(circle) {
             assert_eq!(result, 10);
         }
@@ -213,19 +213,13 @@ mod test {
     #[test]
     fn insert_point_fail() {
         let bounds = Rectangle {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(
-            Point {
-                x: 1000.0,
-                y: 100.0,
-            },
-            10.0,
-        );
+        let circle = Circle::new(Point(1000.0, 100.0), 10.0);
         let result = point_map.insert(circle);
         assert_eq!(result, Err(circle));
     }
@@ -233,14 +227,14 @@ mod test {
     #[test]
     fn get_neighbors() {
         let bounds = Rectangle {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(Point { x: 11.0, y: 11.0 }, 5.0);
-        let non_neighbor = Circle::new(Point { x: 30.3, y: 50.4 }, 10.0);
+        let circle = Circle::new(Point(11.0, 11.0), 5.0);
+        let non_neighbor = Circle::new(Point(30.3, 50.4), 10.0);
 
         let _insertion = point_map.insert(circle);
         let _neighbor_insertion = point_map.insert(non_neighbor);
@@ -254,14 +248,14 @@ mod test {
     #[test]
     fn get_neighbors_edgecase() {
         let bounds = Rectangle {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
         };
         let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 10);
-        let circle = Circle::new(Point { x: 99.0, y: 11.0 }, 5.0);
-        let non_neighbor = Circle::new(Point { x: 101.1, y: 50.4 }, 10.0);
+        let circle = Circle::new(Point(99.0, 11.0), 5.0);
+        let non_neighbor = Circle::new(Point(101.1, 50.4), 10.0);
 
         let _insertion = point_map.insert(circle);
         let _neighbor_insertion = point_map.insert(non_neighbor);
@@ -275,24 +269,24 @@ mod test {
     #[test]
     fn get_all_items() {
         let bounds = Rectangle {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,
         };
 
         let mut point_map: PointMap<'_, Point> = PointMap::new(&bounds, 10);
-        let point = Point { x: 0., y: 0. };
+        let point = Point(0., 0.);
         let _ = point_map.insert(point);
         let points = point_map.get_items();
 
-        assert_eq!(points, vec![&Point { x: 0., y: 0. }]);
+        assert_eq!(points, vec![&Point(0., 0.)]);
     }
 
     #[test]
     fn get_surrounding_cells() {
         let bounds = Rectangle {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             width: 100.0,
             height: 100.0,
             color: Rectangle::default().color,

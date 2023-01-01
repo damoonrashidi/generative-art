@@ -23,7 +23,7 @@ pub fn gen_weighted(range: Range<f64>, rng: &mut ThreadRng) -> f64 {
     ((b - a).abs() * (1.0 + range.end - range.start) + range.start).floor()
 }
 
-/// A set of colors where one can be chosen randomly but biased by a given weight
+/// A set of generic items where one can be chosen randomly but biased by a given weight
 #[derive(Debug)]
 pub struct WeightedChoice<T, const N: usize> {
     pub choices: [T; N],
@@ -36,7 +36,6 @@ impl<T, const N: usize> WeightedChoice<WeightPair<T>, N>
 where
     T: Copy + Clone,
 {
-    /// This thing
     pub fn get_random_choice(&self) -> Option<T> {
         let mut rng = rand::thread_rng();
         let weights = self

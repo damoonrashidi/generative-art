@@ -53,16 +53,16 @@ impl Path {
         let center = self.center();
 
         for (i, mut point) in self.points.clone().into_iter().enumerate() {
-            point.x += rng.gen_range(-3.0..3.0);
-            point.y += rng.gen_range(-3.0..3.0);
+            point.0 += rng.gen_range(-3.0..3.0);
+            point.1 += rng.gen_range(-3.0..3.0);
 
             new_list.push(point);
 
             if let Some(next) = self.points.get(i + 1) {
                 for p in (1..10).step_by(2) {
                     let mut between = point.between(next, p as f64 / 10.);
-                    between.x += between.angle_to(&center).cos() * rng.gen_range(-5.0..5.0);
-                    between.y += between.angle_to(&center).sin() * rng.gen_range(-5.0..5.0);
+                    between.0 += between.angle_to(&center).cos() * rng.gen_range(-5.0..5.0);
+                    between.1 += between.angle_to(&center).sin() * rng.gen_range(-5.0..5.0);
                     new_list.push(between);
                 }
             }
@@ -87,14 +87,14 @@ impl Path {
 
     /// Check if two lines intersect at any point.
     fn intersects(a: (&Point, &Point), b: (&Point, &Point)) -> bool {
-        let dx0 = a.1.x - a.0.x;
-        let dx1 = b.1.x - b.0.x;
-        let dy0 = a.1.y - a.0.y;
-        let dy1 = b.1.y - b.0.y;
-        let p0 = dy1 * (b.1.x - a.0.x) - dx1 * (b.1.y - a.0.y);
-        let p1 = dy1 * (b.1.x - a.1.x) - dx1 * (b.1.y - a.1.y);
-        let p2 = dy0 * (a.1.x - b.0.x) - dx0 * (a.1.y - b.0.y);
-        let p3 = dy0 * (a.1.x - b.1.x) - dx0 * (a.1.y - b.1.y);
+        let dx0 = a.1 .0 - a.0 .0;
+        let dx1 = b.1 .0 - b.0 .0;
+        let dy0 = a.1 .1 - a.0 .1;
+        let dy1 = b.1 .1 - b.0 .1;
+        let p0 = dy1 * (b.1 .0 - a.0 .0) - dx1 * (b.1 .1 - a.0 .1);
+        let p1 = dy1 * (b.1 .0 - a.1 .0) - dx1 * (b.1 .1 - a.1 .1);
+        let p2 = dy0 * (a.1 .0 - b.0 .0) - dx0 * (a.1 .1 - b.0 .1);
+        let p3 = dy0 * (a.1 .0 - b.1 .0) - dx0 * (a.1 .1 - b.1 .1);
         (p0 * p1 <= 0.0) & (p2 * p3 <= 0.0)
     }
 }
@@ -124,16 +124,16 @@ impl Shape for Path {
             let mut str = self.points.iter().skip(1).enumerate().fold(
                 format!(
                     "<path {fill}{stroke}{stroke_weight}d=\"M{:.2},{:.2}",
-                    first.x, first.y
+                    first.0, first.1
                 ),
                 |mut path, (i, point)| {
                     if let Some(previous) = self.points.get(i) {
-                        if previous.x == point.x {
-                            path.push_str(&format!(" V{:.2}", point.y));
-                        } else if previous.y == point.y {
-                            path.push_str(&format!(" H{:.2}", point.x));
+                        if previous.0 == point.0 {
+                            path.push_str(&format!(" V{:.2}", point.1));
+                        } else if previous.1 == point.1 {
+                            path.push_str(&format!(" H{:.2}", point.0));
                         } else {
-                            path.push_str(&format!(" L{:.2},{:.2}", point.x, point.y));
+                            path.push_str(&format!(" L{:.2},{:.2}", point.0, point.1));
                         }
                     }
 
@@ -152,7 +152,7 @@ impl Shape for Path {
             bounding.center();
         }
 
-        Point { x: 0.0, y: 0.0 }
+        Point(0.0, 0.0)
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
@@ -162,8 +162,8 @@ impl Shape for Path {
 
         let p = self.points.get(0)?;
 
-        let min_x = p.x;
-        let min_y = p.y;
+        let min_x = p.0;
+        let min_y = p.1;
         let max_x = min_x;
         let max_y = min_y;
 
@@ -171,19 +171,16 @@ impl Shape for Path {
             (min_x, min_y, max_x, max_y),
             |(x1, y1, x2, y2), point| {
                 (
-                    x1.min(point.x),
-                    y1.min(point.y),
-                    x2.max(point.x),
-                    y2.max(point.y),
+                    x1.min(point.0),
+                    y1.min(point.1),
+                    x2.max(point.0),
+                    y2.max(point.1),
                 )
             },
         );
 
         Some(Rectangle::new(
-            Point {
-                x: bounding.0,
-                y: bounding.1,
-            },
+            Point(bounding.0, bounding.1),
             bounding.2 - bounding.0,
             bounding.3 - bounding.1,
         ))
@@ -228,34 +225,10 @@ impl Shape for Path {
         }
 
         let search = [
-            (
-                point,
-                &Point {
-                    x: point.x,
-                    y: bounds.position.y,
-                },
-            ),
-            (
-                point,
-                &Point {
-                    x: point.x,
-                    y: bounds.position.y + bounds.height,
-                },
-            ),
-            (
-                point,
-                &Point {
-                    x: bounds.position.x + bounds.width,
-                    y: point.y,
-                },
-            ),
-            (
-                point,
-                &Point {
-                    x: bounds.position.x,
-                    y: point.y,
-                },
-            ),
+            (point, &Point(point.0, bounds.position.1)),
+            (point, &Point(point.0, bounds.position.1 + bounds.height)),
+            (point, &Point(bounds.position.0 + bounds.width, point.1)),
+            (point, &Point(bounds.position.0, point.1)),
         ];
 
         for ray in search {
@@ -290,11 +263,7 @@ mod test {
     #[test]
     fn get_bounding_box() {
         let path = Path {
-            points: vec![
-                Point { x: 0., y: 0. },
-                Point { x: 5., y: 5. },
-                Point { x: -5., y: 10. },
-            ],
+            points: vec![Point(0., 0.), Point(5., 5.), Point(-5., 10.)],
             style: Default::default(),
         };
 
@@ -302,7 +271,7 @@ mod test {
             assert_eq!(
                 bounding,
                 Rectangle {
-                    position: Point { x: -5., y: 0. },
+                    position: Point(-5., 0.),
                     width: 10.,
                     height: 10.,
                     color: None
@@ -313,8 +282,8 @@ mod test {
 
     #[test]
     fn does_intersect() {
-        let line1 = (&Point { x: 0., y: 0. }, &Point { x: 0., y: 50. });
-        let line2 = (&Point { x: -25., y: 25. }, &Point { x: 25., y: 25. });
+        let line1 = (&Point(0., 0.), &Point(0., 50.));
+        let line2 = (&Point(-25., 25.), &Point(25., 25.));
 
         assert!(Path::intersects(line1, line2));
     }
@@ -323,16 +292,16 @@ mod test {
     fn point_inside_polygon() {
         let path = Path::new(
             vec![
-                Point { x: 0.0, y: 0.0 },
-                Point { x: 100.0, y: 10.0 },
-                Point { x: 100.0, y: 100.0 },
-                Point { x: 20.0, y: 80.0 },
-                Point { x: 0.0, y: 0.0 },
+                Point(0.0, 0.0),
+                Point(100.0, 10.0),
+                Point(100.0, 100.0),
+                Point(20.0, 80.0),
+                Point(0.0, 0.0),
             ],
             Default::default(),
         );
 
-        assert!(path.contains(&Point { x: 50., y: 50. }));
-        assert!(!path.contains(&Point { x: 500., y: 50. }))
+        assert!(path.contains(&Point(50., 50.)));
+        assert!(!path.contains(&Point(500., 50.)));
     }
 }

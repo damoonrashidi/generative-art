@@ -8,6 +8,12 @@ use super::{
     shape::Shape,
 };
 
+#[derive(Debug)]
+pub enum SplitDirection {
+    Horizontally,
+    Vertically,
+}
+
 /**
 A Rectangle
 
@@ -16,7 +22,7 @@ Example
 
 use generative_art::{shapes::{rectangle::Rectangle, point::Point}, svg::document::Document, palette::color::Color};
 
-let mut rect = Rectangle::new(Point{x: 0.0, y: 0.0}, 100.0, 100.0);
+let mut rect = Rectangle::new(Point(0.0, 0.0), 100.0, 100.0);
 rect.set_color(Color::Hex("#f00"));
 
 let mut svg = Document::new("my_doc", rect);
@@ -63,11 +69,11 @@ impl Rectangle {
     pub fn scale(&self, scale: f64) -> Rectangle {
         let width = self.width * scale;
         let height = self.height * scale;
-        let x = self.position.x - (width - self.width) / 2.0;
-        let y = self.position.y - (height - self.height) / 2.0;
+        let x = self.position.0 - (width - self.width) / 2.0;
+        let y = self.position.1 - (height - self.height) / 2.0;
 
         Rectangle {
-            position: Point { x, y },
+            position: Point(x, y),
             width,
             height,
             color: self.color,
@@ -82,29 +88,78 @@ impl Rectangle {
     /// Returns a range that starts at the x position of the rectangle
     /// and ends on the right side of the rectangle.
     pub fn x_range(&self) -> Range<f64> {
-        self.position.x..(self.position.x + self.width)
+        self.position.0..(self.position.0 + self.width)
     }
 
     /// Returns a range that starts at teh y position of the rectangle
     /// and ends at the bottom of the rectangle.
     pub fn y_range(&self) -> Range<f64> {
-        self.position.y..(self.position.y + self.height)
+        self.position.1..(self.position.1 + self.height)
     }
 
     /// Converts this rectangle to a [`Path`]. Useful for path wobbling.
     pub fn to_path(&self, style: PathStyle) -> Path {
         let points = vec![
-            (self.position.x, self.position.y),
-            (self.position.x + self.width, self.position.y),
-            (self.position.x + self.width, self.position.y + self.height),
-            (self.position.x, self.position.y + self.height),
-            (self.position.x, self.position.y),
+            (self.position.0, self.position.1),
+            (self.position.0 + self.width, self.position.1),
+            (self.position.0 + self.width, self.position.1 + self.height),
+            (self.position.0, self.position.1 + self.height),
+            (self.position.0, self.position.1),
         ]
         .iter()
-        .map(|(x, y)| Point { x: *x, y: *y })
+        .map(|(x, y)| Point(*x, *y))
         .collect();
 
         Path::new(points, style)
+    }
+
+    pub fn subdivide(
+        &self,
+        split_point: &Point,
+        split_direction: SplitDirection,
+    ) -> (Rectangle, Rectangle) {
+        match split_direction {
+            SplitDirection::Horizontally => Rectangle::split_horizontally(&self, &split_point, 16.),
+            SplitDirection::Vertically => Rectangle::split_vertically(&self, &split_point, 16.),
+        }
+    }
+
+    fn split_horizontally(
+        rect: &Rectangle,
+        split_point: &Point,
+        padding: f64,
+    ) -> (Rectangle, Rectangle) {
+        (
+            Rectangle::new(
+                rect.position,
+                split_point.0 - padding - rect.position.0,
+                rect.height,
+            ),
+            Rectangle::new(
+                Point(split_point.0 + padding, rect.position.1),
+                rect.position.0 + rect.width - split_point.0 - padding,
+                rect.height,
+            ),
+        )
+    }
+
+    fn split_vertically(
+        rect: &Rectangle,
+        split_point: &Point,
+        padding: f64,
+    ) -> (Rectangle, Rectangle) {
+        (
+            Rectangle::new(
+                rect.position,
+                rect.width,
+                split_point.1 - padding - rect.position.1,
+            ),
+            Rectangle::new(
+                Point(rect.position.0, split_point.1 + padding),
+                rect.width,
+                rect.position.1 + rect.height - split_point.1 - padding,
+            ),
+        )
     }
 }
 
@@ -117,19 +172,19 @@ impl Shape for Rectangle {
 
         format!(
             "<rect x=\"{:.2}\" y=\"{:.2}\" width=\"{:.2}\" height=\"{:.2}\"{}/>",
-            self.position.x, self.position.y, self.width, self.height, fill
+            self.position.0, self.position.1, self.width, self.height, fill
         )
     }
 
     fn contains(&self, point: &Point) -> bool {
-        self.x_range().contains(&point.x) && self.y_range().contains(&point.y)
+        self.x_range().contains(&point.0) && self.y_range().contains(&point.1)
     }
 
     fn center(&self) -> Point {
-        Point {
-            x: (self.position.x + self.width) / 2.0,
-            y: (self.position.y + self.height) / 2.0,
-        }
+        Point(
+            (self.position.0 + self.width) / 2.0,
+            (self.position.1 + self.height) / 2.0,
+        )
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
@@ -145,7 +200,7 @@ impl Shape for Rectangle {
 impl Default for Rectangle {
     fn default() -> Self {
         Rectangle {
-            position: Point { x: 0., y: 0. },
+            position: Point(0., 0.),
             width: 0.0,
             height: 0.0,
             color: None,
@@ -155,8 +210,8 @@ impl Default for Rectangle {
 
 impl PartialEq for Rectangle {
     fn eq(&self, other: &Self) -> bool {
-        self.position.x == other.position.x
-            && self.position.y == other.position.y
+        self.position.0 == other.position.0
+            && self.position.1 == other.position.1
             && self.width == other.width
             && self.height == other.height
     }
@@ -178,13 +233,13 @@ mod test {
     #[test]
     fn does_not_contain() {
         let rect = Rectangle {
-            position: Point { x: 0., y: 0. },
+            position: Point(0., 0.),
             width: 20.0,
             height: 20.0,
             color: None,
         };
 
-        let point = Point { x: 10.0, y: 30.0 };
+        let point = Point(10.0, 30.0);
 
         assert!(!rect.contains(&point));
     }
@@ -192,7 +247,7 @@ mod test {
     #[test]
     fn scale_rect_up() {
         let rect = Rectangle {
-            position: Point { x: 0., y: 0. },
+            position: Point(0., 0.),
             width: 100.0,
             height: 100.0,
             color: None,
@@ -201,16 +256,13 @@ mod test {
         let scaled = rect.scale(1.1);
         assert_eq!(
             Rectangle {
-                position: Point {
-                    x: scaled.position.x.round(),
-                    y: scaled.position.y.round()
-                },
+                position: Point(scaled.position.0.round(), scaled.position.1.round()),
                 width: scaled.width.round(),
                 height: scaled.height.round(),
                 ..scaled
             },
             Rectangle {
-                position: Point { x: -5., y: -5. },
+                position: Point(-5., -5.),
                 width: 110.0,
                 height: 110.0,
                 color: None
@@ -221,7 +273,7 @@ mod test {
     #[test]
     fn scale_rect_down() {
         let rect = Rectangle {
-            position: Point { x: 0., y: 0. },
+            position: Point(0., 0.),
             width: 100.0,
             height: 100.0,
             color: None,
@@ -236,7 +288,7 @@ mod test {
                 ..scaled
             },
             Rectangle {
-                position: Point { x: 5., y: 5. },
+                position: Point(5., 5.),
                 width: 90.0,
                 height: 90.0,
                 color: None
@@ -246,15 +298,15 @@ mod test {
 
     #[test]
     fn test_center_0_0() {
-        let rect = Rectangle::new(Point { x: 0.0, y: 0.0 }, 100.0, 100.0);
+        let rect = Rectangle::new(Point(0.0, 0.0), 100.0, 100.0);
 
-        assert_eq!(rect.center(), Point { x: 50.0, y: 50.0 });
+        assert_eq!(rect.center(), Point(50.0, 50.0));
     }
 
     #[test]
     fn test_center_other() {
-        let rect = Rectangle::new(Point { x: 50., y: 0. }, 100.0, 100.0);
+        let rect = Rectangle::new(Point(50., 0.), 100.0, 100.0);
 
-        assert_eq!(rect.center(), Point { x: 75.0, y: 50.0 });
+        assert_eq!(rect.center(), Point(75.0, 50.0));
     }
 }

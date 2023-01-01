@@ -12,7 +12,7 @@ use super::config::GridConfig;
 
 pub fn generate_grid(config: Arc<GridConfig>) -> Document<'static> {
     let bounds = Rectangle {
-        position: Point { x: 0.0, y: 0.0 },
+        position: Point(0.0, 0.0),
         width: config.size,
         height: config.size * 1.4,
         color: None,
@@ -23,11 +23,11 @@ pub fn generate_grid(config: Arc<GridConfig>) -> Document<'static> {
     let mut document = Document::new("Grid", bounds);
     let mut rng = rand::thread_rng();
 
-    let mut x: f64 = inner_bounds.position.x;
+    let mut x: f64 = inner_bounds.position.0;
 
     while inner_bounds.x_range().contains(&x) {
         let block_width = rng.gen_range(bounds.width * 0.003..bounds.width * 0.04);
-        let mut y = inner_bounds.position.y;
+        let mut y = inner_bounds.position.1;
 
         while inner_bounds.y_range().contains(&y) {
             let block_height = if rng.gen_bool(0.2) {
@@ -36,7 +36,7 @@ pub fn generate_grid(config: Arc<GridConfig>) -> Document<'static> {
                 bounds.height * rng.gen_range(0.002..0.01)
             };
 
-            let rect = Rectangle::new(Point { x, y }, block_width, block_height);
+            let rect = Rectangle::new(Point(x, y), block_width, block_height);
             rects.push(rect);
             y += block_height;
         }
@@ -55,10 +55,10 @@ pub fn generate_grid(config: Arc<GridConfig>) -> Document<'static> {
             let dots = get_dot_count(&rect, bounds.height, config.max_dots);
             for _ in 0..dots {
                 let mut circle = Circle::new(
-                    Point {
-                        x: thread_rng.gen_range(rect.x_range()),
-                        y: thread_rng.gen_range(rect.y_range()),
-                    },
+                    Point(
+                        thread_rng.gen_range(rect.x_range()),
+                        thread_rng.gen_range(rect.y_range()),
+                    ),
                     0.5,
                 );
 
@@ -91,7 +91,7 @@ fn get_dot_count(rect: &Rectangle, render_height: f64, max_count: usize) -> usiz
         .unwrap_or(0.);
 
     let mut rng = rand::thread_rng();
-    let count = (render_height - rect.position.y) * rng.gen_range(2.0..4.0) + normalized_area;
+    let count = (render_height - rect.position.1) * rng.gen_range(2.0..4.0) + normalized_area;
 
     (count as usize).min(max_count)
 }

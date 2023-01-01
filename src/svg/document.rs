@@ -35,11 +35,11 @@ impl<'a> Document<'static> {
     };
 
     // Create the document
-    let bounds = Rectangle::new(Point{x:0.0, y:0.0}, 1000.0, 1000.0);
+    let bounds = Rectangle::new(Point(0.0, 0.0), 1000.0, 1000.0);
     let mut svg = Document::new("my-art", bounds);
 
     // Draw some art
-    svg.add_shape(Box::new(Circle::new(Point{x:500.0, y: 500.0}, 200.0)));
+    svg.add_shape(Box::new(Circle::new(Point(500.0, 500.0), 200.0)));
 
     // Save the document to disk
     svg.save();

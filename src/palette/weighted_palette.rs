@@ -3,11 +3,11 @@ use rand::{distributions::WeightedIndex, prelude::Distribution};
 
 /// A set of colors where one can be chosen randomly but biased by a given weight
 #[derive(Debug)]
-pub struct WeightedPalette {
-    colors: Vec<(Color, usize)>,
+pub struct WeightedPalette<const N: usize> {
+    colors: [(Color, usize); N],
 }
 
-impl WeightedPalette {
+impl<const N: usize> WeightedPalette<N> {
     /**
      Create a new weighted color palette
 
@@ -17,7 +17,7 @@ impl WeightedPalette {
 
      use generative_art::{palette::{Palette, color::Color, weighted_palette::WeightedPalette}};
 
-     let palette = WeightedPalette::new(vec![
+     let palette = WeightedPalette::new([
         (Color::Hex("#f00"), 1),
         (Color::Hex("#0f0"), 5),
         (Color::Hex("#00f"), 1)
@@ -30,12 +30,12 @@ impl WeightedPalette {
      ```
 
     */
-    pub fn new(colors: Vec<(Color, usize)>) -> WeightedPalette {
+    pub fn new(colors: [(Color, usize); N]) -> Self {
         WeightedPalette { colors }
     }
 }
 
-impl Palette for WeightedPalette {
+impl<const N: usize> Palette for WeightedPalette<N> {
     fn get_random_color(&self) -> Option<Color> {
         let mut rng = rand::thread_rng();
         let weights = self

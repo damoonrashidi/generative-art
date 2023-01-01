@@ -7,5 +7,6 @@ pub trait Palette {
 
 pub mod color;
 pub mod palettes;
+pub mod regional_palette;
 pub mod simple_palette;
 pub mod weighted_palette;

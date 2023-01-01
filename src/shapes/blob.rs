@@ -50,10 +50,10 @@ impl Blob {
 
         for i in 0..count {
             let angle = (i as f64 / count as f64) * PI * 2.0;
-            points.push(Point {
-                x: position.x + angle.cos() * radius * rng.gen_range(0.8..1.2),
-                y: position.y + angle.sin() * radius * rng.gen_range(0.8..1.2),
-            });
+            points.push(Point(
+                position.0 + angle.cos() * radius * rng.gen_range(0.8..1.2),
+                position.1 + angle.sin() * radius * rng.gen_range(0.8..1.2),
+            ));
         }
 
         Blob {
@@ -84,7 +84,7 @@ impl Shape for Blob {
         let mut str = format!("<path {}d=\"M ", fill);
 
         for point in &self.points {
-            str.push_str(&format!("{:.2} {:.2}, ", point.x, point.y));
+            str.push_str(&format!("{:.2} {:.2}, ", point.0, point.1));
         }
 
         str.push_str("\"/>\n");
@@ -97,10 +97,7 @@ impl Shape for Blob {
     }
 
     fn center(&self) -> Point {
-        Point {
-            x: self.position.x,
-            y: self.position.y,
-        }
+        Point(self.position.0, self.position.1)
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
@@ -112,7 +109,7 @@ impl Shape for Blob {
 impl Default for Blob {
     fn default() -> Self {
         Blob {
-            position: Point { x: 0.0, y: 0.0 },
+            position: Point(0.0, 0.0),
             radius: 0.0,
             color: None,
             points: vec![],

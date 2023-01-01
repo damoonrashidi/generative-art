@@ -22,7 +22,7 @@ impl Circle {
     ///
     /// ```
     /// use generative_art::shapes::{circle::Circle, point::Point};
-    /// let circle = Circle::new(Point{x: 0.0, y: 0.0}, 10.0);
+    /// let circle = Circle::new(Point(0.0, 0.0), 10.0);
     /// ```
     pub fn new(center: Point, radius: f64) -> Circle {
         Circle {
@@ -38,13 +38,13 @@ impl Circle {
     ///
     /// ```
     /// use generative_art::shapes::{circle::Circle, point::Point};
-    /// let circle = Circle::new(Point{x: 0.0, y: 0.0}, 10.0);
-    /// let other = Circle::new(Point{x: 20.0, y: 0.0}, 10.0);
+    /// let circle = Circle::new(Point(0.0, 0.0), 10.0);
+    /// let other = Circle::new(Point(20.0, 0.0), 10.0);
     /// let distance = circle.distance(&other); // -> 10.0
     /// ```
     pub fn distance(&self, other: &Circle) -> f64 {
-        let d_x = self.center.x - other.center.x;
-        let d_y = self.center.y - other.center.y;
+        let d_x = self.center.0 - other.center.0;
+        let d_y = self.center.1 - other.center.1;
         (d_x.powi(2) + d_y.powi(2)).sqrt() - self.radius / 2. - other.radius / 2.
     }
 
@@ -82,25 +82,19 @@ impl Shape for Circle {
 
         format!(
             "<circle cx=\"{:.2}\" cy=\"{:.2}\" r=\"{:.2}\" fill=\"{}\" />",
-            self.center.x, self.center.y, self.radius, fill
+            self.center.0, self.center.1, self.radius, fill
         )
     }
 
     fn center(&self) -> Point {
-        Point {
-            x: self.center.x,
-            y: self.center.y,
-        }
+        Point(self.center.0, self.center.1)
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
         Some(Rectangle {
-            position: Point {
-                x: self.center.x - self.radius,
-                y: self.center.y - self.radius,
-            },
-            width: self.center.x + self.radius,
-            height: self.center.y + self.radius,
+            position: Point(self.center.0 - self.radius, self.center.1 - self.radius),
+            width: self.center.0 + self.radius,
+            height: self.center.1 + self.radius,
             color: None,
         })
     }
@@ -112,8 +106,8 @@ impl Shape for Circle {
 
 impl PartialEq for Circle {
     fn eq(&self, other: &Self) -> bool {
-        self.center.x == other.center.x
-            && self.center.y == other.center.y
+        self.center.0 == other.center.0
+            && self.center.1 == other.center.1
             && self.radius == other.radius
     }
 }
@@ -123,7 +117,7 @@ impl Display for Circle {
         write!(
             f,
             "x:{} y:{} r:{}",
-            self.center.x, self.center.y, self.radius
+            self.center.0, self.center.1, self.radius
         )
     }
 }
@@ -131,7 +125,7 @@ impl Display for Circle {
 impl Default for Circle {
     fn default() -> Self {
         Circle {
-            center: Point { x: 0.0, y: 0.0 },
+            center: Point(0.0, 0.0),
             radius: 0.0,
             color: None,
         }

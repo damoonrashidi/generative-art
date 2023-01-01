@@ -20,7 +20,7 @@ use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 
 pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
-    let mut bounds = Rectangle::new(Point { x: 0.0, y: 0.0 }, config.size, config.size * 1.4);
+    let mut bounds = Rectangle::new(Point(0.0, 0.0), config.size, config.size * 1.4);
     let (background, palette) = Palettes::orange_autumn();
 
     bounds.set_color(background);
@@ -38,7 +38,7 @@ pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
         let r = rng.gen_range((bounds.width / 10.0)..(bounds.width / 7.));
         let color = palette.get_random_color();
 
-        let blob = Blob::new(Point { x, y }, r, color);
+        let blob = Blob::new(Point(x, y), r, color);
 
         color_bounds.push(blob);
     }
@@ -52,7 +52,7 @@ pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
 
         let line_color: Option<Color> = match color_bounds
             .iter()
-            .find(|region| region.contains(&Point { x, y }))
+            .find(|region| region.contains(&Point(x, y)))
         {
             Some(region) => region.color,
             _ => palette.get_random_color(),
@@ -82,7 +82,7 @@ pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
             },
         };
 
-        while inner_bounds.contains(&Point { x, y }) && line.length() < config.max_line_length {
+        while inner_bounds.contains(&Point(x, y)) && line.length() < config.max_line_length {
             let smoothness = if (400.0..600.0).contains(&r) {
                 config.smoothness * 3.0
             } else {
@@ -92,7 +92,7 @@ pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
             let n = noise.get([x / smoothness, y / smoothness]);
             x += (config.chaos * n).cos() * step_size;
             y += (config.chaos * n).sin() * step_size;
-            let circle = Circle::new(Point { x, y }, r);
+            let circle = Circle::new(Point(x, y), r);
 
             if let Ok(neighbors) = point_map.get_neighbors(&circle, None) {
                 if neighbors
@@ -105,7 +105,7 @@ pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
                 break;
             }
 
-            line.add_point(Point { x, y });
+            line.add_point(Point(x, y));
         }
 
         if line.length() > config.min_line_length {

@@ -56,8 +56,8 @@ use generative_art::{
 
 let mut g = Group::new(None);
 
-let rect1 = Rectangle::new(Point{x: 0.0, y:0.0}, 100.0, 100.0);
-let rect2 = Rectangle::new(Point{x: 0.0, y:0.0}, 100.0, 100.0);
+let rect1 = Rectangle::new(Point(0.0, 0.0), 100.0, 100.0);
+let rect2 = Rectangle::new(Point(0.0, 0.0), 100.0, 100.0);
 
 g.add_shape(Box::new(rect1));
 g.add_shape(Box::new(rect2));
@@ -89,11 +89,11 @@ impl Group {
         }
     };
 
-    let bounds = Rectangle::new(Point{x: 0., y: 0.}, 500., 500.);
+    let bounds = Rectangle::new(Point(0., 0.), 500., 500.);
     let mut document = Document::new("art", bounds);
     let mut g = Group::new(None);
 
-    let square = Rectangle::new(Point{x: 100., y: 100., }, 100., 100.);
+    let square = Rectangle::new(Point(100., 100.,), 100., 100.);
     g.add_shape(Box::new(square));
 
     document.add_group(g);
@@ -133,7 +133,7 @@ mod test {
 
     #[test]
     fn render() {
-        let rect = Rectangle::new(Point { x: 0.0, y: 0.0 }, 10.0, 10.0);
+        let rect = Rectangle::new(Point(0., 0.), 10.0, 10.0);
         let mut g = Group::new(Some(super::GroupStyle {
             fill: Some(Color::Hex("#111")),
             stroke: None,

@@ -10,7 +10,7 @@ use rand_chacha::ChaCha20Rng;
 fn main() {
     let (background, palette) = Palettes::orange_autumn();
     let bounds = Rectangle {
-        position: Point { x: 0., y: 0. },
+        position: Point(0., 0.),
         width: 1000.,
         height: 1000. * 1.4,
         color: Some(background),
@@ -35,17 +35,17 @@ fn main() {
         let r = rng.gen_range((bounds.width / 10.0)..(bounds.width / 7.));
         let color = palette.get_random_color();
 
-        let blob = Blob::new(Point { x, y }, r, color);
+        let blob = Blob::new(Point(x, y), r, color);
 
         color_bounds.push(blob);
     }
 
     for _ in 0..15_000 {
         let is_long = rng.gen_bool(0.03);
-        let mut point = Point {
-            x: rng.gen_range(bounds.x_range()),
-            y: rng.gen_range(bounds.y_range()),
-        };
+        let mut point = Point(
+            rng.gen_range(bounds.x_range()),
+            rng.gen_range(bounds.y_range()),
+        );
 
         let mut line: Vec<Blob> = vec![];
         let line_color: Option<Color> =
@@ -57,9 +57,9 @@ fn main() {
         while (is_long && long_bounds.contains(&point))
             || inner_bounds.contains(&point) && line.len() < 150
         {
-            let n = noise.get([point.x / 500., point.y / 500.]);
-            point.x += (4.0 * n).cos() * step_size;
-            point.y += (4.0 * n).sin() * step_size;
+            let n = noise.get([point.0 / 500., point.1 / 500.]);
+            point.0 += (4.0 * n).cos() * step_size;
+            point.1 += (4.0 * n).sin() * step_size;
             let blob = Blob::new(point, r, line_color);
 
             if let Ok(neighbors) = point_map.get_neighbors(&blob, None) {
