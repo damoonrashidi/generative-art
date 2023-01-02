@@ -26,12 +26,12 @@ impl RegionalPalette {
         RegionalPalette { bounds }
     }
 
-    pub fn from_region(bounds: Rectangle, palette: Box<dyn Palette>) -> Self {
+    pub fn from_region(bounds: Rectangle, rounds: u8, palette: Box<dyn Palette>) -> Self {
         let mut rects = vec![bounds];
 
         let mut rng = thread_rng();
 
-        for _ in 0..7 {
+        for _ in 0..rounds {
             for i in (0..rects.len()).rev() {
                 if let Some(rect) = rects.get(i) {
                     let split_direction = if rng.gen_bool(0.5) {

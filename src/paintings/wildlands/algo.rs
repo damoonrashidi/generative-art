@@ -3,10 +3,7 @@ use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 
 use crate::{
-    palette::{
-        color::Color, palettes::Palettes, regional_palette::RegionalPalette,
-        weighted_palette::WeightedPalette,
-    },
+    palette::{color::Color, palettes::Palettes, regional_palette::RegionalPalette},
     shapes::{blob::Blob, point::Point, pointmap::PointMap, rectangle::Rectangle, shape::Shape},
     svg::document::Document,
 };
@@ -14,31 +11,25 @@ use crate::{
 use super::config::WildlandsConfig;
 
 pub fn wildlands(config: &WildlandsConfig) -> Document<'static> {
+    let (bg, colors) = Palettes::wild();
+
     let bounds = Rectangle {
         position: Point(0., 0.),
         width: config.size,
         height: config.size * 1.4,
-        color: Some(Palettes::orange_autumn().0),
+        color: Some(bg),
     };
 
-    let palette: RegionalPalette = RegionalPalette::from_region(
-        bounds,
-        Box::new(WeightedPalette::new([
-            (Color::Hex("#E1B31E"), 3),
-            (Color::Hex("#678983"), 1),
-            (Color::Hex("#FB5252"), 1),
-            (Color::Hex("#F0E9D2"), 2),
-            (Color::Hex("#E6DDC4"), 2),
-        ])),
-    );
+    let palette: RegionalPalette =
+        RegionalPalette::from_region(bounds, config.color_rounds, colors);
 
     let inner_bounds = bounds.scale(0.9);
     let long_bounds = bounds.scale(0.94);
     let mut document = Document::new("Wildlands", bounds);
     document.add_shape(Box::new(bounds));
 
-    let r: f64 = 3.5;
-    let step_size: f64 = r * 2.5;
+    let r: f64 = config.radius;
+    let step_size: f64 = r * config.step_size;
     let mut rng = ChaCha20Rng::from_entropy();
     let mut point_map: PointMap<'_, Blob> = PointMap::new(&bounds, 20);
     let noise = OpenSimplex::new().set_seed(config.seed);
