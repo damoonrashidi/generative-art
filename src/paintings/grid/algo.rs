@@ -15,13 +15,15 @@ pub fn generate_grid(config: Arc<GridConfig>) -> Document<'static> {
         position: Point(0.0, 0.0),
         width: config.size,
         height: config.size * 1.4,
-        color: None,
+        color: Some(Color::Hex("#fff")),
     };
 
     let inner_bounds = bounds.scale(0.9);
     let mut rects: Vec<Rectangle> = vec![];
     let mut document = Document::new("Grid", bounds);
     let mut rng = rand::thread_rng();
+
+    document.add_shape(Box::new(bounds));
 
     let mut x: f64 = inner_bounds.position.0;
 

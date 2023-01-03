@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Parser, Debug, Default)]
+#[derive(Parser, Debug, Default, Clone, Copy)]
 #[command(author, version, about, long_about = None)]
 pub struct GridConfig {
     /// Set the size of the final SVG output
