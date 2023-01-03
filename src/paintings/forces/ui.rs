@@ -35,6 +35,7 @@ impl ForcesApp {
             split_with_gap: self.config.split_with_gap,
         };
         let svg_str = forces(std::rc::Rc::new(&config)).generate();
+        self.svg_str = svg_str.clone();
         self.svg = egui_extras::RetainedImage::from_svg_str("Forces", svg_str.as_str()).unwrap();
     }
 
@@ -188,8 +189,9 @@ impl eframe::App for ForcesApp {
             });
 
             if ui.button("Export").clicked() {
-                let mut f = File::create("./output/forces/forces-live.svg")
-                    .expect("could not open file for writing");
+                let mut f =
+                    File::create(format!("./output/forces/forces-{}.svg", self.config.seed))
+                        .expect("could not open file for writing");
 
                 f.write_all(self.svg_str.as_bytes())
                     .expect("Could not write to file");
