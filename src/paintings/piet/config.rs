@@ -11,6 +11,9 @@ pub struct PietConfig {
 
     #[arg(long, default_value_t = 0.7)]
     pub split_chance: f64,
+
+    #[arg(long, default_value_t = 16.0)]
+    pub padding: f64,
 }
 
 impl PietConfig {

@@ -55,7 +55,7 @@ impl eframe::App for WildlandsUi {
     fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
             if ui
-                .add(eframe::egui::Slider::new(&mut self.config.seed, 0..=10_000).text("Seed"))
+                .add(eframe::egui::Slider::new(&mut self.config.seed, 0..=100).text("Seed"))
                 .changed()
             {
                 self.set_new_svg();
@@ -101,9 +101,9 @@ impl eframe::App for WildlandsUi {
 
             if ui
                 .add(
-                    eframe::egui::Slider::new(&mut self.config.smoothness, 100.0..=3500.0)
+                    eframe::egui::Slider::new(&mut self.config.smoothness, 500.0..=10_000.0)
                         .text("Smoothness")
-                        .step_by(100.0),
+                        .step_by(300.0),
                 )
                 .changed()
             {

@@ -40,7 +40,8 @@ pub fn piet(config: Rc<&PietConfig>) -> Document<'static> {
                         SplitDirection::Vertically
                     };
 
-                    let (mut a, mut b) = rect.subdivide(&split_point, split_direction, Some(16.0));
+                    let (mut a, mut b) =
+                        rect.subdivide(&split_point, split_direction, Some(config.padding));
                     rects.remove(i);
 
                     if let Some(a_color) = palette.get_random_color() {
@@ -64,12 +65,11 @@ pub fn piet(config: Rc<&PietConfig>) -> Document<'static> {
     rects
         .iter()
         .map(|rect| {
-            let mut path = rect.to_path(PathStyle {
+            let path = rect.to_path(PathStyle {
                 color: rect.color,
                 stroke_weight: None,
                 stroke: None,
             });
-            path.wobble();
             path
         })
         .for_each(|path| {

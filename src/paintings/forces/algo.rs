@@ -2,9 +2,8 @@ use std::rc::Rc;
 
 use crate::{
     paintings::forces::config::ForcesConfig,
-    palette::{color::Color, palettes::Palettes},
+    palette::{palettes::Palettes, regional_palette::RegionalPalette, Palette},
     shapes::{
-        blob::Blob,
         circle::Circle,
         path::{Path, PathStyle},
         point::Point,
@@ -19,9 +18,10 @@ use noise::{NoiseFn, Seedable, SuperSimplex};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 
-pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
+pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
     let mut bounds = Rectangle::new(Point(0.0, 0.0), config.size, config.size * 1.4);
-    let (background, palette) = Palettes::orange_autumn();
+    let (background, colors) = Palettes::orange_autumn();
+    let palette = RegionalPalette::from_region(bounds, 5, colors);
 
     bounds.set_color(background);
     let inner_bounds = bounds.scale(0.9);
@@ -30,43 +30,20 @@ pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
     svg.add_shape(Box::new(bounds));
     let mut rng = ChaCha20Rng::from_entropy();
 
-    let mut color_bounds: Vec<Blob> = vec![];
-
-    for _ in 0..20 {
-        let x = rng.gen_range(bounds.x_range());
-        let y = rng.gen_range(bounds.y_range());
-        let r = rng.gen_range((bounds.width / 10.0)..(bounds.width / 7.));
-        let color = palette.get_random_color();
-
-        let blob = Blob::new(Point(x, y), r, color);
-
-        color_bounds.push(blob);
-    }
-
     let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 20);
     let noise = SuperSimplex::new().set_seed(config.seed);
 
-    for i in 0..config.line_count {
+    for _ in 0..config.line_count {
         let mut x: f64 = rng.gen_range(inner_bounds.x_range());
         let mut y: f64 = rng.gen_range(inner_bounds.y_range());
 
-        let line_color: Option<Color> = match color_bounds
-            .iter()
-            .find(|region| region.contains(&Point(x, y)))
-        {
-            Some(region) => region.color,
-            _ => palette.get_random_color(),
-        };
+        let line_color = palette.get_color(&Point(x, y));
 
         let radii = WeightedChoice {
-            choices: [(40.0, 10), (100.0, 4), (150.0, 2)],
+            choices: [(40.0, 10), (100.0, 4), (150.0, 2), (250., 5)],
         };
 
-        let r = if i < 1 {
-            350.0
-        } else {
-            radii.get_random_choice().unwrap()
-        };
+        let r = radii.get_random_choice().unwrap();
 
         let step_size = if (0.0..=150.).contains(&r) {
             20.0
@@ -97,7 +74,7 @@ pub fn generate_forces(config: Rc<&ForcesConfig>) -> Document<'static> {
             if let Ok(neighbors) = point_map.get_neighbors(&circle, None) {
                 if neighbors
                     .iter()
-                    .any(|neighbor| neighbor.distance(&circle) < r / 2.)
+                    .any(|neighbor| neighbor.distance(&circle) < r / 4.)
                 {
                     break;
                 }
@@ -153,7 +130,7 @@ fn split_line(line: Vec<Point>, use_gap: bool) -> Vec<Vec<Point>> {
             } else {
                 lines.push(line[last_split - 1..i + 1].into());
             }
-            last_split = i
+            last_split = i;
         }
     }
 

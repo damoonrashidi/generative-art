@@ -1,4 +1,4 @@
-use noise::{NoiseFn, OpenSimplex, Seedable};
+use noise::{NoiseFn, Seedable, SuperSimplex};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha20Rng;
 
@@ -28,11 +28,12 @@ pub fn wildlands(config: &WildlandsConfig) -> Document<'static> {
     let mut document = Document::new("Wildlands", bounds);
     document.add_shape(Box::new(bounds));
 
-    let r: f64 = config.radius;
-    let step_size: f64 = r * config.step_size;
     let mut rng = ChaCha20Rng::from_entropy();
-    let mut point_map: PointMap<'_, Blob> = PointMap::new(&bounds, 20);
-    let noise = OpenSimplex::new().set_seed(config.seed);
+    let mut point_map = PointMap::new(&bounds, 100);
+    let noise = SuperSimplex::new().set_seed(config.seed);
+
+    let r = config.radius;
+    let step_size: f64 = r * config.step_size;
 
     for _ in 0..config.line_count {
         let is_long = rng.gen_bool(0.03);
@@ -44,18 +45,18 @@ pub fn wildlands(config: &WildlandsConfig) -> Document<'static> {
         let mut line: Vec<Blob> = vec![];
         let line_color: Option<Color> = palette.get_color(&point);
 
-        while (is_long && long_bounds.contains(&point))
+        while rng.gen_bool(0.95) && (is_long && long_bounds.contains(&point))
             || inner_bounds.contains(&point) && line.len() < config.max_line_length
         {
             let n = noise.get([point.0 / config.smoothness, point.1 / config.smoothness]);
-            point.0 += (config.chaos * n).cos() * step_size;
-            point.1 += (config.chaos * n).sin() * step_size;
+            point.0 += (config.chaos * n).sin() * step_size;
+            point.1 += (config.chaos * n).cos() * step_size;
             let blob = Blob::new(point, r, line_color);
 
             if let Ok(neighbors) = point_map.get_neighbors(&blob, None) {
                 if neighbors
                     .iter()
-                    .any(|neighbor| neighbor.distance(&blob) < blob.radius)
+                    .any(|neighbor| neighbor.distance(&blob) < r)
                 {
                     break;
                 }

@@ -44,7 +44,7 @@ impl Blob {
     /// Create a new blob at a given {position} with a given @radius
     pub fn new(position: Point, radius: f64, color: Option<Color>) -> Blob {
         let mut rng = rand::thread_rng();
-        let count = rng.gen_range(7..24);
+        let count = rng.gen_range(7..15);
 
         let mut points = vec![];
 
@@ -84,10 +84,11 @@ impl Shape for Blob {
         let mut str = format!("<path {}d=\"M ", fill);
 
         for point in &self.points {
-            str.push_str(&format!("{:.2} {:.2}, ", point.0, point.1));
+            str.push_str(&format!("{:.2} {:.2},", point.0, point.1));
         }
+        str.pop();
 
-        str.push_str("\"/>\n");
+        str.push_str(" Z\"/>\n");
         str
     }
 

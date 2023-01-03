@@ -5,7 +5,7 @@ use std::io::Write;
 
 use rand::prelude::*;
 
-use super::algo::generate_forces;
+use super::algo::forces;
 use super::config::ForcesConfig;
 
 pub struct ForcesApp {
@@ -34,7 +34,7 @@ impl ForcesApp {
             split_line_chance: self.config.split_line_chance,
             split_with_gap: self.config.split_with_gap,
         };
-        let svg_str = generate_forces(std::rc::Rc::new(&config)).generate();
+        let svg_str = forces(std::rc::Rc::new(&config)).generate();
         self.svg = egui_extras::RetainedImage::from_svg_str("Forces", svg_str.as_str()).unwrap();
     }
 
@@ -147,9 +147,7 @@ impl eframe::App for ForcesApp {
             // Line behaviour
             ui.horizontal(|ui| {
                 if ui
-                    .add(
-                        eframe::egui::Slider::new(&mut self.config.chaos, 0.5..=16.0).text("Chaos"),
-                    )
+                    .add(eframe::egui::Slider::new(&mut self.config.chaos, 0.1..=4.0).text("Chaos"))
                     .changed()
                 {
                     self.set_new_image();
@@ -157,7 +155,7 @@ impl eframe::App for ForcesApp {
 
                 if ui
                     .add(
-                        eframe::egui::Slider::new(&mut self.config.smoothness, 400.0..=10000.0)
+                        eframe::egui::Slider::new(&mut self.config.smoothness, 200.0..=5000.0)
                             .text("Smoothness"),
                     )
                     .changed()

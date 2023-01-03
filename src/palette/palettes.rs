@@ -62,11 +62,11 @@ impl Palettes {
     pub fn wild() -> (Color, Box<dyn Palette>) {
         let background = Color::Hex("#1d1a13");
         let colors = WeightedPalette::new([
-            (Color::Hex("#ecfd97"), 1),
-            (Color::Hex("#ef8b32"), 1),
-            (Color::Hex("#ebe1d2"), 1),
-            (Color::Hex("#a1393b"), 1),
-            (Color::Hex("#37322e"), 1),
+            (Color::HSLa((70, 96., 79., 1.)), 2),
+            (Color::HSLa((28, 86., 57., 1.)), 1),
+            (Color::HSLa((36, 38., 87., 1.)), 3),
+            (Color::HSLa((0, 48., 43., 1.)), 3),
+            (Color::HSLa((27, 9., 20., 1.)), 1),
         ]);
 
         (background, Box::new(colors))

@@ -67,6 +67,17 @@ impl RegionalPalette {
     }
 }
 
+impl Palette for RegionalPalette {
+    fn get_random_color(&self) -> Option<Color> {
+        let mut rng = thread_rng();
+
+        match self.bounds.len() {
+            0 => None,
+            n => self.bounds[rng.gen_range(0..n)].color,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
 

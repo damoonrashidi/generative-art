@@ -25,6 +25,7 @@ impl Default for PietUi {
             config: PietConfig {
                 size: 1500.,
                 rounds: 5,
+                padding: 16.0,
                 split_chance: 0.1,
             },
             svg_str: "".into(),
@@ -50,6 +51,15 @@ impl eframe::App for PietUi {
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
             if ui
                 .add(eframe::egui::Slider::new(&mut self.config.size, 500.0..=3000.0).text("Size"))
+                .changed()
+            {
+                self.set_new_svg();
+            }
+
+            if ui
+                .add(
+                    eframe::egui::Slider::new(&mut self.config.padding, 0.0..=50.0).text("Padding"),
+                )
                 .changed()
             {
                 self.set_new_svg();
