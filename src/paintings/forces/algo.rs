@@ -40,7 +40,7 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
         let line_color = palette.get_color(&Point(x, y));
 
         let radii = WeightedChoice {
-            choices: [(40.0, 10), (100.0, 4), (150.0, 2), (250., 5)],
+            choices: [(40.0, 10), (100.0, 4), (150.0, 2), (250., 2)],
         };
 
         let r = radii.get_random_choice().unwrap();
@@ -74,7 +74,7 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
             if let Ok(neighbors) = point_map.get_neighbors(&circle, None) {
                 if neighbors
                     .iter()
-                    .any(|neighbor| neighbor.distance(&circle) < r / 4.)
+                    .any(|neighbor| neighbor.distance(&circle) < r / 2.)
                 {
                     break;
                 }
@@ -94,17 +94,17 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
             if config.split_line_chance > 0.0 && rng.gen_bool(config.split_line_chance) {
                 split_line(line.points, config.split_with_gap)
                     .into_iter()
-                    .for_each(|points| {
-                        let path = Path::new(
+                    .map(|points| {
+                        Path::new(
                             points,
                             PathStyle {
                                 stroke_weight: Some(r),
                                 stroke: palette.get_random_color(),
                                 color: None,
                             },
-                        );
-                        svg.add_shape(Box::new(path));
-                    });
+                        )
+                    })
+                    .for_each(|path| svg.add_shape(Box::new(path)))
             } else {
                 line.style = PathStyle {
                     stroke_weight: Some(r),
@@ -121,18 +121,18 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
 
 fn split_line(line: Vec<Point>, use_gap: bool) -> Vec<Vec<Point>> {
     let mut rng = thread_rng();
-    let mut lines = vec![];
-    let mut last_split = 1;
-    for i in 1..line.len() - 1 {
+    let mut lines: Vec<Vec<Point>> = vec![];
+    let mut last_split = 0;
+    for i in 0..line.len() {
         if rng.gen_bool(0.2) {
             if use_gap {
                 lines.push(line[last_split..i].into());
             } else {
-                lines.push(line[last_split - 1..i + 1].into());
+                lines.push(line[last_split..i + 1].into());
             }
             last_split = i;
         }
     }
 
-    lines
+    lines.into_iter().filter(|line| line.len() > 1).collect()
 }
