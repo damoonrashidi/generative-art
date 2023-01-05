@@ -10,7 +10,7 @@ pub enum Color {
 
     ```
     use generative_art::palette::color::Color::HSLa;
-    let bright_red = HSLa((0, 50.0, 65.0, 1.0));
+    let bright_red = HSLa(0, 50.0, 65.0, 1.0);
     ```
     */
     HSLa(u16, f64, f64, f64),
@@ -31,10 +31,28 @@ pub enum Color {
 impl Display for Color {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Color::Hex(x) => write!(f, "{}", x),
+            Color::Hex(color) => write!(f, "{color}"),
             Color::HSLa(h, s, l, a) => {
-                write!(f, "hsla({}deg, {:.2}%, {:.2}%, {:.2})", h, s, l, a)
+                write!(f, "hsla({h}, {s:.1}%, {l:.1}%, {a:.2})")
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::Color;
+
+    #[test]
+    fn render_hsla() {
+        let color = Color::HSLa(360, 0.0, 0.0, 1.0);
+
+        assert_eq!("hsla(360, 0.0%, 0.0%, 1.00)", color.to_string());
+    }
+
+    #[test]
+    fn render_hex() {
+        let color = Color::Hex("#111");
+        assert_eq!("#111", color.to_string());
     }
 }

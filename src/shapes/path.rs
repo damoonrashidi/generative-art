@@ -101,22 +101,22 @@ impl Path {
 impl Shape for Path {
     fn as_svg(&self) -> String {
         if self.points.is_empty() {
-            return String::from("");
+            return "".to_string();
         }
 
         let stroke: String = match self.style.stroke {
             Some(color) => format!("stroke=\"{color}\" "),
-            None => String::from(""),
+            None => "".to_string(),
         };
 
         let fill: String = match self.style.color {
             Some(color) => format!("fill=\"{color}\" "),
-            None => String::from("fill=\"none\" "),
+            None => "fill=\"none\" ".to_string(),
         };
 
         let stroke_weight: String = match self.style.stroke_weight {
             Some(stroke) => format!("stroke-width=\"{:.2}\" ", stroke),
-            None => String::from(""),
+            None => "".to_string(),
         };
 
         if let Some(first) = self.points.first() {
