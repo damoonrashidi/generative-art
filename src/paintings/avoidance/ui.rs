@@ -44,7 +44,7 @@ impl eframe::App for AvoidanceUi {
     fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
             if ui
-                .add(eframe::egui::Slider::new(&mut self.config.size, 500.0..=3000.0).text("Size"))
+                .add(eframe::egui::Slider::new(&mut self.config.size, 500.0..=1000.0).text("Size"))
                 .changed()
             {
                 self.set_new_svg();

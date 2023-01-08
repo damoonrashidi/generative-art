@@ -1,3 +1,4 @@
+use noise::{Seedable, SuperSimplex};
 use rand::{thread_rng, Rng};
 
 use crate::{
@@ -21,53 +22,33 @@ pub fn avoidance(config: &AvoidanceConfig) -> String {
     bounds.set_color(bg);
 
     let mut pointmap: PointMap<'_, Circle> = PointMap::new(&bounds, 50);
-
     let mut svg = Document::new("Avoidance", bounds);
+    let _noise = SuperSimplex::new().set_seed(500);
 
     svg.add_shape(Box::new(bounds));
 
     let mut rng = thread_rng();
 
-    for _ in 0..200 {
-        let mut point = Trail::new(
-            40.,
+    for _ in 0..5000 {
+        let trail = Trail::new(
+            60.,
             Point(
                 rng.gen_range(bounds.x_range()),
                 rng.gen_range(bounds.y_range()),
             ),
-            rng.gen_range(-0.1..1.0),
+            rng.gen_range(-1.0..1.0),
         );
 
         let mut points: Vec<Point> = vec![];
-        while bounds.contains(&point.position) && points.len() < 20 {
-            points.push(point.position);
-            let circle = Circle::new(point.position, point.radius);
+        while bounds.contains(&trail.position) && points.len() < 100 {
+            points.push(trail.position);
+            let circle = Circle::new(trail.position, trail.radius);
 
-            let neighbors = pointmap
-                .get_neighbors(&circle, Some(point.radius / 2.))
+            let _neighbors = pointmap
+                .get_neighbors(&circle, Some(trail.radius / 2.))
                 .unwrap();
 
-            let next_options: Vec<(Point, f64)> = point
-                .move_candidates(&config.scan_distance, &config.scan_angle)
-                .into_iter()
-                .filter_map(|candidate| {
-                    let c = Circle::new(candidate.0, point.radius);
-                    if !c.instersects_any(neighbors.clone()) {
-                        Some(candidate)
-                    } else {
-                        None
-                    }
-                })
-                .collect();
-
-            if next_options.len() > 0 {
-                let pick = rng.gen_range(0..next_options.len());
-                let (position, direction) = next_options[pick];
-                point.position = position;
-                point.direction = direction;
-            } else {
-                break;
-            }
+            break;
         }
 
         let path = Path::new(

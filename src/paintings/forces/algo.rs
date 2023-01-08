@@ -19,7 +19,7 @@ use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 
 pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
-    let mut bounds = Rectangle::new(Point(0.0, 0.0), config.size, config.size * 1.4);
+    let mut bounds = Rectangle::new(Point(0.0, 0.0), config.size, config.size);
     let (background, colors) = Palettes::orange_autumn();
     let palette = RegionalPalette::from_region(bounds, 5, colors);
 
@@ -32,6 +32,8 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
 
     let mut point_map: PointMap<'_, Circle> = PointMap::new(&bounds, 20);
     let noise = SuperSimplex::new().set_seed(config.seed);
+
+    let center = &bounds.center();
 
     for _ in 0..config.line_count {
         let mut x: f64 = rng.gen_range(inner_bounds.x_range());
@@ -66,7 +68,12 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
                 config.smoothness
             };
 
-            let n = noise.get([x / smoothness, y / smoothness]);
+            let n = if false {
+                noise.get([x / smoothness, y / smoothness])
+            } else {
+                get_next(&Point(x, y), center, 0.01)
+            };
+
             x += (config.chaos * n).cos() * step_size;
             y += (config.chaos * n).sin() * step_size;
             let circle = Circle::new(Point(x, y), r);
@@ -135,4 +142,10 @@ fn split_line(line: Vec<Point>, use_gap: bool) -> Vec<Vec<Point>> {
     }
 
     lines.into_iter().filter(|line| line.len() > 1).collect()
+}
+
+fn get_next(point: &Point, center: &Point, step: f64) -> f64 {
+    let angle = center.angle_to(point);
+
+    angle + step
 }

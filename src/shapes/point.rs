@@ -29,8 +29,8 @@ impl Point {
     ```
     */
     pub fn distance_to(&self, other: &Point) -> f64 {
-        let d_x = (self.0 - other.0).abs();
-        let d_y = (self.1 - other.1).abs();
+        let d_x = self.0 - other.0;
+        let d_y = self.1 - other.1;
 
         (d_x.powi(2) + d_y.powi(2)).sqrt()
     }
@@ -48,7 +48,10 @@ impl Point {
 
     /// The angle between two given points.
     pub fn angle_to(&self, other: &Point) -> f64 {
-        (other.1 - self.1).atan2(other.1 - self.0)
+        let d_x = self.0 - other.0;
+        let d_y = self.1 - other.1;
+
+        (d_y / d_x).atan2(d_x)
     }
 
     /// Create a new point on the line between the two given points with an offset between [0..1],
