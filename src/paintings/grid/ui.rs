@@ -35,7 +35,7 @@ impl Default for GridApp {
 
 impl GridApp {
     fn generate(&self) -> String {
-        let svg = generate_grid(Arc::new(self.config.clone()));
+        let svg = generate_grid(Arc::new(self.config));
 
         svg.generate()
     }

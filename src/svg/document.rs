@@ -91,7 +91,7 @@ impl<'a> Document<'static> {
 
         let _result = std::fs::create_dir(format!("./output/{}", self.name.to_lowercase()));
 
-        let mut f = File::create(&path).expect("could not open file for writing");
+        let mut f = File::create(path).expect("could not open file for writing");
 
         f.write_all(self.document.as_bytes())
             .expect("Could not write to file");

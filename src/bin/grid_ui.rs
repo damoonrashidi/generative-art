@@ -1,4 +1,4 @@
-use generative_art::paintings::grid::ui::GridApp;
+
 
 fn main() -> Result<(), std::fmt::Error> {
     let options = eframe::NativeOptions {
@@ -6,7 +6,7 @@ fn main() -> Result<(), std::fmt::Error> {
         ..Default::default()
     };
 
-    eframe::run_native("Grid", options, Box::new(|_| Box::new(GridApp::default())));
+    eframe::run_native("Grid", options, Box::new(|_| Box::<generative_art::paintings::grid::ui::GridApp>::default()));
 
     Ok(())
 }

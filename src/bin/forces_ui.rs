@@ -1,6 +1,6 @@
 use std::fmt::Error;
 
-use generative_art::paintings::forces::ui::ForcesApp;
+
 
 fn main() -> Result<(), Error> {
     let options = eframe::NativeOptions {
@@ -11,7 +11,7 @@ fn main() -> Result<(), Error> {
     eframe::run_native(
         "Forces",
         options,
-        Box::new(|_| Box::new(ForcesApp::default())),
+        Box::new(|_| Box::<generative_art::paintings::forces::ui::ForcesApp>::default()),
     );
 
     Ok(())

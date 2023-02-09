@@ -1,6 +1,6 @@
 use std::fmt::Error;
 
-use generative_art::paintings::avoidance::ui::AvoidanceUi;
+
 
 fn main() -> Result<(), Error> {
     let options = eframe::NativeOptions {
@@ -11,7 +11,7 @@ fn main() -> Result<(), Error> {
     eframe::run_native(
         "Avoidance",
         options,
-        Box::new(|_| Box::new(AvoidanceUi::default())),
+        Box::new(|_| Box::<generative_art::paintings::avoidance::ui::AvoidanceUi>::default()),
     );
 
     Ok(())

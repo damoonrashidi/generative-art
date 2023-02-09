@@ -1,6 +1,6 @@
 use std::fmt::Error;
 
-use generative_art::paintings::piet::ui::PietUi;
+
 
 fn main() -> Result<(), Error> {
     let options = eframe::NativeOptions {
@@ -8,7 +8,7 @@ fn main() -> Result<(), Error> {
         ..Default::default()
     };
 
-    eframe::run_native("Forces", options, Box::new(|_| Box::new(PietUi::default())));
+    eframe::run_native("Forces", options, Box::new(|_| Box::<generative_art::paintings::piet::ui::PietUi>::default()));
 
     Ok(())
 }

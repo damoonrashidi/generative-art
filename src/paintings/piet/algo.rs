@@ -65,12 +65,11 @@ pub fn piet(config: Rc<&PietConfig>) -> Document<'static> {
     rects
         .iter()
         .map(|rect| {
-            let path = rect.to_path(PathStyle {
+            rect.to_path(PathStyle {
                 color: rect.color,
                 stroke_weight: None,
                 stroke: None,
-            });
-            path
+            })
         })
         .for_each(|path| {
             group.add_shape(Box::new(path));
