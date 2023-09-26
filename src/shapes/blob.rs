@@ -93,7 +93,7 @@ impl Shape for Blob {
     }
 
     fn contains(&self, point: &Point) -> bool {
-        let path = Path::new(self.points.clone(), Default::default());
+        let path = Path::new(&mut self.points, Default::default());
         path.contains(point)
     }
 
@@ -102,7 +102,7 @@ impl Shape for Blob {
     }
 
     fn bounding_box(&self) -> Option<Rectangle> {
-        let path = Path::new(self.points.clone(), Default::default());
+        let path = Path::new(&mut self.points, Default::default());
         path.bounding_box()
     }
 }

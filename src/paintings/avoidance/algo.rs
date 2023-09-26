@@ -18,7 +18,7 @@ use super::config::{AvoidanceConfig, Trail};
 
 pub fn avoidance(config: &AvoidanceConfig) -> String {
     let mut bounds = Rectangle::new(Point(0.0, 0.0), config.size, config.size * 1.4);
-    let (bg, palette) = Palettes::wild();
+    let (bg, palette) = Palettes::orange_autumn();
     bounds.set_color(bg);
 
     let mut pointmap: PointMap<'_, Circle> = PointMap::new(&bounds, 50);
@@ -29,8 +29,8 @@ pub fn avoidance(config: &AvoidanceConfig) -> String {
 
     let mut rng = thread_rng();
 
-    for _ in 0..5000 {
-        let trail = Trail::new(
+    for _ in 0..2 {
+        let mut trail = Trail::new(
             60.,
             Point(
                 rng.gen_range(bounds.x_range()),
@@ -44,15 +44,25 @@ pub fn avoidance(config: &AvoidanceConfig) -> String {
             points.push(trail.position);
             let circle = Circle::new(trail.position, trail.radius);
 
-            let _neighbors = pointmap
+            let neighbors = pointmap
                 .get_neighbors(&circle, Some(trail.radius / 2.))
                 .unwrap();
+
+            if neighbors.iter().any(|c| c.intersects(&circle)) {
+                println!("breaking due to collision");
+                break;
+            }
+
+            // move the trail forward in the direction of its velocity
+
+            trail.position.0 += trail.direction.cos();
+            trail.position.1 += trail.direction.sin();
 
             break;
         }
 
         let path = Path::new(
-            points.clone(),
+            &mut points,
             PathStyle {
                 stroke_weight: Some(config.size / 300.),
                 stroke: palette.get_random_color(),
@@ -60,8 +70,8 @@ pub fn avoidance(config: &AvoidanceConfig) -> String {
             },
         );
 
-        for point in points {
-            let _ = pointmap.insert(Circle::new(point, 40.));
+        for point in &points {
+            let _ = pointmap.insert(Circle::new(*point, 40.));
         }
 
         svg.add_shape(Box::new(path));

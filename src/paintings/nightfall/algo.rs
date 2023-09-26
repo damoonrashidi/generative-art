@@ -102,7 +102,7 @@ pub fn generate_nightfall(config: Rc<&NightfallConfig>) -> Document<'static> {
                 .take(max_count)
                 .for_each(|n| {
                     let path = Path::new(
-                        vec![*point, *n],
+                        &mut vec![*point, *n],
                         PathStyle {
                             stroke_weight: Some(0.2),
                             stroke: Some(Color::Hex("#eee")),

@@ -54,7 +54,7 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
         };
 
         let mut line = Path {
-            points: vec![],
+            points: &mut vec![],
             style: PathStyle {
                 stroke_weight: Some(r),
                 ..Default::default()
@@ -99,11 +99,11 @@ pub fn forces(config: Rc<&ForcesConfig>) -> Document<'static> {
             }
 
             if config.split_line_chance > 0.0 && rng.gen_bool(config.split_line_chance) {
-                split_line(line.points, config.split_with_gap)
+                split_line(*line.points, config.split_with_gap)
                     .into_iter()
-                    .map(|points| {
+                    .map(|mut points| {
                         Path::new(
-                            points,
+                            &mut points,
                             PathStyle {
                                 stroke_weight: Some(r),
                                 stroke: palette.get_random_color(),

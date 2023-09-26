@@ -1,3 +1,4 @@
+use anyhow::{Error, Result};
 use rand::{distributions::WeightedIndex, prelude::Distribution};
 use rand::{rngs::ThreadRng, Rng};
 use std::ops::Range;
@@ -36,7 +37,22 @@ impl<T, const N: usize> WeightedChoice<WeightPair<T>, N>
 where
     T: Copy + Clone,
 {
-    pub fn get_random_choice(&self) -> Option<T> {
+    /**
+    Get a random choice from the set of choices
+
+    Basic example
+    ```
+    use generative_art::transforms::gen_weighted::WeightedChoice;
+    use generative_art::transforms::gen_weighted::WeightPair;
+
+    let choice = WeightedChoice {
+        choices: [(1, 1), (100, 0), (200, 0)],
+    };
+
+    let chosen = choice.get_random_choice();
+    ```
+    */
+    pub fn get_random_choice(&self) -> Result<T> {
         let mut rng = rand::thread_rng();
         let weights = self
             .choices
@@ -44,17 +60,13 @@ where
             .map(|color| color.1)
             .collect::<Vec<usize>>();
 
-        let dist = if let Ok(dist) = WeightedIndex::new(&weights) {
-            dist
-        } else {
-            return None;
-        };
+        let dist = WeightedIndex::new(&weights)?;
 
         let i = dist.sample(&mut rng);
 
         match self.choices.len() {
-            0 => None,
-            _ => Some(self.choices[i].0),
+            0 => Err(Error::msg("No choices to choose from")),
+            _ => Ok(self.choices[i].0),
         }
     }
 }

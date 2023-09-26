@@ -5,10 +5,10 @@ use crate::palette::color::Color;
 use super::{point::Point, rectangle::Rectangle, shape::Shape};
 
 /// An SVG path
-#[derive(Debug, Default)]
-pub struct Path {
+#[derive(Debug)]
+pub struct Path<'a> {
     /// List of points that make up the path.
-    pub points: Vec<Point>,
+    pub points: &'a mut Vec<Point>,
 
     /// Stroke width, stroke color and fill color.
     pub style: PathStyle,
@@ -19,23 +19,23 @@ pub struct Path {
 pub struct PathStyle {
     /// The width of the stroke around this path
     ///
-    /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    /// [Docs](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width)
     pub stroke_weight: Option<f64>,
 
     /// The color of the stroke around this path
     ///
-    /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    /// [Docs](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke)
     pub stroke: Option<Color>,
 
     /// The fill color of this path
     ///
-    /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    /// [Docs](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill)
     pub color: Option<Color>,
 }
 
-impl Path {
+impl<'a> Path<'a> {
     /// Create new [`Path`] with the given [`Point`]s and [`PathStyle`]
-    pub fn new(points: Vec<Point>, style: PathStyle) -> Path {
+    pub fn new(points: &'a mut Vec<Point>, style: PathStyle) -> Path<'a> {
         Path { points, style }
     }
 
@@ -67,7 +67,7 @@ impl Path {
             }
         }
 
-        self.points = new_list
+        self.points = &mut new_list;
     }
 
     /// The total distance between each point in this shape, i.e, the true
@@ -98,7 +98,7 @@ impl Path {
     }
 }
 
-impl Shape for Path {
+impl<'a> Shape for Path<'a> {
     fn as_svg(&self) -> String {
         if self.points.is_empty() {
             return "".to_string();
@@ -166,17 +166,17 @@ impl Shape for Path {
         let max_x = min_x;
         let max_y = min_y;
 
-        let bounding = self.points.clone().iter().fold(
-            (min_x, min_y, max_x, max_y),
-            |(x1, y1, x2, y2), point| {
-                (
-                    x1.min(point.0),
-                    y1.min(point.1),
-                    x2.max(point.0),
-                    y2.max(point.1),
-                )
-            },
-        );
+        let bounding =
+            self.points
+                .iter()
+                .fold((min_x, min_y, max_x, max_y), |(x1, y1, x2, y2), point| {
+                    (
+                        x1.min(point.0),
+                        y1.min(point.1),
+                        x2.max(point.0),
+                        y2.max(point.1),
+                    )
+                });
 
         Some(Rectangle::new(
             Point(bounding.0, bounding.1),
@@ -223,14 +223,14 @@ impl Shape for Path {
             return false;
         }
 
-        let search = [
+        let search_rays = [
             (point, &Point(point.0, bounds.position.1)),
             (point, &Point(point.0, bounds.position.1 + bounds.height)),
             (point, &Point(bounds.position.0 + bounds.width, point.1)),
             (point, &Point(bounds.position.0, point.1)),
         ];
 
-        for ray in search {
+        for ray in search_rays {
             let mut intersections = 0;
 
             for i in 0..self.points.len() {
@@ -262,7 +262,7 @@ mod test {
     #[test]
     fn get_bounding_box() {
         let path = Path {
-            points: vec![Point(0., 0.), Point(5., 5.), Point(-5., 10.)],
+            points: &mut vec![Point(0., 0.), Point(5., 5.), Point(-5., 10.)],
             style: Default::default(),
         };
 
@@ -289,16 +289,15 @@ mod test {
 
     #[test]
     fn point_inside_polygon() {
-        let path = Path::new(
-            vec![
-                Point(0.0, 0.0),
-                Point(100.0, 10.0),
-                Point(100.0, 100.0),
-                Point(20.0, 80.0),
-                Point(0.0, 0.0),
-            ],
-            Default::default(),
-        );
+        let mut points = vec![
+            Point(0.0, 0.0),
+            Point(100.0, 10.0),
+            Point(100.0, 100.0),
+            Point(20.0, 80.0),
+            Point(0.0, 0.0),
+        ];
+
+        let path = Path::new(&mut points, Default::default());
 
         assert!(path.contains(&Point(50., 50.)));
         assert!(!path.contains(&Point(500., 50.)));

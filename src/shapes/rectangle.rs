@@ -98,8 +98,8 @@ impl Rectangle {
     }
 
     /// Converts this rectangle to a [`Path`]. Useful for path wobbling.
-    pub fn to_path(&self, style: PathStyle) -> Path {
-        let points = vec![
+    pub fn to_path<'a>(&self, style: PathStyle) -> Path<'a> {
+        let mut points = vec![
             (self.position.0, self.position.1),
             (self.position.0 + self.width, self.position.1),
             (self.position.0 + self.width, self.position.1 + self.height),
@@ -110,7 +110,7 @@ impl Rectangle {
         .map(|(x, y)| Point(*x, *y))
         .collect();
 
-        Path::new(points, style)
+        Path::new(&mut points, style)
     }
 
     pub fn subdivide(
